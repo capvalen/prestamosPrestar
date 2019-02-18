@@ -1,15 +1,14 @@
+<table class="table">
 <thead>
-	<tr>
-		<th>#</th>
-					<th>Fecha</th>
-					<th>Capital</th>
-					<th>Interés</th>
-					<th class="hidden">Amortización</th>
-					<th>Cuota</th>
-					<th class="hidden">Saldo Real</th>
-	</tr>
+	<th>Interés</th>
+	<th>Total</th>
+	<th>Plazo</th>
+	<th>Cuota</th>
+	<th>Seguro</th>
 </thead>
 <tbody>
+<tr>
+
 <?php
 header('Content-Type: text/html; charset=utf8');
 date_default_timezone_set('America/Lima');
@@ -35,10 +34,12 @@ $fecha = new DateTime($_POST['fDesembolso']);
 
 $feriados = include "feriadosProximos.php";
 $monto = $_POST['monto'];
-$plazo = $_POST['periodo'];
+
 $saldo = $_POST['monto'];
 $saltoDia = new DateInterval('P1D'); //aumenta 1 día
-$interes = 1+$_POST['tasaInt']/100;
+$tasa = $_POST['tasaInt']/100;
+$meses =  $_POST['periodo'];
+
 
 
 //Para saber si es sábado(6) o domingo(0):  format('w') 
@@ -60,34 +61,38 @@ $jsonSimple= json_decode($lista1, true);
 switch ($_POST['modo']){
 	case "1": //DIARIO
 		$intervalo = new DateInterval('P1D'); //aumenta 1 día
+		$plazo = $_POST['periodo']*30;
 		break;
 	case "2": //SEMANAL
 		$intervalo = new DateInterval('P1W'); //aumenta 1 semana
+		$plazo = $_POST['periodo']*4;
 		break;
 	case "4": //QUINCENAL
-		$intervalo = new DateInterval('P15D'); //aumenta 15 días
+		$intervalo = new DateInterval('P14D'); //aumenta 15 días
+		$plazo = $_POST['periodo']*2;
 		break;
 	case "3": //MENSUAL
-		$intervalo = new DateInterval('P1M'); //aumenta 30 día
+		$intervalo = new DateInterval('P30D'); //aumenta 30 día
+		$plazo = $_POST['periodo']*1;
 		break;
 	default:
 	?> <tr><td>Datos inválidos</td></tr><?php
 	break;
 }
 
-$capitalPartido = round($monto/$plazo,1, PHP_ROUND_HALF_UP);
-$cuota = round(($monto*$interes)/$plazo,1, PHP_ROUND_HALF_UP);
-$intGanado = round($monto *$_POST['tasaInt']/100/$plazo,1, PHP_ROUND_HALF_UP);
+$interes = $saldo * $tasa * $meses;
+$totalpago = $monto+ $interes;
+
+$capitalPartido = round($saldo/$plazo,1, PHP_ROUND_HALF_UP);
+$cuota = round( $totalpago/$plazo ,1, PHP_ROUND_HALF_UP);
+$intGanado = round( $interes/ $plazo ,1, PHP_ROUND_HALF_UP);
 
 /* ?> 
 <tr><td class='grey-text text-darken-2'><strong>0</strong></td> <td><?= $fecha->format('d/m/Y'); ?></td> <td>-</td><td>-</td> <td>-</td> <td><?= number_format($saldo,2);?></td></tr><?php */
 
 $interesSumado=0;
-if( $_POST['modo']=='3'){
-	$fecha = new DateTime($_POST['primerPago']);
-}else{
-	$fecha->add($intervalo);
-}
+$fecha->add($intervalo);
+
 //$cuota = round($monto*$interes/$plazo,2);
 for ($i=0; $i < $plazo ; $i++) {
 /* 	?> <tr><?php */
@@ -154,6 +159,28 @@ for ($i=0; $i < $plazo ; $i++) {
 /* ?></tr><?php */
 }
 
+?>
+<td>S/ <?= number_format(round($interes,1, PHP_ROUND_HALF_UP),2); ?></td>
+<td>S/ <?= number_format(round($totalpago,1, PHP_ROUND_HALF_UP),2);?></td>
+<td><?= $plazo;?></td>
+<td>S/ <?= number_format(round($cuota,1, PHP_ROUND_HALF_UP),2); ?></td>
+<td>S/ <?= number_format(round($monto*0.015,1, PHP_ROUND_HALF_UP),2);?> </td>
+</tr></tbody>
+</table>
+<table class="table table-hover">
+<thead>
+	<tr>
+		<th>#</th>
+					<th>Fecha</th>
+					<th>Capital</th>
+					<th>Interés</th>
+					<th class="hidden">Amortización</th>
+					<th>Cuota</th>
+					<th class="hidden">Saldo Real</th>
+	</tr>
+</thead>
+<tbody>
+<?php
 $jsonSimple[0]['saldoReal'] = round($monto * $interes, 1, PHP_ROUND_HALF_UP);
 $dia=1;
 for ($j=0; $j <  count($jsonSimple) ; $j++) { ?><tr><?php
@@ -204,6 +231,7 @@ function esFeriado($feriados, $dia){
 	<td><strong>Total:</strong></td>
 	<td><strong>S/ <?= $monto;?></strong></td>
 	<td><strong>S/ <?= number_format($monto*$_POST['tasaInt']/100,2); ?></strong></td>
-	<td><strong>S/ <?= number_format($monto*$interes,2);?></strong></td>
+	<td><strong>S/ <?= number_format( $totalpago,2);?></strong></td>
 </tr>
 </tfoot>
+</table>

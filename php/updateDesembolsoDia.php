@@ -12,7 +12,11 @@ $sqlDesembolso= "UPDATE `prestamo` SET `presFechaDesembolso`=now() WHERE `idPres
 INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`, `idAprueba`) 
 select null,{$idPrestamo},0,43,now(),`presMontoDesembolso`,'<a href=creditos.php?credito={$_POST['credito']}>CR-{$idPrestamo}</a>',1,1,{$_COOKIE['ckidUsuario']},0
 from prestamo 
-where `idPrestamo`={$idPrestamo}
+where `idPrestamo`={$idPrestamo};
+INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`, `idAprueba`) 
+select null,{$idPrestamo},0,87,now(),`presMontoDesembolso`*0.015,'<a href=creditos.php?credito={$_POST['credito']}>CR-{$idPrestamo}</a>',1,1,{$_COOKIE['ckidUsuario']},0
+from prestamo 
+where `idPrestamo`={$idPrestamo};
 ";
 
 $respDesemb= $cadena->multi_query($sqlDesembolso);

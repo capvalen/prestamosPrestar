@@ -6,16 +6,51 @@ require_once('../vendor/autoload.php');
 $base58 = new StephenHill\Base58();
 
 
+$fecha = new DateTime($_POST['fDesembolso']);
 
-$pagoTotal = $_POST['monto']*(1+$_POST['tasaInt']/100);
-$sql="INSERT INTO `prestamo`(`idPrestamo`, `presFechaAutom`, `presFechaDesembolso`, `presPeriodo`, `preInteresPers`,`presMontoDesembolso`, `idTipoPrestamo`, `presActivo`, `idUsuario`, `preSaldoDebe`) VALUES (null, now(), '0000-00-00', {$_POST['periodo']}, {$_POST['tasaInt']},{$_POST['monto']}, {$_POST['modo']}, 1, {$_COOKIE['ckidUsuario']}, {$pagoTotal} );"; 
+$feriados = include "feriadosProximos.php";
+$monto = $_POST['monto'];
+
+$saldo = $_POST['monto'];
+$saltoDia = new DateInterval('P1D'); //aumenta 1 día
+$tasa = $_POST['tasaInt']/100;
+$meses =  $_POST['periodo'];
+
+switch ($_POST['modo']){
+	case "1": //DIARIO
+		$intervalo = new DateInterval('P1D'); //aumenta 1 día
+		$plazo = $_POST['periodo']*30;
+		break;
+	case "2": //SEMANAL
+		$intervalo = new DateInterval('P1W'); //aumenta 1 semana
+		$plazo = $_POST['periodo']*4;
+		break;
+	case "4": //QUINCENAL
+		$intervalo = new DateInterval('P14D'); //aumenta 15 días
+		$plazo = $_POST['periodo']*2;
+		break;
+	case "3": //MENSUAL
+		$intervalo = new DateInterval('P30D'); //aumenta 30 día
+		$plazo = $_POST['periodo']*1	;
+		break;
+	default:
+	?> <tr><td>Datos inválidos</td></tr><?php
+	break;
+}
+$interes = $monto * $tasa * $meses;
+$pagoTotal  = $monto+ $interes;
+
+$capitalPartido = round($monto/$plazo,1, PHP_ROUND_HALF_UP);
+$cuota = round( $pagoTotal/$plazo ,1, PHP_ROUND_HALF_UP);
+$intGanado = round( $interes/ $plazo ,1, PHP_ROUND_HALF_UP);
 
 
+$sql="INSERT INTO `prestamo`(`idPrestamo`, `presFechaAutom`, `presFechaDesembolso`, `presPeriodo`, `preInteresPers`,`presMontoDesembolso`, `idTipoPrestamo`, `presActivo`, `idUsuario`, `preSaldoDebe`) VALUES (null, now(), '0000-00-00 00:00:00', {$_POST['periodo']}, {$_POST['tasaInt']},{$_POST['monto']}, {$_POST['modo']}, 1, {$_COOKIE['ckidUsuario']}, {$pagoTotal} );"; 
 
-if($conection->query($sql)){
-	$idPrestamo = $conection->insert_id;
+if($cadena->query($sql)){
+	$idPrestamo = $cadena->insert_id;
 }else{
-	echo "hubo un error";
+	echo "hubo un error".$mysqli->errno;
 }
 
 
@@ -30,14 +65,10 @@ $esclavo->multi_query($sqlClie);
 
 
 
-$fecha = new DateTime($_POST['fDesembolso']);
 
-$feriados = include "feriadosProximos.php";
-$monto = $_POST['monto'];
-$plazo = $_POST['periodo'];
-$saldo = $_POST['monto'];
-$saltoDia = new DateInterval('P1D'); //aumenta 1 día
-$interes = 1+$_POST['tasaInt']/100;
+
+
+
 $sqlCuotas='';
 
 //Para saber si es sábado(6) o domingo(0):  format('w') 
@@ -49,36 +80,16 @@ $lista1= '[{
 	"cuota": 0,
 	"interes": 0,
 	"amortizacion": 0,
-	"saldo": '.$saldo.',
+	"saldo": '.$monto.',
 	"saldoReal": 0
 	}]';
 $jsonSimple= json_decode($lista1, true);
 
-switch ($_POST['modo']){
-	case "1": //DIARIO
-		$intervalo = new DateInterval('P1D'); //aumenta 1 día
-		break;
-	case "2": //SEMANAL
-		$intervalo = new DateInterval('P1W'); //aumenta 1 día
-		break;
-	case "4": //QUINCENAL
-		$intervalo = new DateInterval('P15D'); //aumenta 1 día
-		break;
-	case "3": //MENSUAL
-		$intervalo = new DateInterval('P1M'); //aumenta 1 día
-		break;
-	default:
-	break;
-}
-$cuota = round(($monto*$interes)/$plazo,1, PHP_ROUND_HALF_UP);
 
 
 $interesSumado=0;
-if( $_POST['modo']=='3'){
-	$fecha = new DateTime($_POST['primerPago']);
-}else{
-	$fecha->add($intervalo);
-}
+$fecha->add($intervalo);
+
 //$cuota = round($monto*$interes/$plazo,2);
 for ($i=0; $i < $plazo ; $i++) {
 
@@ -120,11 +131,10 @@ for ($i=0; $i < $plazo ; $i++) {
 		// 	//echo "Sábado ".": ". $fecha->format('d/m/Y'). "<br>";  ---------SI SE CUENTAN SABADOS EN ESTE SISTEMA---------
 		// 	$i--;
 		}else{
-			//$suma+=$cuota;
-			//$saldo = $saldo*$interes;
+
 			$interesVariable= round($saldo * $interes, 1, PHP_ROUND_HALF_UP);
 			$amortizacion = round($cuota-$interesVariable, 1, PHP_ROUND_HALF_UP);
-			$saldo = $saldo -$amortizacion;
+			$saldo = $saldo - $cuota;
 			$interesSumado+=$interesVariable;
 
 			$jsonSimple[]=array(
@@ -152,21 +162,21 @@ for ($i=0; $i < $plazo ; $i++) {
 
 
 
-$jsonSimple[0]['saldoReal'] = round($monto * $interes, 1, PHP_ROUND_HALF_UP);
+$saldo= round($pagoTotal, 1, PHP_ROUND_HALF_UP);
 $dia=1;
 for ($j=0; $j <  count($jsonSimple) ; $j++) {
 	
 	$nueva= new DateTime ($jsonSimple[$j]['fPago']);
 
 	if($jsonSimple[$j]['razon']==='Desembolso'){
-		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',0,'0000-00-00',0,{$jsonSimple[$j]['saldoReal']},'0','', 43);";
+		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',0,'0000-00-00',0,{$saldo},'0','', 43);";
 	}else if($jsonSimple[$j]['razon']==='Domingo'){ $dia++;
 	}else if($jsonSimple[$j]['razon']==='Feriado'){ $dia++;
 	}else{
 		if($j>=1){
-			$jsonSimple[$j]['saldoReal'] = $jsonSimple[$j-$dia]['saldoReal']-$jsonSimple[$j]['cuota']; $dia=1;
+			$saldo = $saldo-$cuota; $dia=1;
 		}
-		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',{$jsonSimple[$j]['cuota']},'0000-00-00',0,{$jsonSimple[$j]['saldoReal']},'0','', 79);";
+		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',{$cuota},'0000-00-00',0,{$saldo},'0','', 79);";
 	}
 
 }

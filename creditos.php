@@ -97,8 +97,8 @@ $fechaHoy = new DateTime();
 			<div class="row">
 				<div class="col-sm-2"><label for="">Fecha préstamo</label><p><?php $fechaAut= new DateTime($rowCr['presFechaAutom']); echo $fechaAut->format('j/m/Y h:m a'); ?></p></div>
 				<div class="col-sm-2"><label for="">Fecha desemboslo</label><p><?php if($rowCr['presFechaDesembolso']=='Desembolso pendiente'){echo $rowCr['presFechaDesembolso'];}else{$fechaDes= new DateTime($rowCr['presFechaDesembolso']); echo $fechaDes->format('j/m/Y h:m a');} ?></p></div>
-				<div class="col-sm-2"><label for="">Desembolso</label><p>S/ <?= number_format($rowCr['presMontoDesembolso'],2); ?></p></div>
-				<div class="col-sm-2"><label for="">N° Cuotas</label><p><?= $rowCr['tpreDescipcion']; ?></p></div>
+				<div class="col-sm-2"><label for="">Desembolso</label><p>S/ <?= number_format($rowCr['presMontoDesembolso'],2); ?></p> <span class="hidden" id="spanMontoDado"><?= $rowCr['presMontoDesembolso']; ?></span></div>
+				<div class="col-sm-2"><label for="">Meses</label><p><?= $rowCr['tpreDescipcion']; ?></p></div>
 				<div class="col-sm-2"><label for="">Interés</label><p><?= $rowCr['preInteresPers']."%"; ?></p></div>
 				<div class="col-sm-2"><label for="">Analista</label><p><?= $rowCr['usuNombres']; ?></p></div>
 			</div>
@@ -177,31 +177,56 @@ $fechaHoy = new DateTime();
 				</thead>
 				<tbody>
 			<?php 
+			$sqlPrim = "SELECT `presMontoDesembolso`, `presPeriodo`,`preInteresPers`, `idTipoPrestamo`
+			from prestamo where `idPrestamo` = {$codCredito}";
+		
+			$resultadoPrim=$esclavo->query($sqlPrim);
+			$rowPrim=$resultadoPrim->fetch_assoc();
+				
+			$monto = $rowPrim['presMontoDesembolso'];
+			
+			$tasa = $rowPrim['preInteresPers']/100;
+			$meses =  $rowPrim['presPeriodo'];
+
+			switch ($rowPrim['idTipoPrestamo']){
+				case "1": //DIARIO
+					$plazo = $rowPrim['presPeriodo']*30;
+					break;
+				case "2": //SEMANAL
+					$plazo = $rowPrim['presPeriodo']*4;
+					break;
+				case "4": //QUINCENAL
+					$plazo = $rowPrim['presPeriodo']*2;
+					break;
+				case "3": //MENSUAL
+					$plazo = $rowPrim['presPeriodo']*1	;
+					break;
+				default: break;
+			}
+			$interes = $monto * $tasa * $meses;
+			$pagoTotal  = $monto+ $interes;
+
+			$capitalPartido = round($monto/$plazo,1, PHP_ROUND_HALF_UP);
+			$cuota = round( $pagoTotal/$plazo ,1, PHP_ROUND_HALF_UP);
+			$intGanado = round( $interes/ $plazo ,1, PHP_ROUND_HALF_UP);
+
+
 			$sqlCuot= "SELECT prc.*, pre.preInteresPers, pre.presMontoDesembolso, pre.presPeriodo FROM prestamo_cuotas prc
 			inner join prestamo pre on pre.idPrestamo = prc.idPrestamo
 			where prc.idPrestamo = {$codCredito}
 			order by cuotFechaPago asc";
+
+
 			if($respCuot = $cadena->query($sqlCuot)){ $k=0;
 				$sumCapital = 0; $sumInteres =0; $sumCuota =0;
 				while($rowCuot = $respCuot->fetch_assoc()){
-					$monto = $rowCuot['presMontoDesembolso'];
-					$interes = $rowCuot['preInteresPers'];
-					$plazo = $rowCuot['presPeriodo'];
-					$capitalPartido = $monto/$plazo;
-					$intGanado = $monto*$interes/100/$plazo;
-					$cuotaGanado = $capitalPartido + $intGanado;
-					
-					if($k>=1) {$sumCapital = $sumCapital+$capitalPartido;
-					$sumInteres = $sumInteres+$intGanado;
-					$sumCuota = $sumCuota+$cuotaGanado;}
-
 					?>
 				<tr>
 					<td>SP-<?= $rowCuot['idCuota']; ?></td>
 					<td><?php $fechaCu= new DateTime($rowCuot['cuotFechaPago']); echo $fechaCu->format('d/m/Y'); ?></td>
 					<td><? if($k>=1) {echo number_format($capitalPartido,2);} ?></td>
 					<td><? if($k>=1) {echo number_format($intGanado,2);} ?></td>
-					<td><? if($k>=1) {echo number_format($cuotaGanado,2);} ?></td>
+					<td><? if($k>=1) {echo number_format($cuota,2);} ?></td>
 					<td><?php if($rowCuot['cuotCuota']=='0.00' && $rowCuot['cuotPago']=='0.00'): echo "Desembolso"; elseif($rowCuot['cuotFechaCancelacion']=='0000-00-00'): echo 'Pendiente'; else: echo $rowCuot['cuotFechaCancelacion']; endif;  ?></td>
 					<td class="tdPagoCli" data-pago="<?= number_format($rowCuot['cuotPago'],2); ?>"><? if($k>=1) {echo number_format($rowCuot['cuotPago'],2);} ?></td>
 					<td class="hidden"><?= number_format($rowCuot['cuotSaldo'],2); ?></td>
@@ -232,9 +257,9 @@ $fechaHoy = new DateTime();
 				<tfoot>
 					<tr>
 						<th></th> <th></th>
-						<th><?= number_format($sumCapital,2); ?></th>
-						<th><?= number_format($sumInteres,2); ?></th>
-						<th><?= number_format($sumCuota,2); ?></th>
+						<th>S/ <?= number_format($monto,2); ?></th>
+						<th>S/ <?= number_format($interes,2); ?></th>
+						<th>S/ <?= number_format($pagoTotal,2); ?></th>
 						<th></th> <th></th><th> </th>
 						
 					</tr>
@@ -340,16 +365,16 @@ $fechaHoy = new DateTime();
 							</select>
 						</div>
 						<div class="col-xs-6 col-sm-3">
-							<label for="">Interés</label>
-							<input type="number" class="form-control esNumero esDecimal text-center" id="txtInteres" value=0>
+							<label for="">Monto</label>
+							<input type="number" class="form-control esMoneda text-center" id="txtMontoPrinc" value=0.00>
 						</div>
 						<div class="col-xs-6 col-sm-3">
-							<label for="">N° Cuotas</label>
+							<label for="">Meses</label>
 							<input type="number" class="form-control esNumero noEsDecimal text-center" id="txtPeriodo" value=0 >
 						</div>
 						<div class="col-xs-6 col-sm-3">
-							<label for="">Monto</label>
-							<input type="number" class="form-control esMoneda text-center" id="txtMontoPrinc" value=0.00>
+							<label for="">Interés</label>
+							<input type="number" class="form-control esNumero esDecimal text-center" id="txtInteres" value=0>
 						</div>
 						<div class="col-xs-6 col-sm-3">
 							<label for="">Fecha Desembolso</label>
@@ -379,11 +404,11 @@ $fechaHoy = new DateTime();
 				<p><strong>Resultados:</strong></p>
 				<div class="container row" id="divVariables">
 				</div>
-				<table class="table table-hover" id="tableSimulacion">
+				<div  id="tableSimulacion">
 				<!-- <thead id="theadResultados">
 				</thead>
 				<tbody id="tbodyResultados"></tbody>-->
-				</table> 
+				</div> 
 				</div>
 			</div>
 		
@@ -778,11 +803,11 @@ $('#rowBotonesMaestros').on('click', '#btnImpresionPrevia', function(){
 		window.open(dataUrl, '_blank' );
 });
 $('#sltTipoPrestamo').change(function() {
-	if( $(this).val()==3 ){
+/* 	if( $(this).val()==3 ){
 		$('#divPrimerPago').removeClass('hidden');
 	}else{
 		$('#divPrimerPago').addClass('hidden');
-	}
+	} */
 });
 $('#dtpFechaIniciov3').change(function() {
 	$('#dtpFechaPrimerv3').val('01/'+moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY' ).add(1, 'month').format('MM/YYYY'))
@@ -793,7 +818,10 @@ $('#btnDesembolsar').click(function() {
 	$.ajax({url: 'php/updateDesembolsoDia.php', type: 'POST', data:{ credito: '<?= $_GET['credito'];?>' }}).done(function(resp) {
 		console.log(resp)
 		if(resp==true){
-			location.reload();
+			//location.reload();
+			var seguro = parseFloat($('#spanMontoDado').text()*0.015).toFixed(2);
+			$('#h1Bien').html(`Cobre S/ ${seguro} de seguro al cliente.`);
+			$('#modalGuardadoCorrecto').modal('show');
 		}
 	});
 });
