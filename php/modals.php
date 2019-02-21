@@ -213,8 +213,8 @@
 </div>
 
 
-<!-- Modal para: Verificar o Denegar Credito -->
 <?php if(isset($_GET['credito']) && $rowCr['presAprobado']=== 'Sin aprobar'): ?>
+<!-- Modal para: Aprobar Credito -->
 <div class='modal fade' id='modalVerificarCredito' tabindex='-1' role='dialog' aria-hidden='true'>
 	<div class='modal-dialog modal-sm' >
 	<div class='modal-content '>
@@ -232,6 +232,11 @@
 		</div>
 	</div>
 </div>
+
+<?php endif;
+
+if( in_array($_COOKIE['ckPower'], $soloAutorizados) ){ ?>
+<!-- Modal para: Denegar Credito -->
 <div class='modal fade' id='modalDenegarCredito' tabindex='-1' role='dialog' aria-hidden='true'>
 	<div class='modal-dialog modal-sm' >
 	<div class='modal-content '>
@@ -246,14 +251,12 @@
 		</div>
 		<div class='modal-footer'>
 			<button type='button' class='btn btn-default' data-dismiss='modal'><i class="icofont-close-circled"></i> Cerrar</button>
-			<button type='button' class='btn btn-success btn-outline' id='btnDenegarCredito'><i class="icofont-check-circled"></i> Denegar crédito</button>
+			<button type='button' class='btn btn-rojoFresa btn-outline' id='btnDenegarCredito'><i class="icofont-check-circled"></i> Denegar crédito</button>
 		</div>
 		</div>
 	</div>
 </div>
-<?php endif;
 
-if( in_array($_COOKIE['ckPower'], $admis) ){ ?>
 <!-- Modal para: pagar un credito completo -->
 <div class='modal fade' id='modalPagoCreditoCompleto' tabindex='-1' role='dialog' aria-hidden='true'>
 	<div class='modal-dialog modal-sm' >

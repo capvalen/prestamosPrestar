@@ -127,19 +127,22 @@ $fechaHoy = new DateTime();
 
 			<div class="container row" id="rowBotonesMaestros">
 				<div class="col-xs-12 col-md-6">
-					<button class="btn btn-negro btn-outline btn-lg " id="btnImpresionPrevia" data-pre="<?= $_GET['credito'];?>"><i class="icofont-print"></i> Imprimir cronograma</button>
+					<button class="btn btn-negro btn-outline" id="btnImpresionPrevia" data-pre="<?= $_GET['credito'];?>"><i class="icofont-print"></i> Imprimir cronograma</button>
 				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar'): ?>
-					<button class="btn btn-success btn-outline btn-lg" id="btnShowVerificarCredito"><i class="icofont-check-circled"></i> Aprobar crédito</button>
-					<button class="btn btn-danger btn-outline btn-lg" id="btnDenyVerificarCredito"><i class="icofont-thumbs-down"></i> Denegar crédito</button>
-				<?php endif; ?>
+					<button class="btn btn-success btn-outline " id="btnShowVerificarCredito"><i class="icofont-check-circled"></i> Aprobar crédito</button>
+					<button class="btn btn-danger btn-outline " id="btnDenyVerificarCredito"><i class="icofont-thumbs-down"></i> Denegar crédito</button>
+				<?php else: 
+					if( in_array( $_COOKIE['ckPower'], $soloAdmis) &&  $rowCr['presAprobado']<>"Rechazado"):?>
+					<button class="btn btn-rojoFresa btn-outline" id="btnAnularCredito"><i class="icofont-ui-delete"></i> Anular crédito</button>
+				<?php endif; endif; ?>
 				</div>
 
 			<?php if(isset($_GET['credito']) && $rowCr['presAprobado']<> 'Sin aprobar' && $rowCr['presAprobado']<> "Rechazado" && in_array($_COOKIE['ckPower'], $soloAdmis)): ?>
 			<?php if( $hayCaja==true ):
 				if($rowCr['presFechaDesembolso']=='Desembolso pendiente'): ?>
-				<button class="btn btn-warning btn-outline btn-lg" id="btnDesembolsar"><i class="icofont-money"></i> Desembolsar</button>
+				<button class="btn btn-warning btn-outline" id="btnDesembolsar"><i class="icofont-money"></i> Desembolsar</button>
 			<?php else:?>
-				<button class="btn btn-infocat btn-outline btn-lg" id="btnsolicitarDeuda"><i class="icofont-money"></i> Pago global</button>
+				<button class="btn btn-infocat btn-outline" id="btnsolicitarDeuda"><i class="icofont-money"></i> Pago global</button>
 			<?php endif; ?>
 			<?php else: ?> 
 				<div class="col-xs-12 col-md-6"><br>
@@ -232,11 +235,15 @@ $fechaHoy = new DateTime();
 					<td class="hidden"><?= number_format($rowCuot['cuotSaldo'],2); ?></td>
 					<td><?php if( in_array($_COOKIE['ckPower'], $soloAdmis) &&  $rowCuot['idTipoPrestamo']=='79' && $rowCr['presFechaDesembolso']<>'Desembolso pendiente' && $k>=1):
 					$diasDebe2=$fechaHoy ->diff($fechaCu);
+					if( $rowCr['presAprobado']== "Rechazado" ){ ?>
+						<p class="red-text text-darken-1">Rechazado</p>
+					<?php } else{
 						if( floatval($diasDebe2->format('%R%a')) < 0 ){
-						?> <p class="red-text text-darken-1">Cuota fuera de fecha</p>
+						?> <p class="red-text text-darken-1">Cuota fuera de fecha (<?= $diasDebe2->format('%a').' días';?>)</p>
 						<!-- <button class="btn btn-primary btn-outline btn-sm btnPagarCuota"><i class="icofont-money"></i> Pagar</button> --> <?php
 						}else{
 							?> <p class="blue-text text-accent-2">Cuota en buena fecha</p><?php
+						}
 						}
 						endif;
 						if($rowCuot['cuotPago']<>'0.00' && $rowCr['presFechaDesembolso']<>'Desembolso pendiente'): 
@@ -390,8 +397,8 @@ $fechaHoy = new DateTime();
 						</div>
 						
 						<div class="col-xs-5">
-							<button class="btn btn-azul btn-lg btn-outline btnSinBorde" style="margin-top: 10px;" id="btnSimularPagos"><i class="icofont-support-faq"></i> Simular</button>
-							<button class="btn btn-infocat btn-lg btn-outline btnSinBorde" style="margin-top: 10px;" id="btnGuardarCred"><i class="icofont-save"></i> Guardar</button>
+							<button class="btn btn-azul btn-outline btnSinBorde" style="margin-top: 10px;" id="btnSimularPagos"><i class="icofont-support-faq"></i> Simular</button>
+							<button class="btn btn-infocat btn-outline btnSinBorde" style="margin-top: 10px;" id="btnGuardarCred"><i class="icofont-save"></i> Guardar</button>
 						
 						</div>
 						<label class="orange-text text-darken-1 hidden" id="labelFaltaCombos" for=""><i class="icofont-warning"></i> Todas las casillas tienen que estar rellenadas para proceder</label>
@@ -889,6 +896,12 @@ $('#btnVerificarCredito').click(function() {
 		}
 	});
 });
+
+<?php endif;
+if( in_array($_COOKIE['ckPower'], $soloAdmis)){ ?>
+$('#btnAnularCredito').click(function() {
+	$('#modalDenegarCredito').modal('show');
+});
 $('#btnDenegarCredito').click(function() {
 	$.ajax({url: 'php/updateDenegarCredito.php', type: 'POST', data: { credit: '<?= $codCredito; ?>', razon: $('#txtDenegarRazon').val() }}).done(function(resp) { //console.log(resp)
 		if(resp==1){
@@ -896,8 +909,8 @@ $('#btnDenegarCredito').click(function() {
 		}
 	});
 });
-<?php endif;
-if( in_array($_COOKIE['ckPower'], $admis) ){ ?>
+<?php }
+if( in_array($_COOKIE['ckPower'], $soloAutorizados) ){ ?>
 
 $('.btnPagarCuota').click(function() {
 	var code= $(this).parent().parent().children().first().text();

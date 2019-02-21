@@ -1,11 +1,12 @@
 <?php
 include 'conkarl.php';
-$admis=array(1,4,8);
+$admis=array(1,);
 
-$soloAdmis=array(1,4,8);
+$soloAdmis=array(1);
 $soloDios=array(1);
 $soloCaja=array(4);
 $soloEspecial=array(8);
+$soloAutorizados=array(1,4);
 
 $i=0;
 
