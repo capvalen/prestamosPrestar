@@ -7,6 +7,7 @@ $base58 = new StephenHill\Base58();
 include "php/variablesGlobales.php";
 $hayCaja= require_once("php/comprobarCajaHoy.php");
 $fechaHoy = new DateTime();
+
 ?>
 
 <!DOCTYPE html>
@@ -890,7 +891,7 @@ $('#btnDenyVerificarCredito').click(function() {
 	$('#modalDenegarCredito').modal('show');
 });
 $('#btnVerificarCredito').click(function() {
-	$.ajax({url: 'php/updateVerificarCredito.php', type: 'POST', data: { credit: '<?= $codCredito; ?>' }}).done(function(resp) { //console.log(resp)
+	$.ajax({url: 'php/updateVerificarCredito.php', type: 'POST', data: { credit: '<?= $_GET['credito']; ?>' }}).done(function(resp) { //console.log(resp)
 		if(resp==1){
 			location.reload();
 		}
@@ -898,18 +899,19 @@ $('#btnVerificarCredito').click(function() {
 });
 
 <?php endif;
+if( isset($_GET['credito']) ){
 if( in_array($_COOKIE['ckPower'], $soloAdmis)){ ?>
 $('#btnAnularCredito').click(function() {
 	$('#modalDenegarCredito').modal('show');
 });
 $('#btnDenegarCredito').click(function() {
-	$.ajax({url: 'php/updateDenegarCredito.php', type: 'POST', data: { credit: '<?= $codCredito; ?>', razon: $('#txtDenegarRazon').val() }}).done(function(resp) { //console.log(resp)
+	$.ajax({url: 'php/updateDenegarCredito.php', type: 'POST', data: { credit: '<?= $_GET['credito']; ?>', razon: $('#txtDenegarRazon').val() }}).done(function(resp) { //console.log(resp)
 		if(resp==1){
 			location.reload();
 		}
 	});
 });
-<?php }
+<?php } }
 if( in_array($_COOKIE['ckPower'], $soloAutorizados) ){ ?>
 
 $('.btnPagarCuota').click(function() {
