@@ -604,8 +604,8 @@ $('.btnEditarCajaMaestra').click(function() {
 	$('.modal-cajaMaestra').modal('show');
 });
 $('#btnUpdateCajaMaestra').click(function() {
-	var idProc= $('#cmbEstadoPagos2').find('.selected a').attr('data-tokens');
-	var mone = $('#divCmbMetodoPago2').find('.selected a').attr('data-tokens');
+	var idProc= $("#cmbEstadoPagos2 option:contains('"+ $('#cmbEstadoPagos2 .dropdown-toggle').attr('title') +"')").attr('data-tokens')
+	var mone = $("#divCmbMetodoPago2 option:contains('"+ $('#divCmbMetodoPago2 .dropdown-toggle').attr('title') +"')").attr('data-tokens');
 	var padre = $(this).parent().parent();
 	$.ajax({url: 'php/actualizarCaja.php', type: 'POST', data: { 
 		idCaj: $('#btnUpdateCajaMaestra').attr('data-caja'),

@@ -95,7 +95,7 @@ for ($i=0; $i < $plazo ; $i++) {
 
 	
 	$razon = esFeriado($feriados, $fecha->format('Y-m-d'));
-	if($razon!=false ){
+	if($razon!=false  && $_POST['modo']!=3 ){
 		//echo "si es feriado";
 		//echo "Feriado ".": ". $fecha->format('d/m/Y'). "<br>";
 		$i--;
@@ -112,7 +112,7 @@ for ($i=0; $i < $plazo ; $i++) {
 		$fecha->add($saltoDia);
 	}else{
 		//echo "no es feriado";
-		if( $fecha->format('w')=='0' ){
+		if( $fecha->format('w')=='0' && $_POST['modo']!=3 ){
 			//No hacer nada
 			//echo "\nDomingo ".": ". $fecha->format('d/m/Y'). "<br>\n";
 			$i--;

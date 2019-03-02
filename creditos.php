@@ -52,7 +52,9 @@ $fechaHoy = new DateTime();
 				</div>
 			</div>
 		</div>
-	<?php if( isset($_GET['credito']) ):
+	<?php
+	$codCredito='';
+	if( isset($_GET['credito']) ):
 		$codCredito=$base58->decode($_GET['credito']); ?>
 
 		<h3 class="purple-text text-lighten-1" id="h3Codigo" data-id="<?= $codCredito; ?>">Crédito CR-<?= $codCredito; ?></h3>
@@ -377,7 +379,7 @@ $fechaHoy = new DateTime();
 						</div>
 						<div class="col-xs-6 col-sm-3">
 							<label for="">Meses</label>
-							<input type="number" class="form-control esNumero noEsDecimal text-center" id="txtPeriodo" value=0 >
+							<input type="number" class="form-control esDecimal text-center" id="txtPeriodo" value=0 >
 						</div>
 						<div class="col-xs-6 col-sm-3">
 							<label for="">Interés</label>
@@ -829,6 +831,9 @@ $('#btnDesembolsar').click(function() {
 			var seguro = parseFloat($('#spanMontoDado').text()*0.015).toFixed(2);
 			$('#h1Bien').html(`Cobre S/ ${seguro} de seguro al cliente.`);
 			$('#modalGuardadoCorrecto').modal('show');
+			$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () {
+				location.reload();
+			})
 		}
 	});
 });
@@ -890,7 +895,7 @@ $('#btnDenyVerificarCredito').click(function() {
 	$('#modalDenegarCredito').modal('show');
 });
 $('#btnVerificarCredito').click(function() {
-	$.ajax({url: 'php/updateVerificarCredito.php', type: 'POST', data: { credit: '<?= $_GET['credito']; ?>' }}).done(function(resp) { //console.log(resp)
+	$.ajax({url: 'php/updateVerificarCredito.php', type: 'POST', data: { credit: '<?= $codCredito; ?>' }}).done(function(resp) { //console.log(resp)
 		if(resp==1){
 			location.reload();
 		}
@@ -903,7 +908,7 @@ $('#btnAnularCredito').click(function() {
 	$('#modalDenegarCredito').modal('show');
 });
 $('#btnDenegarCredito').click(function() {
-	$.ajax({url: 'php/updateDenegarCredito.php', type: 'POST', data: { credit: '<?= $_GET['credito']; ?>', razon: $('#txtDenegarRazon').val() }}).done(function(resp) { //console.log(resp)
+	$.ajax({url: 'php/updateDenegarCredito.php', type: 'POST', data: { credit: '<?= $codCredito; ?>', razon: $('#txtDenegarRazon').val() }}).done(function(resp) { //console.log(resp)
 		if(resp==1){
 			location.reload();
 		}
@@ -968,6 +973,9 @@ $('#btnRealizarDeposito').click(function() {
 					for(i=1; i<data.length; i++){$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);}
 				}
 				$('#modalGuardadoCorrecto2').modal('show');
+				$('#modalGuardadoCorrecto2').on('hidden.bs.modal', function () { 
+					location.reload();
+				});
 				
 			}
 			// if(resp==true){
@@ -983,7 +991,8 @@ $('#btnPrintTicketPagoGlo').click(function() {
 	$.each( $('#h1Bien2 span'), function (i, elem) {
 		texto=texto+ $(elem).text()+"<br>";
 	});
-	window.location.href = 'php/printComprobanteCuota.php?tipo=Pago%20de%20cuotas&texto='+encodeURIComponent(texto)+"&codigo=<?=$codCredito?>";
+	window.open('php/printComprobanteCuota.php?tipo=Pago%20de%20cuotas&texto='+encodeURIComponent(texto)+"&codigo=<?=$codCredito?>", '_blank' );
+	
 });
 <?php } ?>
 </script>

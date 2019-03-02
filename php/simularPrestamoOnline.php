@@ -98,7 +98,7 @@ for ($i=0; $i < $plazo ; $i++) {
 /* 	?> <tr><?php */
 	
 	$razon = esFeriado($feriados, $fecha->format('Y-m-d'));
-	if($razon!=false ){
+	if($razon!=false && $_POST['modo']!=3 ){
 		//echo "si es feriado";
 
 		$i--;
@@ -115,7 +115,7 @@ for ($i=0; $i < $plazo ; $i++) {
 		$fecha->add($saltoDia);
 	}else{
 		//echo "no es feriado";
-		if( $fecha->format('w')=='0' ){
+		if( $fecha->format('w')=='0' && $_POST['modo']!=3 ){
 			//No hacer nada es Domingo
 			$i--;
 			$jsonSimple[]=array(
@@ -230,7 +230,7 @@ function esFeriado($feriados, $dia){
 	<td></td>
 	<td><strong>Total:</strong></td>
 	<td><strong>S/ <?= $monto;?></strong></td>
-	<td><strong>S/ <?= number_format($monto*$_POST['tasaInt']/100,2); ?></strong></td>
+	<td><strong>S/ <?=  number_format(round($interes,1, PHP_ROUND_HALF_UP),2); ?></strong></td>
 	<td><strong>S/ <?= number_format( $totalpago,2);?></strong></td>
 </tr>
 </tfoot>

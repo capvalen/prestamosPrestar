@@ -82,6 +82,7 @@ include "php/variablesGlobales.php";
 <script src="js/bootstrap-material-datetimepicker.js?version=2.0.1"></script>
 <?php include 'php/modals.php'; ?>
 <?php include 'php/existeCookie.php'; ?>
+<script src="js/stupidtable.js"></script>
 
 <?php if ( isset($_COOKIE['ckidUsuario']) ){?>
 <script>
@@ -129,8 +130,9 @@ $(document).ready(function(){
 $('#btnFiltrarReporte').click(function() { //console.log('a')
 	if( $('#sltFiltroReporte').val()!=-1 && moment($('#inputFechaInicio').val(), 'DD/MM/YYYY').isValid() && moment($('#inputFechaFin').val(), 'DD/MM/YYYY').isValid() ){
 		$.ajax({url: 'php/reporteXCaso.php', type: 'POST', data: { caso: $('#sltFiltroReporte').val(), fInicio :  moment($('#inputFechaInicio').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'), fFinal: moment($('#inputFechaFin').val(), 'DD/MM/YYYY').format('YYYY-MM-DD') }}).done(function(resp) {
-			console.log(resp);
+			//console.log(resp);
 			$('#resultadoReporte').html(resp);
+			$("table").stupidtable();
 		});
 	}
 });
