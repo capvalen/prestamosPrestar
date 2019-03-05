@@ -266,7 +266,7 @@
        */
       xlsx: {
         defaultClass: "xlsx",
-        buttonContent: "Export to xlsx",
+        buttonContent: "Exportar a Excel",
         mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         fileExtension: ".xlsx"
       },
@@ -288,7 +288,7 @@
        */
       xls: {
         defaultClass: "xls",
-        buttonContent: "Export to xls",
+        buttonContent: "Exportar a Excel",
         separator: "\t",
         mimeType: "application/vnd.ms-excel",
         fileExtension: ".xls",
