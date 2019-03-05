@@ -3,6 +3,7 @@
 include 'conkarl.php';
 include 'verificarMatrimonio.php';
 require_once('vendor/autoload.php');
+require('contarRecurrente.php');
 $base58 = new StephenHill\Base58();
 
 $log = mysqli_query($conection,"call buscarCliente('".$_GET['buscar']."');");
@@ -29,6 +30,7 @@ if($cantRow>0){
       <td><a href="clientes.php?idCliente=<?= $base58->encode($row['idCliente']);?>">CL-<?= $row['idCliente']; ?></a></td>
       <td><a href="clientes.php?idCliente=<?= $base58->encode($row['idCliente']);?>"><?= $row['cliDni']; ?></a></td>
       <td><a href="clientes.php?idCliente=<?= $base58->encode($row['idCliente']);?>"><?= ucwords($row['cliApellidoPaterno']).' '.ucwords($row['cliApellidoMaterno']).', '. ucwords($row['cliNombres']); ?></a></td>
+      <td><? $cant= contarRecurrentes($row['idCliente'], $cadena); if($cant==0){echo "Nuevo";}else{echo "+".$cant. " Fin.";}?></td>
       <td><?= ucwords($row['addrDireccion']); ?></td>
       <td><?= $row['cliCelularPersonal']; ?></td>
       <td><?= $row['civDescripcion']; ?></td>

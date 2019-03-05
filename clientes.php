@@ -64,6 +64,7 @@ $base58 = new StephenHill\Base58();?>
 							<th>Cod.</th>
 							<th>D.N.I.</th>
 							<th>Apellidos y nombres</th>
+							<th>Recurrente</th>
 							<th>Dirección</th>
 							<th>Celular</th>
 							<th>Estado civil</th>

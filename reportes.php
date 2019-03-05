@@ -44,7 +44,8 @@ include "php/variablesGlobales.php";
 				<div class="col-xs-6 col-md-3">
 					<select name="" class="form-control" id="sltFiltroReporte">
 						<option value="R3" class="optReporte">Créditos nuevos</option>
-						<option value="R5" class="optReporte">Créditos recurrentes</option>
+						<option value="R5" class="optReporte">Créditos Finalizados</option>
+						<!-- <option value="R5" class="optReporte">Créditos recurrentes</option> -->
 						<option value="R4" class="optReporte">Moras cobradas</option>
 						<option value="R1" class="optReporte">Movimientos de entrada</option>
 						<option value="R2" class="optReporte">Movimientos de Salida</option>

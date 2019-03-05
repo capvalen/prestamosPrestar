@@ -232,6 +232,49 @@ switch ($_POST['caso']) {
 			</tfoot>
 		<?
 		break;
+
+
+		case 'R5':
+		
+		$sql="SELECT pre.`idPrestamo`, `fechaFinPrestamo`, presMontoDesembolso, preInteresPers, presPeriodo,
+		cliApellidoPaterno, cliApellidoMaterno, cliNombres, 'Fin de préstamo' as `tipoDescripcion`
+				FROM `prestamo` pre 
+				inner join involucrados i on i.idPrestamo = pre.idPrestamo inner join cliente cl on i.idCliente = cl.idCliente
+				where `fechaFinPrestamo` between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59'
+				order by idPrestamo";
+		$resultado=$cadena->query($sql);
+		?> 
+		<thead>
+				<tr>
+					<th>Préstamo</th>
+					<th>Cliente</th>
+					<th>Proceso</th>
+					<th>Inversión</th>
+					<th>Fecha</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+	<? while($row=$resultado->fetch_assoc()){ 
+		$sumaTodo = $sumaTodo + $row['presMontoDesembolso']; ?>
+			<tr>
+				<td><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
+				<td class='mayuscula'><?= $row['cliApellidoPaterno'].' '.$row['cliApellidoMaterno'].', '.$row['cliNombres'];?></td>
+				<td><?= $row['tipoDescripcion']?></td>
+				<td>S/ <?= number_format($row['presMontoDesembolso'],2);?></td>
+				<td><? $fechaCaj= new DateTime($row['fechaFinPrestamo']); echo $fechaCaj->format('d/m/Y h:m a');?></td>
+			</tr>
+	<? } //end de while ?> 
+			</tbody>
+			<tfoot>
+				<td></td>
+				<td></td>
+				<td></td>
+				<th>S/ <?= number_format($sumaTodo,2);?></th>
+				<td></td>
+			</tfoot>
+		<?
+		break;
 	default:
 		# code...
 		break;

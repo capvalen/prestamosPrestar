@@ -4,6 +4,7 @@
 		<th>Cod.</th>
 		<th>D.N.I.</th>
 		<th>Apellidos y nombres</th>
+		<th>Recurrente</th>
 		<th>Dirección</th>
 		<th>Celular</th>
 		<th>Estado civil</th>
@@ -16,6 +17,7 @@
 
 <?php 
 require("conkarl.php");
+require('contarRecurrente.php');
 $sql = mysqli_query($conection,"SELECT c.*, a.addrDireccion, a.addrNumero, ec.civDescripcion FROM `cliente` c inner join address a on a.idAddress = c.cliDireccionCasa inner join estadocivil ec on c.idEstadoCivil = ec.idEstadoCivil");
 $botonMatri='';
 while($row = mysqli_fetch_array($sql, MYSQLI_ASSOC))
@@ -24,6 +26,7 @@ while($row = mysqli_fetch_array($sql, MYSQLI_ASSOC))
 	<td><a href="clientes.php?idCliente=<?= $base58->encode($row['idCliente']); ?>">CL-<?= $row['idCliente'];?></a></td>
 	<td><a href="clientes.php?idCliente=<?= $base58->encode($row['idCliente']); ?>"><?= $row['cliDni'];?></a></td>
 	<td class="mayuscula"><a href="clientes.php?idCliente=<?= $base58->encode($row['idCliente']); ?>"><?= $row['cliApellidoPaterno'].' '.$row['cliApellidoMaterno'].' '.$row['cliNombres'];?></a></td>
+	<td><? $cant= contarRecurrentes($row['idCliente'], $cadena); if($cant==0){echo "Nuevo";}else{echo "+".$cant. " Fin.";}?></td>
 	<td class="mayuscula"><?= $row['addrDireccion'].' '.$row['addrNumero'];?></td>
 	<td><?= $row['cliCelularPersonal'];?></td>
 	<td><?= $row['civDescripcion'];?></td>
