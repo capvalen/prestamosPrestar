@@ -405,7 +405,7 @@ function calculoTicketVirtual() {
 	
 
 	cuadre = parseFloat(apertura+efectivosEntrada-efectivosSalida-tarjetasSalida).toFixed(2);
-	sobra = parseFloat(cuadre-cierre);
+	sobra = parseFloat(cierre-cuadre);
 	$('#spanTotalEfectivo').text(cierre.toFixed(2));
 	$('#spanTotalSistema').text( cuadre);
 	
@@ -545,6 +545,7 @@ $('#btnGuardarCierre').click(function () {
 			$('.modal-GuardadoCorrecto #spanBien').text('¿Deseas imprimir el ticket de cierre?');
 			$('.modal-GuardadoCorrecto #h1Bien').html( '<button class="btn btn-negro btn-outline" id="btnPrintTCierre"><i class="icofont icofont-print"></i> Ticket de cierre</button>');
 			$('.modal-GuardadoCorrecto').modal('show');
+			location.reload();
 		});
 	}
 });

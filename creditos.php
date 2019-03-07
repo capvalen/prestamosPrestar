@@ -130,7 +130,7 @@ $fechaHoy = new DateTime();
 			<div class="container row" id="rowBotonesMaestros">
 				<div class="col-xs-12 col-md-6">
 					<button class="btn btn-negro btn-outline" id="btnImpresionPrevia" data-pre="<?= $_GET['credito'];?>"><i class="icofont-print"></i> Imprimir cronograma</button>
-				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar'): ?>
+				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && in_array($_COOKIE['ckPower'], $soloAnalistas)): ?>
 					<button class="btn btn-success btn-outline " id="btnShowVerificarCredito"><i class="icofont-check-circled"></i> Aprobar crédito</button>
 					<button class="btn btn-danger btn-outline " id="btnDenyVerificarCredito"><i class="icofont-thumbs-down"></i> Denegar crédito</button>
 				<?php else: 
@@ -139,7 +139,7 @@ $fechaHoy = new DateTime();
 				<?php endif; endif; ?>
 				</div>
 
-			<?php if(isset($_GET['credito']) && $rowCr['presAprobado']<> 'Sin aprobar' && $rowCr['presAprobado']<> "Rechazado" && in_array($_COOKIE['ckPower'], $soloAdmis)): ?>
+			<?php if(isset($_GET['credito']) && $rowCr['presAprobado']<> 'Sin aprobar' && $rowCr['presAprobado']<> "Rechazado" && in_array($_COOKIE['ckPower'], $soloCajas)): ?>
 			<?php if( $hayCaja==true ):
 				if($rowCr['presFechaDesembolso']=='Desembolso pendiente'): ?>
 				<button class="btn btn-warning btn-outline" id="btnDesembolsar"><i class="icofont-money"></i> Desembolsar</button>
@@ -159,7 +159,7 @@ $fechaHoy = new DateTime();
 					</div>
 				</div>
 			<?php endif; //if de hay caja ?>
-			<?php endif; //if de soloadmins  ?>
+			<?php endif; //if de soloCajas  ?>
 		
 			</div>
 			<hr>
@@ -477,7 +477,7 @@ $fechaHoy = new DateTime();
 </div>
 </div>
 
-<?php if(isset($_GET['credito']) && $rowCr['presAprobado']<> 'Sin aprobar' && $rowCr['presAprobado']<> "Rechazado" && $rowCr['presFechaDesembolso']<>'Desembolso pendiente' && in_array($_COOKIE['ckPower'], $soloAdmis)): ?>
+<?php if(isset($_GET['credito']) && $rowCr['presAprobado']<> 'Sin aprobar' && $rowCr['presAprobado']<> "Rechazado" && $rowCr['presFechaDesembolso']<>'Desembolso pendiente' && in_array($_COOKIE['ckPower'], $soloCajas)): ?>
 <!-- Modal para realizar un pago automtico combo -->
 <div class="modal fade" id="mostrarRealizarPagoCombo" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
 <div class="modal-dialog modal-sm" role="document">
@@ -915,7 +915,7 @@ $('#btnDenegarCredito').click(function() {
 	});
 });
 <?php }
-if( in_array($_COOKIE['ckPower'], $soloAutorizados) ){ ?>
+if( in_array($_COOKIE['ckPower'], $soloCajas) ){ ?>
 
 $('.btnPagarCuota').click(function() {
 	var code= $(this).parent().parent().children().first().text();

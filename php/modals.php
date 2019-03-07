@@ -235,7 +235,7 @@
 
 <?php endif;
 
-if( in_array($_COOKIE['ckPower'], $soloAutorizados) ){ ?>
+if( in_array($_COOKIE['ckPower'], $soloAdmis) ){ ?>
 <!-- Modal para: Denegar Credito -->
 <div class='modal fade' id='modalDenegarCredito' tabindex='-1' role='dialog' aria-hidden='true'>
 	<div class='modal-dialog modal-sm' >
