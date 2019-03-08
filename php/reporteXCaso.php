@@ -28,10 +28,10 @@ switch ($_POST['caso']) {
 	<? while($row=$resultado->fetch_assoc()){ 
 		$sumaTodo = $sumaTodo + $row['cajaValor']; ?>
 			<tr>
-				<td data-sort-value="<?= $row['idPrestamo'];?>"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
-				<td data-sort-value="<?=$row['idCuota'];?>"><? if( $row['idCuota'] <>'0'){ echo 'SP-'.$row['idCuota']; } ?></td>
-				<td><?= $row['tipoDescripcion'];?></td>
-				<td data-sort-value="<?=$row['cajaValor'];?>">S/ <?= number_format($row['cajaValor'],2);?></td>
+				<td class="tableexport-string" data-sort-value="<?= $row['idPrestamo'];?>"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
+				<td class="tableexport-string" data-sort-value="<?=$row['idCuota'];?>"><? if( $row['idCuota'] <>'0'){ echo 'SP-'.$row['idCuota']; } ?></td>
+				<td class="tableexport-string"><?= $row['tipoDescripcion'];?></td>
+				<td class="tableexport-string" data-sort-value="<?=$row['cajaValor'];?>">S/ <?= number_format($row['cajaValor'],2);?></td>
 			<? if( in_array($row['idtipoProceso'], $entradas) ){
 				$presto = $row['presMontoDesembolso'];
 				$porcentaje = $row['preInteresPers'];
@@ -47,17 +47,17 @@ switch ($_POST['caso']) {
 				
 
 				if( round(floatval($row['cajaValor']),1, PHP_ROUND_HALF_UP)== round(floatval($cuota),1,PHP_ROUND_HALF_UP) ){ $sumaRecup = $sumaRecup + $capitalUnit; $sumaGananc = $sumaGananc + $interesUnit; ?>
-				<td data-sort-value="<?=$capitalUnit;?>">S/ <?= number_format($capitalUnit,2);?></td>
-				<td data-sort-value="<?=$interesUnit;?>">S/ <?= number_format($interesUnit,2);?></td>
+				<td class="tableexport-string" data-sort-value="<?=$capitalUnit;?>">S/ <?= number_format($capitalUnit,2);?></td>
+				<td class="tableexport-string" data-sort-value="<?=$interesUnit;?>">S/ <?= number_format($interesUnit,2);?></td>
 		<?	} else if(round(floatval($row['cajaValor']),1, PHP_ROUND_HALF_UP)< round(floatval($cuota),1, PHP_ROUND_HALF_UP)){ $sumaRecup = $sumaRecup + ($cuota-$row['cajaValor']); ?>
-				<td data-sort-value="<?=$cuota-$row['cajaValor'];?>">S/ <?= number_format($cuota-$row['cajaValor'],2); /* .  ' cuota es '.$cuota; */?></td>
-				<td data-sort-value="0">S/ 0.00</td>
+				<td class="tableexport-string" data-sort-value="<?=$cuota-$row['cajaValor'];?>">S/ <?= number_format($cuota-$row['cajaValor'],2); /* .  ' cuota es '.$cuota; */?></td>
+				<td class="tableexport-string" data-sort-value="0">S/ 0.00</td>
 			<? }
       }else if($row['idtipoProceso']==81){  $sumaGananc = $sumaGananc + $row['cajaValor']; ?>
-				<td data-sort-value="0"></td>
-				<td data-sort-value="$row['cajaValor'];"><?= 'S/ '. number_format($row['cajaValor'],2);?></td>
+				<td class="tableexport-string" data-sort-value="0"></td>
+				<td class="tableexport-string" data-sort-value="$row['cajaValor'];"><?= 'S/ '. number_format($row['cajaValor'],2);?></td>
 			<? } else{ ?>
-				<td data-sort-value="0"></td><td data-sort-value="0"></td>
+				<td class="tableexport-string" data-sort-value="0"></td><td data-sort-value="0"></td>
 			<? } ?>
 			</tr>
 <? } //end de while ?> 
@@ -93,9 +93,9 @@ switch ($_POST['caso']) {
 	<? while($row=$resultado->fetch_assoc()){ 
 		$sumaTodo = $sumaTodo + $row['cajaValor']; ?>
 			<tr>
-				<td><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
-				<td><?= $row['tipoDescripcion']?> <? if($row['cajaObservacion']<>''){echo '<span class="mayucula">«'.$row['cajaObservacion'].'»</span>';}?></td>
-				<td>S/ <?= number_format($row['cajaValor'],2);?></td>
+				<td class="tableexport-string" ><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
+				<td class="tableexport-string" ><?= $row['tipoDescripcion']?> <? if($row['cajaObservacion']<>''){echo '<span class="mayucula">«'.$row['cajaObservacion'].'»</span>';}?></td>
+				<td class="tableexport-string" >S/ <?= number_format($row['cajaValor'],2);?></td>
 			</tr>
 <? } //end de while ?> 
 			</tbody>
@@ -215,7 +215,7 @@ switch ($_POST['caso']) {
 	<? while($row=$resultado->fetch_assoc()){ 
 		$sumaTodo = $sumaTodo + $row['cajaValor']; ?>
 			<tr>
-				<td><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
+				<td class="tableexport-string"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
 				<td class='mayuscula'><?= $row['cliApellidoPaterno'].' '.$row['cliApellidoMaterno'].', '.$row['cliNombres'];?></td>
 				<td><?= $row['tipoDescripcion']?></td>
 				<td>S/ <?= number_format($row['cajaValor'],2);?></td>
@@ -258,7 +258,7 @@ switch ($_POST['caso']) {
 	<? while($row=$resultado->fetch_assoc()){ 
 		$sumaTodo = $sumaTodo + $row['presMontoDesembolso']; ?>
 			<tr>
-				<td><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
+				<td class="tableexport-string"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
 				<td class='mayuscula'><?= $row['cliApellidoPaterno'].' '.$row['cliApellidoMaterno'].', '.$row['cliNombres'];?></td>
 				<td><?= $row['tipoDescripcion']?></td>
 				<td>S/ <?= number_format($row['presMontoDesembolso'],2);?></td>
