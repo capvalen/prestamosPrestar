@@ -8,7 +8,7 @@ $filas=array();
 
 $k=0;
 $diasMora=0; $moraTotal=0;
-$dinero= $_POST['dinero'];
+$dinero= floatval($_POST['dinero']);
 $idPrestamo = $base58->decode($_POST['credito']);
 $sql= "SELECT * FROM prestamo_cuotas
 where  idPrestamo = {$idPrestamo} and idTipoPrestamo in (33, 79) and idTipoPrestamo <>43
@@ -55,14 +55,15 @@ else:
 	}
 endif;
 
-$filas[] = array('sumaMora' => $moraTotal, 'diasMora' => $diasMora, 'queEs'=> 'Pago mora' );
+$filas[] = array('sumaMora' => $moraTotal, 'diasMora' => $diasMora, 'queEs'=> 'Pago mora', 'montoCuota' => $moraTotal,  );
 
 
 
 $sentenciaLarga ='';
 while($row2=$resultado->fetch_assoc()){
-	$debePendiente = $row2['cuotCuota']-$row2['cuotPago'];
-	//echo 'din '. $debePendiente . ' ';
+	$debePendiente = floatval($row2['cuotCuota']-$row2['cuotPago']);
+	//echo 'dinero '. $dinero . "\n";
+	//echo 'pendiente '. $debePendiente . "\n";
 	if($dinero >= $debePendiente){
 		//echo 'Pago completo delinterés;
 
@@ -89,9 +90,9 @@ while($row2=$resultado->fetch_assoc()){
 			VALUES (null,{$idPrestamo},{$row2['idCuota']},33,now(),{$dinero},'',1,1,{$_COOKIE['ckidUsuario']})";
 			$filas[] = array('cuota' => $row2['idCuota'], 'montoCuota' => $dinero, 'queEs'=> 'Adelanto cuota' );
 
-		}
+		} 
 	}
-	$dinero= round($dinero - $debePendiente,2);
+	$dinero= floatval(round($dinero - $debePendiente,2));
 }
 
 

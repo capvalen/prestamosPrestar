@@ -1,0 +1,3 @@
+<?
+echo "Botin de oro";
+?>

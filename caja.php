@@ -92,7 +92,7 @@ a:focus, a:hover { color: #62286f; }
 				</div>
 				
 				<div class=" panel panel-default" id="divEntradas">
-					<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+					<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Cliente</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
 					<tbody>
 					<?php
 					if( ! isset($_GET['cuadre']) ):
@@ -119,7 +119,7 @@ a:focus, a:hover { color: #62286f; }
 					<?php } ?>
 				</div>
 				<div class=" panel panel-default " id="divSalidas">
-					<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+					<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Cliente</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
 					<tbody>
 					<?php
 						if( ! isset($_GET['cuadre']) ):
@@ -550,7 +550,7 @@ $('#btnGuardarCierre').click(function () {
 	}
 });
 $('.modal-GuardadoCorrecto').on('click', '#btnPrintTCierre', function (e) {
-	$.ajax({url: 'http://127.0.0.1/perucash/printTicketCierre.php', type: 'POST', data: {
+	$.ajax({url: '<?= $servidorLocal;?>printTicketCierre.php', type: 'POST', data: {
 		apertura: $('#spanApertura').text(),
 		cierre: $('#txtMontoCierre').val(),
 		efectivoEntrada: $('#spanResultadoFinal').attr('sumaEfectivo'),
@@ -622,6 +622,178 @@ $('#btnUpdateCajaMaestra').click(function() {
 			location.reload();
 		}
 	});
+});
+$('.btnPrintCajaEsp').click(function () {
+	var padre = $(this).parent().parent();
+	var queMonto, queTitulo;
+	var queUser = padre.find('.emRegistra').text();
+	queMonto= padre.find('.spanCantv3').text();
+	var code = padre. find('.aCode').text();
+	
+	var queDueno =  '';
+	var cliente = padre.find('.aCliente').text();
+	var queFecha = moment( padre.find('.fechaPagov3').text(), 'YYYY-MM-DD H:mm:SS').format('DD/MMMM/YYYY h:mm a');
+	if(queUser=='' || queUser==' '){
+		queUser='Sistema';
+	}
+
+	switch( $(this).attr('data-boton') ){
+		case '0':
+		case '28':
+			queTitulo='* Registro de Producto *\nGracias por registrar su producto';
+			queMonto= $('#spanPresInicial').text(); 
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				fecha: queFecha.replace('a las ', ''),
+				cliente: queDueno,
+				articulo: queArticulo,
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '9':
+			queTitulo='* Pago Parcial de Interés *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				cliente: queDueno,
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '10':
+		case '44':
+			queTitulo='* Cancelación de Interés *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				cliente: queDueno,
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '21':
+			queTitulo='* Venta de producto *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketVenta.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				cliente: '-',
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '45':
+			queTitulo='* Amotización al préstamo *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				cliente: '-',
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '32':
+			queTitulo='* Fin de préstamo *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				cliente: queDueno,
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '33':
+			queTitulo='* Pago parcial *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				cliente: queDueno,
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '36':
+			queTitulo='* Gastos Adminitrativos *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketGastos.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				cliente: queDueno,
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '38':
+			queTitulo='* Compra *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketCompra.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '43':
+			queTitulo='* Desembolso *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '76':
+			queTitulo='* Pago de cochera *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketGastos.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				cliente: queDueno,
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '80':
+			queTitulo='* Pago de cuota *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '81':
+			queTitulo='* Pago de mora *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				monto: queMonto,
+				observacion: padre.find('.tdObservacion').text(),
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+		case '87':
+			queTitulo='* Pago de seguro *';
+			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+				codigo: code,
+				cliente: cliente,
+				titulo: queTitulo,
+				fecha: queFecha.replace('a las ', ''),
+				monto: queMonto,
+				usuario: queUser
+			}}).done(function (resp) { 	}); break;
+	}
+	
+	
 });
 
 <?php }

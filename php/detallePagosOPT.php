@@ -1,7 +1,7 @@
 <?php 
 require("conkarl.php");
 
-$sql = mysqli_query($conection,"SELECT * FROM `tipoproceso` where idtipoproceso in (28, 39, 38, 31, 33, 36, 42, 44, 45, 32,21, 43, 76, 74, 78, 80, 81, 87) order by tipoDescripcion asc");
+$sql = mysqli_query($conection,"SELECT * FROM `tipoproceso` where idtipoproceso in (39, 31, 33, 36, 42, 44, 45, 32, 43, 80, 81, 87) order by tipoDescripcion asc");
 
 while($row = mysqli_fetch_array($sql, MYSQLI_ASSOC))
 {

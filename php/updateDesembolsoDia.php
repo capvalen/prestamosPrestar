@@ -7,8 +7,10 @@ $base58 = new StephenHill\Base58();
 
 
 $idPrestamo = $base58->decode($_POST['credito']);
+//-----------------Reponer este codigo luego de vacear la data
+//UPDATE `prestamo` SET `presFechaDesembolso`=now() WHERE `idPrestamo`={$idPrestamo};
+$sqlDesembolso= "UPDATE `prestamo` SET `presFechaDesembolso`=presFechaAutom WHERE `idPrestamo`={$idPrestamo};
 
-$sqlDesembolso= "UPDATE `prestamo` SET `presFechaDesembolso`=now() WHERE `idPrestamo`={$idPrestamo};
 INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`, `idAprueba`) 
 select null,{$idPrestamo},0,43,now(),`presMontoDesembolso`,'<a href=creditos.php?credito={$_POST['credito']}>CR-{$idPrestamo}</a>',1,1,{$_COOKIE['ckidUsuario']},0
 from prestamo 
@@ -119,8 +121,8 @@ $sqlCuotasFechas= "";
 				if($j==0){ $autoFechas[$j]['cuotFechaPago']= date('Y-m-d'); }
 				else{ $autoFechas[$j]['cuotFechaPago']= $fecha->format('Y-m-d');}
 				//echo "sale ".$autoFechas[$j]['cuotFechaPago']."\n";
-				//--------------  HACER EL UPDATEEEEEEEEEEE --------------------- 
 				//echo $autoFechas[$j]['cuotFechaPago']."\n";
+				//--------------  HACER EL UPDATEEEEEEEEEEE --------------------- 
 				$sqlCuotasFechas=$sqlCuotasFechas."UPDATE `prestamo_cuotas` SET `cuotFechaPago`='".$autoFechas[$j]['cuotFechaPago']."' WHERE `idCuota`=".$autoFechas[$j]['idCuota'].";";
 				$j++;
 				
@@ -132,8 +134,8 @@ $sqlCuotasFechas= "";
 		}
 	}// fin de for
 
-	//echo $sqlCuotasFechas;
-	$cadena->multi_query($sqlCuotasFechas);
+	//-----------------Reponer este codigo luego de vacear la data
+	//$cadena->multi_query($sqlCuotasFechas);
 
 	
 	echo true;

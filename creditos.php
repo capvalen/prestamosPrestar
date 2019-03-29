@@ -225,6 +225,10 @@ $fechaHoy = new DateTime();
 			if($respCuot = $cadena->query($sqlCuot)){ $k=0;
 				$sumCapital = 0; $sumInteres =0; $sumCuota =0;
 				while($rowCuot = $respCuot->fetch_assoc()){
+					if($k>=1){
+						$sumCapital+=$capitalPartido;
+						$sumInteres+=$intGanado;
+						$sumCuota+=$cuota;}
 					?>
 				<tr>
 					<td>SP-<?= $rowCuot['idCuota']; ?></td>
@@ -266,9 +270,9 @@ $fechaHoy = new DateTime();
 				<tfoot>
 					<tr>
 						<th></th> <th></th>
-						<th>S/ <?= number_format($monto,2); ?></th>
-						<th>S/ <?= number_format($interes,2); ?></th>
-						<th>S/ <?= number_format($pagoTotal,2); ?></th>
+						<th>S/ <?= number_format($sumCapital,2); ?></th>
+						<th>S/ <?= number_format($sumInteres,2); ?></th>
+						<th>S/ <?= number_format($sumCuota,2); ?></th>
 						<th></th> <th></th><th> </th>
 						
 					</tr>
@@ -796,8 +800,11 @@ $('#btnGuardarCred').click(function() {
 
 				$.post("php/58decode.php", {texto: resp}, function(data){ console.log(data);
 					$('#spanBien').text('Código de préstamo:')
-					$('#h1Bien').html(`<a href="creditos.php?credito=`+resp+`">CR-`+data+`</a> <br> <button class="btn btn-default " id="btnImpresionPrevia" data-pre="`+resp+`"><i class="icofont-print"></i> Imprimir</button>`)
+					$('#h1Bien').html(`<a href="creditos.php?credito=`+resp+`">CR-`+data+`</a> <br> <button class="btn btn-default " id="btnImpresionPrevia" data-pre="`+resp+`"><i class="icofont-print"></i> Imprimir Impresora</button>`);
 					$('#modalGuardadoCorrecto').modal('show');
+					$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () {
+						window.location.href = `creditos.php?credito=`+resp;
+					});
 				});
 			}
 		});
@@ -831,9 +838,12 @@ $('#btnDesembolsar').click(function() {
 			var seguro = parseFloat($('#spanMontoDado').text()*0.015).toFixed(2);
 			$('#h1Bien').html(`Cobre S/ ${seguro} de seguro al cliente.`);
 			$('#modalGuardadoCorrecto').modal('show');
+			$.ajax({url: '<?= $serverLocal;?>impresion/ticketDesembolso.php', type: 'POST', data: { queMichiEs: 'Crédito nuevo', codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), monto: parseFloat($('#spanMontoDado').text()).toFixed(2), seguro: seguro, hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {
+				console.log(resp)
+			});
 			$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () {
 				location.reload();
-			})
+			});
 		}
 	});
 });
@@ -931,6 +941,7 @@ $('#btnPagarCreditoCompleto').click(function() {
 		}
 	});
 });
+
 $('#btnsolicitarDeuda').click(function() {
 	$.ajax({url: 'php/solicitarDeudasHoy.php', type: 'POST', data: { credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>' }}).done(function(resp) {
 		console.log(resp);
@@ -962,16 +973,25 @@ $('#btnRealizarDeposito').click(function() {
 	} */else if( $('#txtPagaClienteVariable').val() < parseFloat($('#spaCPrecioMora').text()) ){
 		$('#mostrarRealizarPagoCombo .divError').removeClass('hidden').find('.spanError').html('Debe adeltar y cubrir mínimo la mora <strong>S/ '+$('#spaCPrecioMora').text()+'</strong> .');
 	}else{
+		var linea ='';
 		$.ajax({url: 'php/pagarCreditoCombo.php', type: 'POST', data: {credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', dinero: $('#txtPagaClienteVariable').val(), exonerar: $('#chkExonerar').prop('checked') }}).done(function(resp) { console.log( resp );
 			var data = JSON.parse(resp); //console.log(data)
 			if( data.length >0 ){
-				if(data[0].diasMora>0){ console.log( 'aca' );
+				if(data[0].diasMora>0){ console.log( 'con mora' );
 					$('#tituloPeque2').text('Items cancelados');
 					$('#h1Bien2').append(`<span  data-quees='${data[0].queEs}' data-monto='${data[0].montoCuota}' data-id='0'>Mora: S/ `+ parseFloat(data[0].sumaMora).toFixed(2) +`</span><br>`);
-					for(i=1; i<data.length; i++){$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);}
-				}else{ console.log( 'noac' );
-					for(i=1; i<data.length; i++){$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);}
+					linea = linea + data[0].queEs +': S/ '+parseFloat(data[0].sumaMora).toFixed(2)+"\n";
+
+				}else{ console.log( 'sin mora' );
+					/* for(i=1; i<data.length; i++){$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);} */
 				}
+				for(i=1; i<data.length; i++){
+					$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);
+					linea = linea + data[i].queEs +': S/ '+parseFloat(data[i].montoCuota).toFixed(2)+"\n";
+				}
+				$.ajax({url: '<?= $serverLocal;?>impresion/ticketCuotas.php', type: 'POST', data: { queMichiEs: linea, codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {
+					console.log(resp)
+				});
 				$('#modalGuardadoCorrecto2').modal('show');
 				$('#modalGuardadoCorrecto2').on('hidden.bs.modal', function () { 
 					location.reload();
