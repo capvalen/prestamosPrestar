@@ -573,7 +573,7 @@ $('.aLiProcesos').click(function() {
 $(".modal-pagoMaestro").on("shown.bs.modal", function () { $('#txtMontoPagos').val('0.00').focus(); });
 <?php if($_COOKIE['ckPower']==1 || $_COOKIE['ckPower']==8 || $_COOKIE['ckPower']==4) { ?>
 $('#btnInsertPagoOmiso').click(()=> {
-	var idMoneda= $('#divCmbMetodoPago').find('.selected a').attr('data-tokens');
+	var idMoneda= $('#divCmbMetodoPago option:contains("'+$('#sltMetodopago').selectpicker('val')+'")').attr('data-tokens');
 	if(idMoneda == null ){
 		$('.modal-pagoMaestro .divError').removeClass('hidden').find('.spanError').text('Debes seleccionar un método de pago primero');
 	}else{

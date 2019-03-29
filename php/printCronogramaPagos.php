@@ -4,10 +4,8 @@ date_default_timezone_set('America/Lima');
 include 'conkarl.php';
 require_once('../vendor/autoload.php');
 $base58 = new StephenHill\Base58();
-
 $nomEmpresa = $_COOKIE['cknombreEmpresa'];
 $idPresPost = $base58->decode($_GET['prestamo']);
-
 $sql = "SELECT pre.*, lower(concat(TRIM(c.cliApellidoPaterno), ' ', TRIM(c.cliApellidoMaterno), ', ', TRIM(c.cliNombres))) as cliNombres, c.cliDni, tp.tpreDescipcion, lower( concat(a.addrDireccion, ' ', a.addrNumero, ' ', d.distrito, ' - ', p.provincia )) as `direccion`
 FROM `prestamo` pre
 inner join tipoprestamo tp on tp.idTipoPrestamo = pre.idTipoPrestamo
@@ -17,11 +15,9 @@ inner join address a on a.idAddress= c.cliDireccionNegocio
 inner join distrito d on d.idDistrito= a.idDistrito
 inner join provincia p on p.idProvincia = a.idProvincia
 WHERE pre.idPrestamo = {$idPresPost} and i.idTipoCliente = 1";
-
 if($llamado= $conection->query($sql)){
   $respuesta = $llamado->fetch_assoc();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -36,75 +32,40 @@ if($llamado= $conection->query($sql)){
 <body>
 <style>
   h5{font-weight: 700;}
-  .mayuscula{text-transform: capitalize;}
-  .container-fluid{
-    padding-right: 0px;
-    padding-left: 0px;
-  }
-  .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{
-    padding: 3px 8px;
-    line-height: 1.4;
-  }
-  .col-xs-6 {
-    width: 48%;
-}
-  #primeraColumna{
-    margin-right:20px;
-  }
+  .mayuscula{text-transform: capitalize}
 </style> 
   <div class="container-fluid">
-    <div class="row hidden">
+    <div class="row">
       <div class="col-xs-3"><img src="./../images/empresa.png" class="img-responsive"> </div>
       <div class="col-xs-8 text-center">
         <strong><h5><?= $nomEmpresa; ?></h5></strong>
         <strong><h5>Cronograma de pagos</h5></strong>
       </div>
     </div>
-    <div class="row hidden">
+    <div class="row">
       <div class="col-xs-7">
-        <p><strong>Cliente:</strong> <span class="mayuscula"><?= $respuesta['cliNombres']?></span></p>
-        <p><strong>DNI:</strong> <span><?= $respuesta['cliDni']?></span></p>
+        <p><strong>Cliente:</strong> <span class="mayuscula"><?= $respuesta['cliNombres'];?></span></p>
+        <p><strong>DNI:</strong> <span><?= $respuesta['cliDni'];?></span></p>
         <p><strong>N° Crédito:</strong> <span>CR-<?= $idPresPost; ?></span></p>
-        <p><strong>Dirección de negocio:</strong> <span class="mayuscula"><?= $respuesta['direccion'];?></span></p>
+        <p><strong>Dirección:</strong> <span class='mayuscula'><?= $respuesta['direccion'];?></span></p>
       </div>
       <div class="col-xs-5">
         <p><strong>Oficina:</strong> <span><?= $_COOKIE['cksucursalEmpresa'] ?></span></p>
-        <p><strong>Asesor:</strong> <span><?= $_COOKIE['ckAtiende'] ?></span></p>
-        <p><strong>Periodo:</strong> <span><?= $respuesta['tpreDescipcion']; ?></span></p>
-        <p><strong>F. Desembolso:</strong> <span><? if($respuesta['presFechaDesembolso']=='0000-00-00 00:00:00'){echo 'Pendiente';}else{$feRepo = new DateTime($respuesta['presFechaDesembolso']); echo $feRepo->format('d/m/Y');} ?></span></p>
+        <p><strong>Asesor:</strong> <span class='mayuscula'><?= $_COOKIE['ckAtiende'] ?></span></p>
+        <p><strong>Periodo:</strong> <span><?= $respuesta['tpreDescipcion'];?></span></p>
+        <p><strong>F. Desembolso:</strong> <span><?= $respuesta['presFechaDesembolso'];?></span></p>
       </div>
     </div>
-    
-
-    <!-- Primera Columna  -->
-    <div class="col-xs-6" id="primeraColumna">
     <div class="row">
-      <table class="table table-bordered">
-        <thead>
-        <tr> 
-          <th class="text-center" colspan="5">CREDIBALVIN <br> <span>CR-<?= $idPresPost; ?></span></th>  
-        </tr>
-        <tr>
-          <td class="text-center" colspan="5">Jr. Augusto B. Leguía - Cel 966237843 - 934696220</td>
-        </tr>
-        <tr> 
-          <th class="text-center" colspan="5">CALENDARIO DE PAGOS</th>
-        </tr>
-        <tr> 
-          <td colspan="5">Nombre: <span class="mayuscula"><?= $respuesta['cliNombres']?></span> </td>
-        </tr>
-        <tr> 
-          <td colspan="5">Dirección: <span class="mayuscula"><?= $respuesta['direccion']?></span> </td>
-        </tr>
-        </thead>
-       
+      <table class="table">
+
           <?php 
            switch ($respuesta['idTipoPrestamo']) {
             case '1':
             case '2':
             case '4':
             ?>
-            <thead><tr><th>N°</th> <th>F. Pago</th> <th>Cuota</th> <th>Monto P.</th> <th class="hidden">Saldo</th> <th>Firma</th> </tr></thead>
+            <thead><tr><th>N°</th> <th>F. Pago</th> <th>Cuota</th> <th>Cancelación</th> <th>Pago</th> <th>Saldo</th> <th>Vo</th> </tr></thead>
             <tbody> <?php
             $i=0;
             $sql2 = "SELECT * FROM `prestamo_cuotas` WHERE `idPrestamo` = {$idPresPost}";
@@ -117,7 +78,8 @@ if($llamado= $conection->query($sql)){
                   <td><?php $fecha = new DateTime($respuesta2['cuotFechaPago']); echo $fecha->format('d/m/Y');?></td>
                   <td><?= number_format(round($respuesta2['cuotCuota'], 1, PHP_ROUND_HALF_UP),2);?></td>
                   <td></td>
-                  <td class="hidden"><?php if($totalRows==($i+1)){ echo '0.00';} else { echo number_format(round($respuesta2['cuotSaldo'], 1, PHP_ROUND_HALF_UP),2);}?></td>
+                  <td></td>
+                  <td><?php if($totalRows==($i+1)){ echo '0.00';} else { echo number_format(round($respuesta2['cuotSaldo'], 1, PHP_ROUND_HALF_UP),2);}?></td>
                   <td></td>
                 </tr>
                 <?php
@@ -158,15 +120,10 @@ if($llamado= $conection->query($sql)){
               break;
           }
           ?>
-        
+
       </table>
     </div>
-    </div>
-    <!-- Fin de Primera Columna  -->
-
-    
-
-  </div> <!-- Fin de container-fluid  -->
+  </div>
 
 
 

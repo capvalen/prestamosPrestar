@@ -40,7 +40,7 @@ $saltoDia = new DateInterval('P1D'); //aumenta 1 día
 $tasa = $_POST['tasaInt']/100;
 $meses =  $_POST['periodo'];
 
-
+$sumaCapital =0; $sumaInt=0; $sumaCuot=0;
 
 //Para saber si es sábado(6) o domingo(0):  format('w') 
 
@@ -200,6 +200,9 @@ for ($j=0; $j <  count($jsonSimple) ; $j++) { ?><tr><?php
 		if($j>=1){
 			$jsonSimple[$j]['saldoReal'] = $jsonSimple[$j-$dia]['saldoReal']-$jsonSimple[$j]['cuota']; $dia=1;
 		}
+		$sumaCapital +=$capitalPartido;
+		$sumaInt +=$intGanado;
+		$sumaCuot +=$jsonSimple[$j]['cuota'];
 
 		?><td class='grey-text text-darken-2'><strong><?= $jsonSimple[$j]['numDia']; ?></strong></td>
 		<td class='grey-text text-darken-2'><?= $nueva->format('d/m/Y'); ?></td>
@@ -229,9 +232,9 @@ function esFeriado($feriados, $dia){
 <tr>
 	<td></td>
 	<td><strong>Total:</strong></td>
-	<td><strong>S/ <?= $monto;?></strong></td>
-	<td><strong>S/ <?=  number_format(round($interes,1, PHP_ROUND_HALF_UP),2); ?></strong></td>
-	<td><strong>S/ <?= number_format( $totalpago,2);?></strong></td>
+	<td><strong>S/ <?= number_format($sumaCapital,2);?></strong></td>
+	<td><strong>S/ <?=  number_format(round($sumaInt,1, PHP_ROUND_HALF_UP),2); ?></strong></td>
+	<td><strong>S/ <?= number_format( $sumaCuot,2);?></strong></td>
 </tr>
 </tfoot>
 </table>
