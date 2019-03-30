@@ -53,7 +53,7 @@ if($cadena->query($sql)){
 	echo "hubo un error".$mysqli->errno;
 }
 
-
+ 
 $clientes=$_POST['clientes'];
 $sqlClie='';
 foreach ($clientes as $cliente ) {
@@ -134,7 +134,7 @@ for ($i=0; $i < $plazo ; $i++) {
 
 			$interesVariable= round($saldo * $interes, 1, PHP_ROUND_HALF_UP);
 			$amortizacion = round($cuota-$interesVariable, 1, PHP_ROUND_HALF_UP);
-			$saldo = $saldo - $cuota;
+			$saldo = $saldo - $amortizacion;
 			$interesSumado+=$interesVariable;
 
 			$jsonSimple[]=array(
@@ -176,7 +176,7 @@ for ($j=0; $j <  count($jsonSimple) ; $j++) {
 		if($j>=1){
 			$saldo = $saldo-$cuota; $dia=1;
 		}
-		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',{$cuota},'0000-00-00',0,{$saldo},'0','', 79);";
+		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',{$jsonSimple[$j]['cuota']},'0000-00-00',0,{$saldo},'0','', 79);";
 	}
 
 }

@@ -397,7 +397,7 @@ $fechaHoy = new DateTime();
 							<label for="">Fecha primer pago</label>
 							<input type="text" id="dtpFechaPrimerv3" class="form-control text-center" placeholder="Fecha para controlar citas" autocomplete="off">
 						</div>
-						<div class="col-xs-6 col-sm-4">
+						<div class="col-xs-6 col-sm-4 hidden">
 							<label for="">¿Alguna prenda?</label>
 							<input type="text" id="txtPrendaSimple" class="form-control" placeholder="Rellene si hay algùn item prendario" autocomplete="off">
 						</div>

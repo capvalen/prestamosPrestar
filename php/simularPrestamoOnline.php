@@ -210,7 +210,7 @@ for ($j=0; $j <  count($jsonSimple) ; $j++) { ?><tr><?php
 		<td class='grey-text text-darken-2'><?= "S/ ". number_format($intGanado,2); ?></td> 
 		<td class='grey-text text-darken-2 hidden'><?= number_format($jsonSimple[$j]['amortizacion'],2); ?></td> 
 		<td class='grey-text text-darken-2 hidden'><?= number_format($jsonSimple[$j]['saldo'], 2);?></td> 
-		<td><?= "S/ ".number_format($jsonSimple[$j]['cuota'], 2);?></td> <?php
+		<td class="cuota"><?= "S/ ".number_format($jsonSimple[$j]['cuota'], 2);?></td> <?php
 	}
 ?></tr>
 <?php
