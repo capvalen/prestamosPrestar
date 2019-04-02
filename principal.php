@@ -10,7 +10,7 @@
 		<meta name="description" content="">
 		<meta name="author" content="">
 
-		<title>Principal - Sistema Préstamos</title>
+		<title>Principal - <?= $Htitle;?></title>
 
 		<!-- Bootstrap Core CSS -->
 		<?php include 'headers.php'; ?>

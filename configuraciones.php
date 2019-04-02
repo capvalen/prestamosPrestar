@@ -1,10 +1,10 @@
-<?php session_start();
+<?php include "php/variablesGlobales.php";
 include 'php/conkarl.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-	<title>Configuraciones: PeruCash</title>
+	<title>Configuraciones - <?= $Htitle;?></title>
 	<?php include "headers.php"; ?>
 </head>
 

@@ -15,7 +15,7 @@ $base58 = new StephenHill\Base58();?>
 		<meta name="description" content="">
 		<meta name="author" content="">
 
-		<title>Principal - Sistema Préstamos</title>
+		<title>Clientes - <?= $Htitle;?></title>
 
 		<!-- Bootstrap Core CSS -->
 		<?php include 'headers.php'; ?>

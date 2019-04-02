@@ -3,12 +3,13 @@ date_default_timezone_set('America/Lima');
 if (!isset($_GET['fecha'])) { //si existe lista fecha requerida
 	$_GET['fecha']=date('Y-m-d');
 }
+include "php/variablesGlobales.php";
  ?>
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-	<title>Caja: PeruCash</title>
+	<title>Caja - <?= $Htitle;?></title>
 	<?php include "headers.php";
 	include "php/variablesGlobales.php"; ?>
 </head>
@@ -46,7 +47,7 @@ a:focus, a:hover { color: #62286f; }
 				<div class="row col-sm-7"><h3 class="purple-text" style="margin-top: 21px;"><span class="glyphicon glyphicon-piggy-bank"></span> Reporte de caja </h3></div>
 			</div>
 
-			<div class="container-fluid  ">
+			<div class="row container-fluid  ">
 				<p class="pheader col-xs-12"><i class="icofont icofont-filter"></i> Filtros</p>
 				<div class="panel panel-default container-fluid ">
 					<div class="col-xs-12 col-sm-6 col-md-3">
@@ -63,7 +64,7 @@ a:focus, a:hover { color: #62286f; }
 				</div>
 			</div>
 	
-			<div class="container-fluid">
+			<div class="row container-fluid">
 					<p class="pheader col-xs-12"><i class="icofont icofont-hard-disk"></i> Datos del cuadre</p>
 					<div class="panel panel-default container-fluid" style="padding: 18px 0;">
 						<!-- <div class="col-xs-12 col-sm-6 text-center">
@@ -92,20 +93,22 @@ a:focus, a:hover { color: #62286f; }
 				</div>
 				
 				<div class=" panel panel-default" id="divEntradas">
-					<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Cliente</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
-					<tbody>
-					<?php
-					if( ! isset($_GET['cuadre']) ):
-						// require_once 'php/reporteIngresoDia.php';+
-						echo "<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>";
-					else:
-						require_once 'php/reporteIngresoDiaxCuadre.php';
-					endif;
-					?>
-					</tbody> </table>
+					<div class="table-responsive">
+						<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Cliente</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+						<tbody>
+						<?php
+						if( ! isset($_GET['cuadre']) ):
+							// require_once 'php/reporteIngresoDia.php';+
+							echo "<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>";
+						else:
+							require_once 'php/reporteIngresoDiaxCuadre.php';
+						endif;
+						?>
+						</tbody> </table>
+					</div>
 				</div>
 			</div>
-			<div class="container-fluid col-xs-12 ">
+			<div class="row container-fluid ">
 				<div class="pheader">
 					<h4><i class="icofont icofont-minus-circle"></i> Salidas de dinero</h4>
 					<?php 
@@ -119,20 +122,22 @@ a:focus, a:hover { color: #62286f; }
 					<?php } ?>
 				</div>
 				<div class=" panel panel-default " id="divSalidas">
-					<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Cliente</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
-					<tbody>
-					<?php
-						if( ! isset($_GET['cuadre']) ):
-							// require_once 'php/reporteEgresoDia.php';+
-							echo "<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>";
-						else:
-							require_once 'php/reporteEgresoDiaxCuadre.php';
-						endif;
-					?>
-					</tbody> </table>
+					<div class="table-responsive">
+						<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Cliente</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+						<tbody>
+						<?php
+							if( ! isset($_GET['cuadre']) ):
+								// require_once 'php/reporteEgresoDia.php';+
+								echo "<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>";
+							else:
+								require_once 'php/reporteEgresoDiaxCuadre.php';
+							endif;
+						?>
+						</tbody> </table>
+					</div>
 				</div>
 			</div>
-			<div class="container-fluid col-xs-12">
+			<div class="row container-fluid ">
 				<div class="pheader"><h4><i class="icofont icofont-fax"></i> Resumen <strong> <span id="spanResultadoFinal"></span></strong></h4></div>
 				<div class="panel panel-default">
 					<div class="container-fluid" style="padding:20px;">

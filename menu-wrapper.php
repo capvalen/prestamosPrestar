@@ -39,7 +39,7 @@ $nomArchivo = basename($_SERVER['PHP_SELF']); ?>
 <div class="navbar-wrapper">
 	<div class="container-fluid">
 		<nav class="navbar navbar-fixed-top encoger">
-			<div class="container">
+			<div class="container-fluid">
 				<div class="navbar-header ">
 				<a class="navbar-brand ocultar-mostrar-menu" href="#"><img id="imgLogoInfocat" class="img-responsive" src="images/logoInfocat.png" alt=""></a>
 					<button type="button" class="navbar-toggle collapsed" id="btnColapsador" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -50,31 +50,32 @@ $nomArchivo = basename($_SERVER['PHP_SELF']); ?>
 					</button>
 				</div>
 				<div id="navbar" class="navbar-collapse collapse ">
-					<ul class="nav navbar-nav">
-						<li class="hidden down"><a href="#" class="dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">HR <span class="caret"></span></a>
-								<ul class="dropdown-menu">
-										<li><a href="#">Change Time Entry</a></li>
-										<li><a href="#">Report</a></li>
-								</ul>
-							</li>
-					</ul>
+					
 					<ul class="nav navbar-nav navbar-right " style="padding:0 30px;">
 						 <li>
-							<div class="btn-group has-clear "><label for="txtBuscarNivelGod" class="text-muted visible-xs" style="color:white;" autocomplete='nope'>Buscar algo:</label>
-								<input type="text" class="form-control" id="txtBuscarNivelGod" placeholder="&#xed11;" autocomplete='nope'>
-								<span class="form-control-clear icofont icofont-close form-control-feedback hidden" style="color:#777;padding-top: 9px;"></span>
+							<div class="btn-group has-clear "><label for="txtBuscarNivelGod" class="text-muted visible-xs" style="color:white; font-weight: 500;">Buscar algo:</label>
+								<input type="text" class="form-control" id="txtBuscarNivelGod" placeholder="&#xeb6d;">
+								<span class="form-control-clear icofont icofont-close form-control-feedback hidden" id="spanClear" style="color: #fff;"></span>
 							</div>
 						 </li>
-						 <li class="dropdown" id="liDatosPersonales">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="padding-top: 20px;"><i class="icofont-user-alt-7"></i> <?php echo $_COOKIE['cknomCompleto']; ?> <span class="caret"></span></a>
-							  <ul class="dropdown-menu">
-							  	<li><a href="miperfil.php"><i class="icofont-id-card"></i> Ver mi perfil</a></li>
-								<li><a href="#"><i class="icofont-key"></i> Cambiar contraseña</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="php/desconectar.php"><i class="icofont icofont-ui-power"></i> <span class="">Cerrar Sesión</span></a></li>
-							  </ul>
+						 
+						 <li class="dropdown text-center" id="liDatosPersonales">
+						 	
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							<? $imagen = 'images/usuarios/'.$_COOKIE['ckidUsuario'].'.jpg';
+							if( file_exists($imagen) ):?>
+								<img src="<?= $imagen; ?>" class="img-responsive img-circle" style="max-width:50px; display: inline-block;"> <span class="caret"></span>
+							<? else: ?>
+							<img src="images/usuarios/noimg.jpg?ver=1.2" class="img-responsive img-circle" style="max-width:50px; display: inline-block;"> <span class="caret"></span>
+							<? endif;?>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="miperfil.php?usuario=soloyo"><i class="icofont icofont-ui-file"></i> Ver mi perfil</a></li>
+								<li><a href="php/desconectar.php"><i class="icofont icofont-ui-power"></i> Salir del sistema</a></li>
+							</ul>
 						 </li>
-						 <li class="text-center"></li>
+						 <li class="hidden" id="liDatosPersonales"><a href="#!" style="padding-top: 12px;"><p> <span class="icoUser"><i class="icofont icofont-ui-user"></i></span><span class="mayuscula" id="menuNombreUsuario"><?= $_COOKIE['cknomCompleto']; ?></span></p><p class="icoUser"><i class="icofont icofont-archive"></i> <?= $_COOKIE['ckSucursal'];?></p></a></li>
+						 <li class="text-center hidden"><a href="php/desconectar.php"><span class="visible-xs">Cerrar Sesión</span><i class="icofont icofont-ui-power"></i></a></li>
 					</ul>
 
 				</div>

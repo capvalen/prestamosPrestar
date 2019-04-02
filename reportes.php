@@ -12,7 +12,7 @@ include "php/variablesGlobales.php";
 		<meta name="description" content="">
 		<meta name="author" content="">
 
-		<title>Reporte - Sistema Préstamos</title>
+		<title>Reporte - <?= $Htitle;?></title>
 
 		<!-- Bootstrap Core CSS -->
 		<?php include 'headers.php'; ?>

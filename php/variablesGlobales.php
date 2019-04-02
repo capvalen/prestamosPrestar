@@ -8,8 +8,11 @@ $soloCaja=array(4);
 $soloCajas=array(1,4);
 $soloAnalistas =array(1,2);
 
-$serverLocal= "//192.168.0.3/prestamosPrestar/";
+$serverLocal= "//192.168.1.3/prestamosPrestar/";
 $servidorLocal = $serverLocal;
+
+
+$Htitle= "Sistema Préstamos Prestar Huancayo";
 
 $i=0;
 

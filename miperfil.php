@@ -2,7 +2,7 @@
 <html lang="es">
 
 <head>
-	<title>Créditos: PeruCash</title>
+	<title>Mi perfil - <?= $Htitle;?></title>
 	<?php
 	include 'php/variablesGlobales.php';
 	include "headers.php"; ?>

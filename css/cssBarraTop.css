@@ -6,7 +6,7 @@ body{
 .encoger{left:250px; transition: all 0.5s ease;}
 
 .ocultar-mostrar-menu:focus{outline: none;}
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 1200px) {
    .encoger{left:0px; }
 #page-content-wrapper{margin-top:70px;}
 .navbar-brand > img{display: inherit;  max-width: 75%;}
@@ -72,20 +72,12 @@ border: none;}
 #txtBuscarNivelGod:placeholder-shown { width:100%; font-family: 'IcoFont'; -moz-box-sizing: border-box;}/*Cuando el txt SI esta vacio*/
 
 ::-ms-clear {display: none;} .form-control-clear {  z-index: 10;  pointer-events: auto;  cursor: pointer;}
-#liDatosPersonales .dropdown-toggle{ color:white!important; }
-#liDatosPersonales .dropdown-menu>li>a{color: #a35bb4;}
-#liDatosPersonales i{font-size:16px;}
-.dropdown-menu .divider{border-bottom: 1px solid transparent;}
+#liDatosPersonales p{    margin-bottom: 3px;     padding-top: 7px;    line-height: 1px;}
 
 #imgLogoInfocat{width: 247px;  margin-top: -12px;}
 @media(min-width:1000px){
   #imgLogoInfocat{width: 222px;  margin-top: -12px; margin-left: 20px;}
 }
-@media(max-width: 767px){
-  #liDatosPersonales .dropdown-menu>li>a{color: #e3dde4;}
-}
 .navbar-fixed-top {
   z-index: 999!important;
 }
-
-.navbar-nav>li>.dropdown-menu{border-radius: 4px;top: 90%; left: 16px;}
