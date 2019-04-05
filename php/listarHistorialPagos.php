@@ -8,7 +8,7 @@ inner join prestamo_cuotas pc on pc.idPrestamo = pre.idPrestamo
 inner join tipoprestamo tpe on tpe.idTipoPrestamo = pre.idTipoPrestamo
 inner join involucrados i on i.idPrestamo = pc.idPrestamo 
 inner join usuario u on u.idUsuario = pre.idUsuario
-where i.idCliente={$base58->decode($_GET['idCliente'])}  and cuotCuota<>0
+where i.idCliente={$base58->decode($_GET['idCliente'])}  and cuotCuota<>0 and pre.presAprobado<>2
 group by pre.idPrestamo
 order by cuotfechaPago desc;";
 
