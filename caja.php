@@ -282,6 +282,36 @@ a:focus, a:hover { color: #62286f; }
 </div>
 </div>
 
+
+<!-- Modal para Cambiar tipo de moneda de caja  -->
+<div class="modal fade" id="modalCambiarMonedaCaja" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal-dialog modal-sm" role="document">
+	<div class="modal-content">
+		<div class="modal-header-warning">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="myModalLabel"> Cambiar tipo de moneda</h4>
+		</div>
+		<div class="modal-body">
+			<div class="container-fluid">
+			<div class="row">
+				<label for="">Método de pago</label>
+				<div id="divCmbMetodoPago3">
+					<select class="form-control selectpicker" id="sltMetodopago3" title="Métodos..."  data-width="100%" data-live-search="true" data-size="15">
+						<?php include 'php/listarMonedaOPT.php'; ?>
+					</select>
+				</div> <br>
+				
+			</div>
+		</div>
+		<div class="divError text-left hidden"><i class="icofont icofont-test-bulb"></i> Lo sentimos, <span class="spanError"></span></div>	<br>
+		<div class="modal-footer">
+			<button class="btn btn-warning btn-outline" id="btnUpdateMoneda"><i class="icofont icofont-save"></i> Actualizar</button>
+		</div>
+	</div>
+	</div>
+</div>
+</div>
+
 <!-- Modal para Cambiar salida de caja  -->
 <div class="modal fade" id="modalCambiarSalidaCaja" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
 <div class="modal-dialog modal-sm" role="document">
@@ -800,7 +830,26 @@ $('.btnPrintCajaEsp').click(function () {
 	
 	
 });
-
+$('body').on('click', '.btnChangeMonedaEsp', function (e) {
+	$('#btnUpdateMoneda').attr('data-caja', $(this).attr('data-caja'));
+	$('#modalCambiarMonedaCaja').modal('show');
+});
+$('#btnUpdateMoneda').click(function() {
+	pantallaOver(true);
+	var idCaja= $(this).attr('data-caja');
+	var mone = $("#divCmbMetodoPago3 option:contains('"+ $('#divCmbMetodoPago3 .dropdown-toggle').attr('title') +"')").attr('data-tokens');
+	if(mone==null){
+		pantallaOver(false);
+		$('#modalCambiarMonedaCaja .divError').removeClass('hidden').find('.spanError').text('Tienes que seleccionar un tipo de moneda antes de guardar');
+	}else{
+		$('#modalCambiarMonedaCaja .divError').addClass('hidden');
+		$.ajax({url: 'php/updateMonedaCaja.php', type: 'POST', data: {caja: idCaja, moneda: mone }}).done(function(resp) {
+			console.log(resp)
+		});
+		pantallaOver(false);
+		location.reload();
+	}
+});
 <?php }
 if( in_array( $_COOKIE['ckPower'], $soloDios)){ ?>
 $('#btnCambiarApertura').click(function() {

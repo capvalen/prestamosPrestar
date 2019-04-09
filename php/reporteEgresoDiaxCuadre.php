@@ -35,7 +35,9 @@ if($totalRow==0){
 		}
 		if($row['idPrestamo']<>0){$codTemp= $base58->encode('00'.$row['idPrestamo']);}
 
-		if($_COOKIE['ckPower']==1 || $_COOKIE['ckPower']==8): $boton = "<button class='btn btn-sm btn-negro btn-outline btnEditarCajaMaestra'><i class='icofont icofont-edit'></i></button> <button class='btn btn-sm btn-azul btn-outline btnPrintCajaEsp' data-caja='{$row["idCaja"]}' data-boton='{$row["idTipoProceso"]}'><i class='icofont icofont-print'></i></button> "; else: $boton=''; endif;?>
+		if($_COOKIE['ckPower']==1 ): $boton = "<button class='btn btn-sm btn-negro btn-outline btnEditarCajaMaestra'><i class='icofont icofont-edit'></i></button> <button class='btn btn-sm btn-azul btn-outline btnPrintCajaEsp' data-caja='{$row["idCaja"]}' data-boton='{$row["idTipoProceso"]}'><i class='icofont icofont-print'></i></button> ";
+		elseif( $_COOKIE['ckPower']==4 ):  $boton = "<button class='btn btn-sm btn-azul btn-outline btnPrintCajaEsp' data-caja='{$row["idCaja"]}' data-boton='{$row["idTipoProceso"]}'><i class='icofont icofont-print'></i></button> <button class='btn btn-sm btn-success btn-outline btnChangeMonedaEsp' data-caja='{$row["idCaja"]}' ><i class='icofont icofont-pen-alt-3'></i></button> ";
+		else: $boton=''; endif; ?>
 
 		<tr data-id="<?= $row['idCaja']; ?>" data-activo="<?= $row['cajaActivo']; ?>">
 			<th scope='row' class="aCode"><a href="<? if($row['idPrestamo']<>0){ echo 'creditos.php?credito='.$codTemp;}?>"><? if($row['idPrestamo']<>0){ echo 'CR-0'.$row['idPrestamo'];}?></a> </th>
