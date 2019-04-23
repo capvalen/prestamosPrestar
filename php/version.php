@@ -1,5 +1,5 @@
 <?php 
-echo "Ver. 0.7 Compilado 180328";
+echo "Ver. 0.11c Compilado 190423";
 
 /*
 Nuevos cambios en versiones:
