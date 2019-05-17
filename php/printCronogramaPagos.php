@@ -108,7 +108,7 @@ if($llamado= $conection->query($sql)){
 								if($i>=1){ ?>
 								<tr>
 									<td><?= $i; ?></td>
-									<td><?php $fecha = new DateTime($respuesta2['cuotFechaPago']); echo $diassemanaN[$fecha->format('w')].', '. $fecha->format('d').' de '. $mesesN[$fecha->format('n')]." de ".$fecha->format('Y');?></td>
+									<td><?php $fecha = new DateTime($respuesta2['cuotFechaPago']); echo $diassemanaN[$fecha->format('w')].', '. $fecha->format('d').' de '. $mesesN[$fecha->format('n')-1]." de ".$fecha->format('Y');?></td>
 									<td><?= number_format(round($capitalPartido,1, PHP_ROUND_HALF_UP),2); ?></td>
 									<td><?= number_format(round($respuesta2['cuotCuota']- $capitalPartido,1, PHP_ROUND_HALF_UP),2); ?></td>
 									<td><?= number_format(round($respuesta2['cuotCuota'], 1, PHP_ROUND_HALF_UP),2);?></td>

@@ -17,7 +17,7 @@ use Mike42\Escpos\EscposImage; //librería de imagen
  
     $connector4 = new WindowsPrintConnector("smb://127.0.0.1/XP-58");
 try {
-    //$tux = EscposImage::load("../images/empresa.png", false);
+    $tux = EscposImage::load("../images/empresa.png", false);
 
     $printer = new Printer($connector4);
     $printer -> bitImage($tux);

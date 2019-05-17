@@ -41,9 +41,9 @@ $base58 = new StephenHill\Base58();?>
 			<h2 class="purple-text text-lighten-1"><i class="icofont-users"></i> Zona clientes</h2><hr>
 			
 			<button class="btn btn-infocat btn-outline btnSinBorde" id="btnAddClientes"><i class="icofont-ui-add"></i> Nuevo cliente</button>
-		<? if( isset($_GET['idCliente']) && in_array($_COOKIE['ckPower'], $soloDios)){ ?>
+		<? /* if( isset($_GET['idCliente']) && in_array($_COOKIE['ckPower'], $soloDios)){ */ ?>
 			<button class="btn btn-dark btn-outline btnSinBorde" id="btnEditClientes"><i class="icofont-edit"></i> Editar cliente</button>
-		<? } ?>
+		<? /* } */ ?>
 			<div class="form-inline hidden">
 				<div class="form-group"><label for="" style='margin-top:-3px'>Filtro de clientes:</label> <input type="text" class='form-control' id="txtClientesZon" placeholder='Clientes' autocomplete="off" style="margin-bottom: 0px;">
 				<button class="btn btn-infocat btn-outline btnSinBorde" id="btnFiltrarClientes"><i class="icofont-search"></i></button>

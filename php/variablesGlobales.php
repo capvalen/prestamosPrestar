@@ -8,7 +8,7 @@ $soloCaja=array(4);
 $soloCajas=array(1,4);
 $soloAnalistas =array(1,2);
 
-$serverLocal= "//192.168.1.3/prestamosPrestar/";
+$serverLocal= "//192.168.1.36/prestamosPrestar/";
 $servidorLocal = $serverLocal;
 
 

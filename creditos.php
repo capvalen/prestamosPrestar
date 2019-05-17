@@ -99,9 +99,9 @@ $fechaHoy = new DateTime();
 			<div class="row">
 				<div class="col-sm-2"><label for="">Fecha préstamo</label><p><?php $fechaAut= new DateTime($rowCr['presFechaAutom']); echo $fechaAut->format('j/m/Y h:m a'); ?></p></div>
 				<div class="col-sm-2"><label for="">Fecha desemboslo</label><p><?php if($rowCr['presFechaDesembolso']=='Desembolso pendiente'){echo $rowCr['presFechaDesembolso'];}else{$fechaDes= new DateTime($rowCr['presFechaDesembolso']); echo $fechaDes->format('j/m/Y h:m a');} ?></p></div>
-				<div class="col-sm-2"><label for="">Desembolso</label><p>S/ <?= number_format($rowCr['presMontoDesembolso'],2); ?></p> <span class="hidden" id="spanMontoDado"><?= $rowCr['presMontoDesembolso']; ?></span></div>
+				<div class="col-sm-2"><label for="">Desembolso</label><p>S/ <?= number_format($rowCr['presMontoDesembolso'],2); ?></p> <span class="hidden" id="spanMontoDado" data-monto=<?= $base58->encode($rowCr['presMontoDesembolso']);?>><?= $rowCr['presMontoDesembolso']; ?></span></div>
 				<div class="col-sm-2"><label for="">Meses</label><p><?= $rowCr['tpreDescipcion']; ?></p></div>
-				<div class="col-sm-2"><label for="">Interés</label><p><?= $rowCr['preInteresPers']."%"; ?></p></div>
+				<div class="col-sm-2"><label for="">Interés</label><p id="pinteresGlobal" data-int="<?= $base58->encode($rowCr['preInteresPers']."%");?>"><?= $rowCr['preInteresPers']."%"; ?></p></div>
 				<div class="col-sm-2"><label for="">Analista</label><p><?= $rowCr['usuNombres']; ?></p></div>
 			</div>
 
@@ -130,6 +130,7 @@ $fechaHoy = new DateTime();
 			<div class="container row" id="rowBotonesMaestros">
 				<div class="col-xs-12 col-md-6">
 					<button class="btn btn-negro btn-outline" id="btnImpresionPrevia" data-pre="<?= $_GET['credito'];?>"><i class="icofont-print"></i> Imprimir cronograma</button>
+					<button class="btn btn-negro btn-outline" id="btnImpresionContrato" data-pre="<?= $_GET['credito'];?>"><i class="icofont-print"></i> Imprimir Contrato</button>
 				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && in_array($_COOKIE['ckPower'], $soloAnalistas)): ?>
 					<button class="btn btn-success btn-outline " id="btnShowVerificarCredito"><i class="icofont-check-circled"></i> Aprobar crédito</button>
 					<button class="btn btn-danger btn-outline " id="btnDenyVerificarCredito"><i class="icofont-thumbs-down"></i> Denegar crédito</button>
@@ -813,12 +814,22 @@ $('#btnGuardarCred').click(function() {
 	}
 });
 $('#h1Bien').on('click', '#btnImpresionPrevia', function(){
-		var dataUrl="php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre');
-		window.open(dataUrl, '_blank' );
+	var dataUrl="php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre');
+	window.open(dataUrl, '_blank' );
+});
+$('body').on('click', '#btnImpresionContrato', function(){
+	var monto = $('#spanMontoDado').attr('data-monto');
+	var fecha1 = moment($('#tableSubIds tbody tr').first().children().eq(1).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var fechaPri = moment($('#tableSubIds tbody tr').eq(1).children().eq(1).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var fecha2 = moment($('#tableSubIds tbody tr').last().children().eq(1).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var interes = $('#pinteresGlobal').attr('data-int');
+	
+	var dataUrl="impresion/printContrato.php?credito="+$(this).attr('data-pre')+"&monto="+monto+"&fecha1="+fecha1+"&fecha2="+fecha2+"&fechaPri="+fechaPri+"&interes="+interes;
+	window.open(dataUrl, '_blank' );
 });
 $('#rowBotonesMaestros').on('click', '#btnImpresionPrevia', function(){
-		var dataUrl="php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre');
-		window.open(dataUrl, '_blank' );
+	var dataUrl="php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre');
+	window.open(dataUrl, '_blank' );
 });
 $('#sltTipoPrestamo').change(function() {
 /* 	if( $(this).val()==3 ){
@@ -869,7 +880,7 @@ $('.spanPrint').click(function() {
 	var queEs= $(this).attr('data-print');
 	switch(queEs){
 		case 'parcial':
-			$.post("http://localhost/prestamosSatipo/impresion/ticketCuotaParcial.php", {
+			$.post("http://localhost/prestamosPrestar/impresion/ticketCuotaParcial.php", {
 				cknombreEmpresa: '<?= $_COOKIE['cknombreEmpresa'];?>',
 				ckLemaEmpresa: '<?= $_COOKIE['ckLemaEmpresa'];?>',
 				queMichiEs: 'Adelanto de cuota',
@@ -883,7 +894,7 @@ $('.spanPrint').click(function() {
 			}, function(resp){ console.log(resp)});
 		break;
 		case 'completo':
-			$.post("http://localhost/prestamosSatipo/impresion/ticketCuotaParcial.php", {
+			$.post("http://localhost/prestamosPrestar/impresion/ticketCuotaParcial.php", {
 				cknombreEmpresa: '<?= $_COOKIE['cknombreEmpresa'];?>',
 				ckLemaEmpresa: '<?= $_COOKIE['ckLemaEmpresa'];?>',
 				queMichiEs: 'Cuota cancelada',
