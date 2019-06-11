@@ -50,6 +50,8 @@ include "php/variablesGlobales.php";
 						<option value="R4" class="optReporte">Moras cobradas</option>
 						<option value="R1" class="optReporte">Movimientos de entrada</option>
 						<option value="R2" class="optReporte">Movimientos de Salida</option>
+						<option value="R6" class="optReporte">Cuadro de control</option>
+						<option value="R7" class="optReporte">Relación de desembolsos</option>
 
 					</select>
 				</div>
@@ -70,6 +72,20 @@ include "php/variablesGlobales.php";
 			<button class="btn btn-azul btn-outline" id="btnExportar"><i class="icofont-ui-file"></i> Generar archivo</button>
 			<table class="table table-hover" id="resultadoReporte">
 			</table>
+
+			<div class="hidden" id="subCuadro">
+			<table class="table table-hover">
+				<thead><tr><th>Resultados</th><th>Saldos</th></tr></thead>
+				<tbody>
+				<tr><th>Capital Prestado</th><td id="tdHijoCapital"></td></tr>
+				<tr><th>Saldo Pagado</th><td id="tdHijoPagado"></td></tr>
+				<tr><th>Saldo por cobrar</th><td id="tdHijoPendiente"></td></tr>
+				<tr><th>S. Pagado + S. por cobrar</th><td id="tdHijoTotal"></td></tr>
+				<tr><th>Total a cobrar(Capital + Interés)</th><th id="tdHijoTotal2"></th></tr>
+				</tbody>
+			</table>
+			</div>
+			
 			</div>
 
 				
@@ -140,12 +156,27 @@ $('#btnFiltrarReporte').click(function() { //console.log('a')
 			//console.log(resp);
 			$('#resultadoReporte').html(resp);
 			$("table").stupidtable();
+			if($('#sltFiltroReporte').val()=='R6'){ $('#subCuadro').removeClass('hidden');
+				$('#tdHijoCapital').text( $('#tdCapital').text().replace(',',''));
+				$('#tdHijoPagado').text( $('#tdPagados').text().replace(',',''));
+				$('#tdHijoPendiente').text( $('#tdPendientes').text().replace(',',''));
+				$('#tdHijoTotal').text( $('#tdTotal').text().replace(',',''));
+				$('#tdHijoTotal2').text( $('#tdTotal').text().replace(',',''));
+			}else{ $('#subCuadro').addClass('hidden');}
 		});
+	
+
+		$("#wrapper").addClass("toggled");
+		//$('.navbar-fixed-top').css('left','0');
+		$('.navbar-fixed-top').removeClass('encoger');
+		$('#btnColapsador').addClass('collapsed');
+		$('#btnColapsador').attr('aria-expanded','false');
+		$('#navbar').removeClass('in');
 	}
 });
 $('#btnExportar').click(function() {
 	var d = new Date();
-	TableExport($("table"), {
+	TableExport($("#resultadoReporte"), {
   headers: true,                      // (Boolean), display table headers (th or td elements) in the <thead>, (default: true)
   footers: true,                      // (Boolean), display table footers (th or td elements) in the <tfoot>, (default: false)
   formats: ["xlsx"],    // (String[]), filetype(s) for the export, (default: ['xlsx', 'csv', 'txt'])

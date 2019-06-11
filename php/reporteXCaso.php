@@ -275,6 +275,148 @@ switch ($_POST['caso']) {
 			</tfoot>
 		<?
 		break;
+		case "R6":
+			$sql="SELECT `cliDni`, lower( concat(trim(`cliApellidoPaterno`),' ', trim(`cliApellidoMaterno`), ' ', trim(`cliNombres`))) as 'cliNombre',
+			pre.idPrestamo, preInteresPers, date_format(presFechaDesembolso, '%d/%m/%Y') as fechaDesembolso, presMontoDesembolso,
+			idTipoPrestamo, presPeriodo, round(`retornarMontoCuota`(pre.idPrestamo),1) as montCuota, `retornarNumCuotasPagadas`(pre.idPrestamo) as pagados, retornarNumCuotasNoPagadas(pre.idPrestamo) as noPagados,
+			round(retornarSumCuotasPagadas(pre.idPrestamo),1) as sumPagados, round(retornarSumCuotasNoPagadas(pre.idPrestamo),1) as sumNoPagados
+			
+			FROM cliente c
+			inner join involucrados i on i.idCliente = c.idCliente
+			inner join prestamo pre on pre.idPrestamo = i.idPrestamo
+			WHERE pre.presActivo=1 /* date_format(presFechaDesembolso,'%Y-%m-%d') between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' */; ";
+			$resultado=$cadena->query($sql);
+			$sumMontos=0;  $sumCuotas=0; $sumSemana=0; $sumQuincena=0; $sumMensual=0;$sumDiario=0; $sumPagados=0; $sumPendientes=0; $numPagado=0; $numPendiente=0; $sumCobroTotal=0;
+			?>
+			<thead>
+				<tr>
+					<th>Préstamo</th>
+					<th>D.N.I.</th>
+					<th>Apellidos y Nombres</th>
+					<th>Tasa</th>
+					<th>Fecha de desembolso</th>
+					<th>Monto</th>
+					<th>Sem.</th>
+					<th>Qui.</th>
+					<th>Men.</th>
+					<th>Dia.</th>
+					<th>Cuota</th>
+					<th>Pagados</th>
+					<th>Pendiente</th>
+					<th>Pagados</th>
+					<th>Por cobrar</th>
+					<th>Cobro total</th>
+				</tr>
+			</thead>
+			<tbody>
+			<?php
+			while($row=$resultado->fetch_assoc()){ 
+				$sumMontos+= $row['presMontoDesembolso']; $sumCuotas+=$row['montCuota']; 
+				$sumPagados+=$row['sumPagados']; $sumPendientes+= $row['sumNoPagados'];
+				$numPagado+=$row['pagados']; $numPendiente+=$row['noPagados'];
+			?>
+			<tr>
+				<td><?= $row['idPrestamo']; ?></td>
+				<td class="tableexport-string"><?= $row['cliDni']; ?></td>
+				<td class="text-capitalize"><?= $row['cliNombre']; ?></td>
+				<td><?= $row['preInteresPers']."%"; ?></td>
+				<td class="tableexport-string"><?= $row['fechaDesembolso']; ?></td>
+				<td class="tableexport-string">S/ <?= $row['presMontoDesembolso']; ?></td>
+				<?php switch ($row['idTipoPrestamo']) {
+					case '2':  $sumSemana++; ?><td><?= $row['presPeriodo']*4; ?></td> <td></td><td></td><td></td>
+						<?php break;
+					case '4':  $sumQuincena++; ?><td></td><td><?= $row['presPeriodo']*2; ?></td> <td></td><td></td>
+					<?php break;
+					case '3':  $sumMensual++; ?><td></td><td></td><td><?= $row['presPeriodo']; ?></td> <td></td>
+					<?php break;
+					case '1':  $sumDiario++; ?><td></td><td></td><td></td><td><?= $row['presPeriodo']*30; ?></td>
+					<?php break;
+					default:
+						# code...
+						break;
+				} ?>
+				<?php  ?>
+				<td class="tableexport-string">S/ <?= number_format($row['montCuota'],2); ?></td>
+				<td><?= $row['pagados']; ?></td>
+				<td><?= $row['noPagados']; ?></td>
+				<td class="tableexport-string">S/ <?= number_format($row['sumPagados'],2); ?></td>
+				<td class="tableexport-string">S/ <?= number_format($row['sumNoPagados'],2); ?></td>
+				<td class="tableexport-string">S/ <?= number_format($row['sumPagados']+$row['sumNoPagados'],2); ?></td>
+			</tr>
+			<?php
+			}?>
+			</tbody>
+			<tfoot>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<th id="tdCapital">S/ <?= number_format($sumMontos,2);?></th>
+				<td><?=$sumSemana; ?></td>
+				<td><?=$sumQuincena; ?></td>
+				<td><?=$sumMensual; ?></td>
+				<td><?=$sumDiario; ?></td>
+				<th>S/ <?= number_format($sumCuotas,2);?></th>
+				<td><?= $numPagado; ?></td>
+				<td><?= $numPendiente; ?></td>
+				<th id="tdPagados">S/ <?= number_format($sumPagados,2);?></th>
+				<th id="tdPendientes">S/ <?= number_format($sumPendientes,2);?></th>
+				<th id="tdTotal">S/ <?= number_format($sumPagados+$sumPendientes,2);?></th>
+			</tfoot>
+			<?php
+			
+			
+		break;
+		case "R7":
+		?>
+		<thead>
+		<tr>
+			<th>N°</th>
+			<th>Código</th>
+			<th>D.N.I.</th>
+			<th>Apellidos y Nombres</th>
+			<th>Desembolso</th>
+			<th>Monto</th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php
+		$sumMontos=0;
+		$sql="SELECT pre.idPrestamo, `cliDni`, lower( concat(trim(`cliApellidoPaterno`),' ', trim(`cliApellidoMaterno`), ' ', trim(`cliNombres`))) as 'cliNombre',
+		date_format(presFechaDesembolso, '%d/%m/%Y') as fechaDesembolso, presMontoDesembolso
+		FROM cliente c
+		inner join involucrados i on i.idCliente = c.idCliente
+		inner join prestamo pre on pre.idPrestamo = i.idPrestamo
+		where presAprobado=1; ";
+		$resultado=$cadena->query($sql);
+		$i=1;
+		while($row=$resultado->fetch_assoc()){ 
+			$sumMontos+= $row['presMontoDesembolso']; ?>
+		<tr>
+			<td> <?= $i; ?> </td>
+			<td> <?= $row['idPrestamo']; ?> </td>
+			<td class="tableexport-string"> <?= $row['cliDni']; ?> </td>
+			<td class="text-capitalize"> <?= $row['cliNombre']; ?> </td>
+			<td class="tableexport-string"> <?= $row['fechaDesembolso']; ?> </td>
+			<td class="tableexport-string">S/ <?= number_format($row['presMontoDesembolso'],2); ?> </td>
+		</tr>
+		<?php	
+		$i++; }
+		?>
+		<tfoot>
+			<tr>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th>S/ <?= number_format($sumMontos,2) ?></th>
+			</tr>
+		</tfoot>
+		</tbody>
+		<?php
+		break;
 	default:
 		# code...
 		break;

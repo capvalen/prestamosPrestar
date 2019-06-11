@@ -54,14 +54,35 @@ $montoLetras = trim(NumeroALetras::convertir($parteEntera)).' CON '.$parteDecima
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>CONTRATO DE DEUDA Y COMPROMISO DE PAGO </title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-	<style>
-	p{ text-indent: 5em }
-	</style>
-	<h4 class="text-center">CONTRATO DE DEUDA Y COMPROMISO DE PAGO</h4>
-	<div class="container">
+<style>
+p{ text-indent: 5em }
+.pPropietario{ background-color: #000; 
+	
+	content: '';
+	display: block;
+	height: 1px;
+	left: 10%;
+	position: absolute;
+	
+	width: 250px;}
+	#contFirmas p{margin-bottom: 0;}
+@media print{
+	.pPropietario{
+	width: 250px!important;
+	border-top: 1px solid black!important;
+	}
+	#contFirmas p{margin-bottom: 0;}
+}
+</style>
+	<div class="row">
+		<div class="col-sm-3 ml-5 pl-5"><img src="../images/logoCorto.jpg" class="img-fluid"></div>
+		<div class="col"></div>
+	</div>
+	<h4 class="text-center pt-3">CONTRATO DE DEUDA Y COMPROMISO DE PAGO</h4>
+	<div class="container-fluid">
 		<p class="text-justify">CONSTE POR EL PRESENTE DOCUMENTO QUE SUSCRIBE EL CONTRATO DE DEUDA Y COMPROMISO DE PAGO QUE CELEBRAN DE UNA PARTE EL SEÑOR RAMOS GALVAN JHON CON DNI N° 41699159 Y DOMICILIADO EN LA CALLE REAL 969 A QUIEN EN ADELANTE SE LE DENOMINARA EL ACREEDOR Y DE LA OTRA PARTE SR(A) <?= $rowInvolucrados['cliNombres'];?> CON DNI N° <?= $rowInvolucrados['cliDni'];?> CON DOMICILIO EN EL <?= $rowInvolucrados['cliDireccion'];?>, A QUIEN EN ADELANTE SE LE DENOMINARA EL DEUDOR
 		<?php while($dato = $resultadoInvolucrados->fetch_assoc()){
 			if( $dato['idTipoCliente']=='2'){
@@ -89,6 +110,48 @@ $montoLetras = trim(NumeroALetras::convertir($parteEntera)).' CON '.$parteDecima
 			
 		} ?>
 		<p class="text-justify"> <?php if($totalInvolucrados >1){ echo 'QUINTO'; }else{echo 'CUARTO'; }?>: EN CASO DE INCUMPLIMIENTO CON UN MINIMO DE UNA LETRA IMPAGA POR EL DEUDOR; EL ACREEDOR SE RESERVA EL DERECHO DE PROCEDER CONFORME A LEY, DEBIENDO RECONOCER EL DEUDOR O EL GARANTE LOS GASTOS JUDICIALES, EXTRAJUDICIALES, COSTAS Y COSTOS QUE PUEDAN ORIGINARSE POR INCUMPLIMIENTO EN LA CANCELACION DE LA DEUDA, DEJANDO EN GARANTIA UNA LETRA DE CAMBIO FIRMADA, SE SUSCRIBE LA PRESENTE  EN LA CIUDAD DE HUANCAYO A LOS DIECIOCHO DIAS DEL MES DE FEBRERO DEL 2019 Y EN SEÑAL DE CONFORMIDAD FIRMAN AL PIE DEL DOCUMENTO DENOMINADO CONTRATO DE DEUDA Y COMPROMISO DE PAGO E IMPRIME SU HUELLA DEL INDICE DERECHO.</p>
+	</div>
+	<div class="container-fluid" id="contFirmas">
+		<div class="row">
+			<div class="col"> <br>
+			<br>
+			<br><br>
+				<span class="pPropietario"></span>
+				<p>Cliente</p>
+				<p>Apellidos y Nombres:</p>
+				<p>D.N.I.:</p>
+				<p>Domicilio:</p>
+			</div>
+			<div class="col"> <br>
+			<br>
+			<br><br>
+				<span class="pPropietario"></span>
+				<p>Cliente</p>
+				<p>Apellidos y Nombres:</p>
+				<p>D.N.I.:</p>
+				<p>Domicilio:</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col"> <br>
+			<br>
+			<br><br>
+				<span class="pPropietario"></span>
+				<p>Fiador</p>
+				<p>Apellidos y Nombres:</p>
+				<p>D.N.I.:</p>
+				<p>Domicilio:</p>
+			</div>
+			<div class="col"> <br>
+			<br>
+			<br><br>
+				<span class="pPropietario"></span>
+				<p>Fiador</p>
+				<p>Apellidos y Nombres:</p>
+				<p>D.N.I.:</p>
+				<p>Domicilio:</p>
+			</div>
+		</div>
 	</div>
 
 	

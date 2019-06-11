@@ -129,8 +129,16 @@ $fechaHoy = new DateTime();
 
 			<div class="container row" id="rowBotonesMaestros">
 				<div class="col-xs-12 col-md-6">
-					<button class="btn btn-negro btn-outline" id="btnImpresionPrevia" data-pre="<?= $_GET['credito'];?>"><i class="icofont-print"></i> Imprimir cronograma</button>
-					<button class="btn btn-negro btn-outline" id="btnImpresionContrato" data-pre="<?= $_GET['credito'];?>"><i class="icofont-print"></i> Imprimir Contrato</button>
+				<div class="btn-group">
+				<?php if($rowCr['presFechaDesembolso']!='Desembolso pendiente'): ?>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style='margin-bottom: 0px;'  ><i class="icofont-print"></i>  Impresiones <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li id="btnImpresionPrevia" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Cronograma</a></li>
+						<li id="btnImpresionContrato" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Contrato</a></li>
+					</ul>
+				<?php endif;//de desembolso pendiente ?>
+				</div>
 				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && in_array($_COOKIE['ckPower'], $soloAnalistas)): ?>
 					<button class="btn btn-success btn-outline " id="btnShowVerificarCredito"><i class="icofont-check-circled"></i> Aprobar crédito</button>
 					<button class="btn btn-danger btn-outline " id="btnDenyVerificarCredito"><i class="icofont-thumbs-down"></i> Denegar crédito</button>
@@ -442,6 +450,7 @@ $fechaHoy = new DateTime();
 					<th>Tipo</th>
 					<th>Monto</th>
 					<th>Periodo</th>
+					<th>Vencido</th>
 					<th>Interés</th>
 					<th>Desembolso</th>
 				</tr>

@@ -3,7 +3,7 @@ $sql="SELECT presMontoDesembolso, presPeriodo, tpr.tpreDescipcion,
 u.usuNombres, preInteresPers, i.idCliente, pre.idPrestamo,
 case presFechaDesembolso when '0000-00-00 00:00:00' then 'Desembolso pendiente' else presFechaDesembolso end as `presFechaDesembolso`,
 case presAprobado when 0 then 'Sin aprobar' when 2 then 'Rechazado' else 'Aprobado' end as `presAprobado`,
-	lower(concat (c.cliApellidoPaterno, ' ', c.cliApellidoMaterno, ' ', c.cliNombres)) as cliNombres
+	lower(concat (c.cliApellidoPaterno, ' ', c.cliApellidoMaterno, ' ', c.cliNombres)) as cliNombres, retornarCantidadCuotasVencidas(pre.idPrestamo) as cuotVencDias
 FROM `prestamo` pre
 	inner join involucrados i on i.idPrestamo = pre.idPrestamo
 	inner join cliente c on c.idCliente = i.idCliente
@@ -21,6 +21,7 @@ while($row=$resultado->fetch_assoc()){
 		<td><?= $row['tpreDescipcion'];?></td>
 		<td>S/ <?= number_format($row['presMontoDesembolso'],2);?></td>
 		<td><?= $row['presPeriodo'];?></td>
+		<td><?php if($row['cuotVencDias']>0){ echo '<span class="red-text">'.$row['cuotVencDias'].'</span>';}else{ echo '<span class="indigo-text text-darken-4">'.$row['cuotVencDias'].'</span>'; } ?></td>
 		<td><?= $row['preInteresPers'];?></td>
 		<td><?= $fecha->format('d/m/Y');?></td>
 	</tr>
