@@ -18,6 +18,8 @@ include "php/variablesGlobales.php";
 		<?php include 'headers.php'; ?>
 		<link rel="stylesheet" href="css/awesome-bootstrap-checkbox.css?version=1.0.1">
 		<link rel="stylesheet" href="css/tableexport.min.css?version=5.2.1">
+		<link rel="stylesheet" href="css/bootstrap-material-datetimepicker.css?version=2.0.3" />
+
 </head>
 
 <body>
@@ -50,12 +52,14 @@ include "php/variablesGlobales.php";
 						<option value="R4" class="optReporte">Moras cobradas</option>
 						<option value="R1" class="optReporte">Movimientos de entrada</option>
 						<option value="R2" class="optReporte">Movimientos de Salida</option>
+						<option value="R9" class="optReporte">Balance general y EE.FF</option>
+						<option value="R8" class="optReporte">Colocación del mes</option>
 						<option value="R6" class="optReporte">Cuadro de control</option>
 						<option value="R7" class="optReporte">Relación de desembolsos</option>
 
 					</select>
 				</div>
-				<div class="col-xs-6 col-md-6">
+				<div class="col-xs-6 col-md-6" id="divFechasRango">
 					<div class="sandbox-container">
 						<div class="input-daterange input-group" id="datepicker">
 							<input type="text" class=" form-control" id="inputFechaInicio" name="start" />
@@ -63,6 +67,9 @@ include "php/variablesGlobales.php";
 							<input type="text" class=" form-control" id="inputFechaFin" name="end" />
 						</div>
 					</div>
+				</div>
+				<div class="col-xs-6 col-md-6 hidden" id="divFechaMensual">
+					<input type="text" id="dtpFechaIniciov3" class="form-control text-center" placeholder="Fecha para filtrar datos">
 				</div>
 				<div class="col-xs-6 col-md-3">
 					<button class="btn btn-success btn-outline" id="btnFiltrarReporte"><i class="icofont-search-1"></i> Filtrar reporte</button>
@@ -72,6 +79,7 @@ include "php/variablesGlobales.php";
 			<button class="btn btn-azul btn-outline" id="btnExportar"><i class="icofont-ui-file"></i> Generar archivo</button>
 			<table class="table table-hover" id="resultadoReporte">
 			</table>
+			<div id="divTablaRespuestas"></div>
 
 			<div class="hidden" id="subCuadro">
 			<table class="table table-hover">
@@ -82,6 +90,16 @@ include "php/variablesGlobales.php";
 				<tr><th>Saldo por cobrar</th><td id="tdHijoPendiente"></td></tr>
 				<tr><th>S. Pagado + S. por cobrar</th><td id="tdHijoTotal"></td></tr>
 				<tr><th>Total a cobrar(Capital + Interés)</th><th id="tdHijoTotal2"></th></tr>
+				</tbody>
+			</table>
+			</div>
+			<div  class="hidden" id="subCuadro2">
+			<table class="table table-hover">
+				<thead><tr><th>Resultados</th><th>Seguros</th></tr></thead>
+				<tbody>
+				<tr><th>Seguro de desgravamen</th><td id="tdHijoSegurosPorc">1.5%</td></tr>
+				<tr><th>Suma en Préstamos</th><td>S/ <span id="tdHijoPrestamosColoc"></span></td></tr>
+				<tr><th>Total cobro de seguros</th><th>S/ <span id="tdHijoTotal3"></span></th></tr>
 				</tbody>
 			</table>
 			</div>
@@ -105,6 +123,8 @@ include "php/variablesGlobales.php";
 <script src="js/xlsx.core.min.js"></script>
 <script src="js/FileSaver.min.js"></script>
 <script src="js/tableexport.js?version=5.2.1"></script>
+<script src="js/bootstrap-material-datetimepicker.js"></script>
+
 
 
 <?php if ( isset($_COOKIE['ckidUsuario']) ){?>
@@ -148,21 +168,47 @@ $('#inputFechaInicio').change(function () {
 });
 
 $(document).ready(function(){
-
+	$('#dtpFechaIniciov3').bootstrapMaterialDatePicker({ format : 'YYYY-MM', lang : 'es', weekStart : 1 , time: false});
+	$('#dtpFechaIniciov3').bootstrapMaterialDatePicker('setDate', moment());
 });
+$('#sltFiltroReporte').change(function() {
+	switch ($('#sltFiltroReporte').val()) {
+		case "R1":
+		case "R2":
+		case "R3":
+		case "R4":
+		case "R5": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
+		case "R6":
+		case "R7": $('#divFechasRango').addClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
+		case "R8": $('#divFechasRango').addClass('hidden');  $('#divFechasRango').addClass('hidden');  $('#divFechaMensual').removeClass('hidden'); break;
+		case "R9": $('#divFechasRango').addClass('hidden');  $('#divFechasRango').addClass('hidden');  $('#divFechaMensual').removeClass('hidden'); break;
+		
+		default:
+			break;
+	}
+});
+
 $('#btnFiltrarReporte').click(function() { //console.log('a')
 	if( $('#sltFiltroReporte').val()!=-1 && moment($('#inputFechaInicio').val(), 'DD/MM/YYYY').isValid() && moment($('#inputFechaFin').val(), 'DD/MM/YYYY').isValid() ){
-		$.ajax({url: 'php/reporteXCaso.php', type: 'POST', data: { caso: $('#sltFiltroReporte').val(), fInicio :  moment($('#inputFechaInicio').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'), fFinal: moment($('#inputFechaFin').val(), 'DD/MM/YYYY').format('YYYY-MM-DD') }}).done(function(resp) {
-			//console.log(resp);
+		$.ajax({url: 'php/reporteXCaso.php', type: 'POST', data: { caso: $('#sltFiltroReporte').val(), fInicio :  moment($('#inputFechaInicio').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'), fFinal: moment($('#inputFechaFin').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'), fMes: $('#dtpFechaIniciov3').val() }}).done(function(resp) { //console.log(resp);
+			if($('#sltFiltroReporte').val()=='R9'){
+			$('#divTablaRespuestas').html(resp);
+			}else{
 			$('#resultadoReporte').html(resp);
-			$("table").stupidtable();
+			$("#resultadoReporte .table").stupidtable();
+			}
 			if($('#sltFiltroReporte').val()=='R6'){ $('#subCuadro').removeClass('hidden');
 				$('#tdHijoCapital').text( $('#tdCapital').text().replace(',',''));
 				$('#tdHijoPagado').text( $('#tdPagados').text().replace(',',''));
 				$('#tdHijoPendiente').text( $('#tdPendientes').text().replace(',',''));
 				$('#tdHijoTotal').text( $('#tdTotal').text().replace(',',''));
 				$('#tdHijoTotal2').text( $('#tdTotal').text().replace(',',''));
-			}else{ $('#subCuadro').addClass('hidden');}
+			}else if($('#sltFiltroReporte').val()=='R8'){
+				$('#subCuadro2').removeClass('hidden');
+				var mnto= parseFloat($('#thSumaMontosR8').text().replace(',',''));
+				$('#tdHijoPrestamosColoc').text( mnto.toFixed(2) );
+				$('#tdHijoTotal3').text( (mnto * 0.015).toFixed(2) );
+			}else{ $('#subCuadro').addClass('hidden'); $('#subCuadro2').addClass('hidden');}
 		});
 	
 

@@ -284,7 +284,7 @@ switch ($_POST['caso']) {
 			FROM cliente c
 			inner join involucrados i on i.idCliente = c.idCliente
 			inner join prestamo pre on pre.idPrestamo = i.idPrestamo
-			WHERE pre.presActivo=1 /* date_format(presFechaDesembolso,'%Y-%m-%d') between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' */; ";
+			WHERE pre.presActivo=1 and pre.presAprobado<>2  and pre.presFechaDesembolso <> '0000-00-00'; /* date_format(presFechaDesembolso,'%Y-%m-%d') between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' */; ";
 			$resultado=$cadena->query($sql);
 			$sumMontos=0;  $sumCuotas=0; $sumSemana=0; $sumQuincena=0; $sumMensual=0;$sumDiario=0; $sumPagados=0; $sumPendientes=0; $numPagado=0; $numPendiente=0; $sumCobroTotal=0;
 			?>
@@ -335,7 +335,6 @@ switch ($_POST['caso']) {
 						# code...
 						break;
 				} ?>
-				<?php  ?>
 				<td class="tableexport-string">S/ <?= number_format($row['montCuota'],2); ?></td>
 				<td><?= $row['pagados']; ?></td>
 				<td><?= $row['noPagados']; ?></td>
@@ -390,6 +389,7 @@ switch ($_POST['caso']) {
 		inner join prestamo pre on pre.idPrestamo = i.idPrestamo
 		where presAprobado=1; ";
 		$resultado=$cadena->query($sql);
+		$sumMontos=0;  $sumCuotas=0; $sumSemana=0; $sumQuincena=0; $sumMensual=0;$sumDiario=0; $sumPagados=0; $sumPendientes=0; $numPagado=0; $numPendiente=0; $sumCobroTotal=0;
 		$i=1;
 		while($row=$resultado->fetch_assoc()){ 
 			$sumMontos+= $row['presMontoDesembolso']; ?>
@@ -415,6 +415,237 @@ switch ($_POST['caso']) {
 			</tr>
 		</tfoot>
 		</tbody>
+		<?php
+		break;
+		case "R8":
+		?>
+		<thead>
+		<tr>
+			<th>N°</th>
+			<th>Apellidos y Nombres</th>
+			<th>Tasa</th>
+			<th>Desembolso</th>
+			<th>Monto</th>
+			<th>Semana</th>
+			<th>Quincena</th>
+			<th>Mensual</th>
+			<th>Dia</th>
+			<th>Cuota</th>
+			<th>Pagados</th>
+			<th>Pendiente</th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php
+		$sumMontos=0;
+		$sql="SELECT `cliDni`, lower( concat(trim(`cliApellidoPaterno`),' ', trim(`cliApellidoMaterno`), ' ', trim(`cliNombres`))) as 'cliNombre',
+			pre.idPrestamo, preInteresPers, date_format(presFechaDesembolso, '%d/%m/%Y') as fechaDesembolso, presMontoDesembolso,
+			idTipoPrestamo, presPeriodo, round(`retornarMontoCuota`(pre.idPrestamo),1) as montCuota, `retornarNumCuotasPagadas`(pre.idPrestamo) as pagados, retornarNumCuotasNoPagadas(pre.idPrestamo) as noPagados,
+			round(retornarSumCuotasPagadas(pre.idPrestamo),1) as sumPagados, round(retornarSumCuotasNoPagadas(pre.idPrestamo),1) as sumNoPagados
+			
+			FROM cliente c
+			inner join involucrados i on i.idCliente = c.idCliente
+			inner join prestamo pre on pre.idPrestamo = i.idPrestamo
+			WHERE pre.presActivo=1 and pre.presAprobado<>2  and pre.presFechaDesembolso <> '0000-00-00' and date_format(presFechaDesembolso,'%Y-%m') = '{$_POST['fMes']}' ; ";
+		echo $sql;
+		$resultado=$cadena->query($sql);
+		$i=1;
+		while($row=$resultado->fetch_assoc()){ 
+			$sumMontos+= $row['presMontoDesembolso'];
+			$sumPagados+=$row['sumPagados']; $sumPendientes+= $row['sumNoPagados'];
+			$numPagado+=$row['pagados']; $numPendiente+=$row['noPagados']; ?>
+		<tr>
+			<td> <?= $i; ?> </td>
+			<td class="text-capitalize"> <?= $row['cliNombre']; ?> </td>
+			<td class="tableexport-string"> <?= $row['preInteresPers']."%"; ?> </td>
+			<td class="tableexport-string"> <?= $row['fechaDesembolso']; ?> </td>
+			<td class="tableexport-string">S/ <?= number_format($row['presMontoDesembolso'],2); ?> </td>
+			<?php switch ($row['idTipoPrestamo']) {
+					case '2':  $sumSemana++; ?><td><?= $row['presPeriodo']*4; ?></td> <td></td><td></td><td></td>
+						<?php break;
+					case '4':  $sumQuincena++; ?><td></td><td><?= $row['presPeriodo']*2; ?></td> <td></td><td></td>
+					<?php break;
+					case '3':  $sumMensual++; ?><td></td><td></td><td><?= $row['presPeriodo']; ?></td> <td></td>
+					<?php break;
+					case '1':  $sumDiario++; ?><td></td><td></td><td></td><td><?= $row['presPeriodo']*30; ?></td>
+					<?php break;
+					default:
+						# code...
+						break;
+				} ?>
+				<td class="tableexport-string">S/ <?= number_format($row['montCuota'],2); ?></td>
+				<td><?= $row['pagados']; ?></td>
+				<td><?= $row['noPagados']; ?></td>
+		</tr>
+		<?php	
+		$i++; }
+		?>
+		<tfoot>
+			<tr>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th>S/ <span id="thSumaMontosR8"><?= number_format($sumMontos,2); ?></span></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th>S/ <?= number_format($sumPagados,2); ?></th>
+			</tr>
+		</tfoot>
+		</tbody>
+		<?php
+		break;
+		case "R9":
+		?>
+		<div class="row">
+			<div class="col col-sm-6">
+				<table class="table table-hover">
+				<thead>
+					<tr>
+						<th class="text-center" colspan="4">BALANCE GENERAL PRESTAR HUANCAYO</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th class="" colspan="3">Activo</th>
+						<td class=""> S/ 41 426.45</td>
+					</tr>
+					<tr>
+						<th class="" colspan="3">1.1 Activo Corriente</th>
+						<td class="">  S/34 856.45</td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">A. Disponible</td>
+						<td class="">  S/ 100.00</td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">B. Caja</td>
+						<td class="">  </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">C. Bancos</td>
+						<td class="">  S/ 3000.00</td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">D. Cuentas por cobrar</td>
+						<td class="">  </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">F. Adelantos a proveedores</td>
+						<td class="">  </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">G. Suministros</td>
+						<td class="">  </td>
+					</tr>
+					<tr>
+						<th class="" colspan="3">1.2 Activo No Corriente</th>
+						<td class=""> S/ 6570.00</td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">A. Inmueble Maquinaria Y Equipo</td>
+						<td class="">  </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">B. Terrenos Edificios Y Otras Construcciones</td>
+						<td class="">  </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">C. Maquinaria Y Equipo Y Otros (Muebles Y Enseres)</td>
+						<td class=""> S/ 900.00 </td>
+					</tr>
+					<tr>
+						<th>Cant.</th>
+						<th>Descipción</th>
+						<th>Prec. Unit.</th>
+						<th>SubTotal</th>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>Computadoras</td>
+						<td>450</td>
+						<td>900</td>
+					</tr>
+					<tr id="trTotalActivos">
+						<td colspan="3"></td>
+						<td>S/ 900.00</td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">D. Unidad de transporte</td>
+						<td class=""> S/ 4500.00 </td>
+					</tr>
+					<tr>
+						<th>Cant.</th>
+						<th>Descipción</th>
+						<th>Prec. Unit.</th>
+						<th>SubTotal</th>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>Moto Honda 2013</td>
+						<td>4500</td>
+						<td>4500</td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
+		<div class="col col-sm-6">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th class="text-center" colspan="3">Estado de resultados</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th class="text-center" colspan="2">Capital + Interés</th>
+						<td class="text-center"> S/ 41 426.45</td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
+		</div>
+		<!-- <thead>
+			<tr>
+				<th class="text-center" colspan="3">BALANCE GENERAL PRESTAR HUANCAYO</th>
+				<th class="text-center">ESTADO DE RESULTADOS</th>
+			</tr>
+			
+		</thead>
+		<tbody>
+			<tr>
+				<th>Activo</th>
+				<td colspan="2">S/ 0.00</td>
+				<th>Capital + Interés</th>
+				<td>S/ 0.00</td>
+			</tr>
+			<tr>
+				<th>1.1 Activo Corriente</th>
+				<td colspan="2">S/ 0.00</td>
+				<th>Capital</th>
+				<td>S/ 0.00</td>
+			</tr>
+			<tr>
+				<th>A. Disponible</th>
+				<td colspan="2">S/ 0.00</td>
+				<th>Utilidad Bruta-Margen Bruto</th>
+				<td>S/ 0.00</td>
+			</tr>
+			<tr>
+				<th>B. Caja</th>
+				<td colspan="2"></td>
+				<th>Gastos operativos del negocio</th>
+				<td>S/ 0.00</td>
+			</tr>
+			<tr>
+				<th>C. Bancos</th>
+				<td colspan="2">S/ 0.00</td>
+				<th>Gastos de personal</th>
+				<td></td>
+			</tr>
+		</tbody> -->
 		<?php
 		break;
 	default:
