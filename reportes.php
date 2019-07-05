@@ -79,7 +79,7 @@ include "php/variablesGlobales.php";
 			<button class="btn btn-azul btn-outline" id="btnExportar"><i class="icofont-ui-file"></i> Generar archivo</button>
 			<table class="table table-hover" id="resultadoReporte">
 			</table>
-			<div id="divTablaRespuestas"></div>
+			<div class="hidden" id="divTablaRespuestas"></div>
 
 			<div class="hidden" id="subCuadro">
 			<table class="table table-hover">
@@ -113,6 +113,29 @@ include "php/variablesGlobales.php";
 </div>
 <!-- /#page-content-wrapper -->
 </div><!-- /#wrapper -->
+
+<!-- Modal para: -->
+<div class='modal fade' id="modalCMaquinarias" tabindex='-1' role='dialog' aria-hidden='true'>
+	<div class='modal-dialog modal-sm' >
+	<div class='modal-content '>
+		<div class='modal-header-primary'>
+			<button type='button' class='close' data-dismiss='modal' aria-label='Close' ><span aria-hidden='true'>&times;</span></button>
+			<h4 class='modal-tittle'> Agregue un elemento</h4>
+		</div>
+		<div class='modal-body'>
+			<label for="">Cantidad:</label>
+			<input type="text" class="form-control" id="txtCMaquinariaCantidad" placeholder='Cantidad'>
+			<label for="">Descripción:</label>
+			<input type="text" class="form-control" id="txtCMaquinariaRazon" placeholder='Descripción'>
+			<label for="">Valor (S/):</label>
+			<input type="text" class="form-control" id="txtCMaquinariaValor" placeholder='Valor'>
+		</div>
+		<div class='modal-footer'>
+			<button type='button' class='btn btn-dark btn-outline' id="btnCMaquinariasSave">Guardar cambios</button>
+		</div>
+		</div>
+	</div>
+</div>
 
 
 <?php include 'footer.php'; ?>
@@ -178,10 +201,10 @@ $('#sltFiltroReporte').change(function() {
 		case "R3":
 		case "R4":
 		case "R5": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
-		case "R6":
+		case "R6": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
 		case "R7": $('#divFechasRango').addClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
-		case "R8": $('#divFechasRango').addClass('hidden');  $('#divFechasRango').addClass('hidden');  $('#divFechaMensual').removeClass('hidden'); break;
-		case "R9": $('#divFechasRango').addClass('hidden');  $('#divFechasRango').addClass('hidden');  $('#divFechaMensual').removeClass('hidden'); break;
+		case "R8": $('#divFechasRango').addClass('hidden'); $('#divFechasRango').addClass('hidden');  $('#divFechaMensual').removeClass('hidden'); break;
+		case "R9": $('#divFechasRango').addClass('hidden'); $('#resultadoReporte').addClass('hidden'); $('#divFechaMensual').removeClass('hidden'); $('#divTablaRespuestas').removeClass('hidden'); break;
 		
 		default:
 			break;
@@ -237,6 +260,32 @@ $('#btnExportar').click(function() {
   sheetname: "Hoja1"                     // (id, String), sheet name for the exported spreadsheet, (default: 'id')
 });
 });
+$('#divTablaRespuestas').on('click', '#btnANCEnseres',function() {
+	$.idFila = $(this).parent().parent().index()+1;
+
+	$('#modalCMaquinarias').modal('show');
+	
+});
+$('#btnCMaquinariasSave').click(function() {
+	var nuevaFila = $(`<tr class="tdANCEnseresHijo">
+						<td>${$('#txtCMaquinariaCantidad').val()}</td>
+						<td>${$('#txtCMaquinariaRazon').val()}</td>
+						<td>${$('#txtCMaquinariaValor').val()}</td>
+						<td class="tdSumSemiAuto">${parseFloat(parseFloat($('#txtCMaquinariaCantidad').val()) * parseFloat($('#txtCMaquinariaValor').val())).toFixed(2)}</td>
+						<
+					</tr>`);
+	nuevaFila.insertBefore($('#tblBalanceGeneral tbody tr:nth('+$.idFila+')'));
+	sumarHijos('.tdANCEnseresHijo');
+	$('#modalCMaquinarias').modal('hide');
+});
+function sumarHijos(malla) {
+	var suma =0;
+	$.each( $(malla) , function(i, objeto){
+		suma += parseFloat($(objeto).find('.tdSumSemiAuto').text());
+	});
+	$(malla).first().prev().find('.tdConsolidado').text('S/ '+ suma.toFixed(2));
+	$(malla).last().next().find('.tdConsolidado').text('S/ '+ suma.toFixed(2));
+}
 </script>
 <?php } ?>
 </body>

@@ -501,7 +501,7 @@ switch ($_POST['caso']) {
 		?>
 		<div class="row">
 			<div class="col col-sm-6">
-				<table class="table table-hover">
+				<table class="table table-hover" id="tblBalanceGeneral">
 				<thead>
 					<tr>
 						<th class="text-center" colspan="4">BALANCE GENERAL PRESTAR HUANCAYO</th>
@@ -552,25 +552,19 @@ switch ($_POST['caso']) {
 						<td class="" colspan="3">B. Terrenos Edificios Y Otras Construcciones</td>
 						<td class="">  </td>
 					</tr>
-					<tr>
-						<td class="" colspan="3">C. Maquinaria Y Equipo Y Otros (Muebles Y Enseres)</td>
-						<td class=""> S/ 900.00 </td>
+					<tr id="tdANCenseres">
+						<td class="" colspan="3">C. Maquinaria Y Equipo Y Otros (Muebles Y Enseres) <button class="btn btn-primary btn-outline btn-sm" id="btnANCEnseres">+</button> </td>
+						<td class="tdConsolidado"> S/ 0.00 </td>
 					</tr>
-					<tr>
+					<!-- <tr class="hidden">
 						<th>Cant.</th>
 						<th>Descipción</th>
 						<th>Prec. Unit.</th>
 						<th>SubTotal</th>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td>Computadoras</td>
-						<td>450</td>
-						<td>900</td>
-					</tr>
+					</tr> -->
 					<tr id="trTotalActivos">
-						<td colspan="3"></td>
-						<td>S/ 900.00</td>
+						<td colspan="3">Total</td>
+						<td class="tdConsolidado">S/ 0.00</td>
 					</tr>
 					<tr>
 						<td class="" colspan="3">D. Unidad de transporte</td>
@@ -587,6 +581,42 @@ switch ($_POST['caso']) {
 						<td>Moto Honda 2013</td>
 						<td>4500</td>
 						<td>4500</td>
+					</tr>
+					<tr>
+						<th class="" colspan="3">2. Pasivo</th>
+						<td class=""> S/ 20 000.00 </td>
+					</tr>
+					<tr>
+						<th class="" colspan="3">2.1 Pasivo Corriente</th>
+						<td class=""> S/ 10 000.00 </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">A. Pago de Proveedores</td>
+						<td class=""> S/ 10 000.00 </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">B. Otras cuentas por pagar</td>
+						<td class="">  </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">C. Préstamos a CP Menor a 12 meses</td>
+						<td class=""> S/ 10 000.00 </td>
+					</tr>
+					<tr>
+						<th class="" colspan="3">2.2 Pasivo No Corriente</th>
+						<td class=""> S/ 10 000.00 </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">C. Préstamos a LP Mayor a 12 meses</td>
+						<td class=""> S/ 10 000.00 </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">3. Patrimonio</td>
+						<td class=""> S/ 21426.45 </td>
+					</tr>
+					<tr>
+						<td class="" colspan="3">4. Pasivo + Patrimonio</td>
+						<td class=""> S/ 41426.45 </td>
 					</tr>
 				</tbody>
 				</table>
