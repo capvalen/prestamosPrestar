@@ -40,7 +40,7 @@ $saltoDia = new DateInterval('P1D'); //aumenta 1 día
 $tasa = $_POST['tasaInt']/100;
 $meses =  $_POST['periodo'];
 
-$sumaCapital =0; $sumaInt=0; $sumaCuot=0;
+$sumaCapital =0; $sumaInt=0; $sumaCuot=0; $sumSeguro=0;
 
 //Para saber si es sábado(6) o domingo(0):  format('w') 
 
@@ -89,6 +89,8 @@ $intGanado = round( $interes/ $plazo ,1, PHP_ROUND_HALF_UP);
 
 /* ?> 
 <tr><td class='grey-text text-darken-2'><strong>0</strong></td> <td><?= $fecha->format('d/m/Y'); ?></td> <td>-</td><td>-</td> <td>-</td> <td><?= number_format($saldo,2);?></td></tr><?php */
+
+$seguro = $monto/$plazo*0.01;
 
 $interesSumado=0;
 $fecha->add($intervalo);
@@ -167,7 +169,7 @@ for ($i=0; $i < $plazo ; $i++) {
 <td>S/ <?= number_format(round($monto*0.015,1, PHP_ROUND_HALF_UP),2);?> </td>
 </tr></tbody>
 </table>
-<table class="table table-hover">
+<table class="table table-hover" style="margin-top:20px">
 <thead>
 	<tr>
 		<th>#</th>
@@ -175,6 +177,7 @@ for ($i=0; $i < $plazo ; $i++) {
 					<th>Capital</th>
 					<th>Interés</th>
 					<th class="hidden">Amortización</th>
+					<th>Com. y Serv.</th>
 					<th>Cuota</th>
 					<th class="hidden">Saldo Real</th>
 	</tr>
@@ -199,6 +202,7 @@ for ($j=0; $j <  count($jsonSimple) ; $j++) { ?><tr><?php
 	}else{
 		if($j>=1){
 			$jsonSimple[$j]['saldoReal'] = $jsonSimple[$j-$dia]['saldoReal']-$jsonSimple[$j]['cuota']; $dia=1;
+			$sumSeguro += $seguro;
 		}
 		$sumaCapital +=$capitalPartido;
 		$sumaInt +=$intGanado;
@@ -210,7 +214,8 @@ for ($j=0; $j <  count($jsonSimple) ; $j++) { ?><tr><?php
 		<td class='grey-text text-darken-2'><?= "S/ ". number_format($intGanado,2); ?></td> 
 		<td class='grey-text text-darken-2 hidden'><?= number_format($jsonSimple[$j]['amortizacion'],2); ?></td> 
 		<td class='grey-text text-darken-2 hidden'><?= number_format($jsonSimple[$j]['saldo'], 2);?></td> 
-		<td class="cuota"><?= "S/ ".number_format($jsonSimple[$j]['cuota'], 2);?></td> <?php
+		<td><?= number_format($seguro, 2);?></td>
+		<td class="cuota"><?= "S/ ".number_format($jsonSimple[$j]['cuota'] + $seguro, 2);?></td> <?php
 	}
 ?></tr>
 <?php
@@ -234,7 +239,8 @@ function esFeriado($feriados, $dia){
 	<td><strong>Total:</strong></td>
 	<td><strong>S/ <?= number_format($sumaCapital,2);?></strong></td>
 	<td><strong>S/ <?=  number_format(round($sumaInt,1, PHP_ROUND_HALF_UP),2); ?></strong></td>
-	<td><strong>S/ <?= number_format( $sumaCuot,2);?></strong></td>
+	<td><strong>S/ <?= number_format($sumSeguro, 2); ?> </strong></td>
+	<td><strong>S/ <?= number_format( $sumaCuot + $sumSeguro,2);?></strong></td>
 </tr>
 </tfoot>
 </table>

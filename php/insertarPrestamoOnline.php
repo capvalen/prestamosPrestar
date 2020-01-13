@@ -43,6 +43,7 @@ $pagoTotal  = $monto+ $interes;
 $capitalPartido = round($monto/$plazo,1, PHP_ROUND_HALF_UP);
 $cuota = round( $pagoTotal/$plazo ,1, PHP_ROUND_HALF_UP);
 $intGanado = round( $interes/ $plazo ,1, PHP_ROUND_HALF_UP);
+$seguro = round( ($monto/ $plazo) * 0.01 ,1, PHP_ROUND_HALF_UP);
 
 
 $sql="INSERT INTO `prestamo`(`idPrestamo`, `presFechaAutom`, `presFechaDesembolso`, `presPeriodo`, `preInteresPers`,`presMontoDesembolso`, `idTipoPrestamo`, `presActivo`, `idUsuario`, `preSaldoDebe`) VALUES (null, now(), '0000-00-00 00:00:00', {$_POST['periodo']}, {$_POST['tasaInt']},{$_POST['monto']}, {$_POST['modo']}, 1, {$_COOKIE['ckidUsuario']}, {$pagoTotal} );"; 
@@ -176,7 +177,7 @@ for ($j=0; $j <  count($jsonSimple) ; $j++) {
 		if($j>=1){
 			$saldo = $saldo-$cuota; $dia=1;
 		}
-		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',{$jsonSimple[$j]['cuota']},'0000-00-00',0,{$saldo},'0','', 79);";
+		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`, `cuotSeg`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',{$jsonSimple[$j]['cuota']},'0000-00-00',0,{$saldo},'0','', 79, {$seguro} );";
 	}
 
 }

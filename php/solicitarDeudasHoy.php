@@ -13,13 +13,14 @@ $sumaSa=0;
 $diasMora =0;
 $precioCuota=0;
 
-$sql="SELECT idCuota, cuotFechaPago, cuotCuota, cuotPago FROM `prestamo_cuotas`
+$sql="SELECT idCuota, cuotFechaPago, cuotCuota, cuotPago, cuotSeg FROM `prestamo_cuotas`
 where cuotFechaPago <=curdate() and cuotCuota<>0 and idTipoPrestamo in (33, 79)
 and idPrestamo={$base58->decode($_POST['credito'])}
 order by cuotFechaPago asc;";
 
 $resultado=$cadena->query($sql);
 while($row=$resultado->fetch_assoc()){
+	$seguro = floatval($row['cuotSeg']);
 	$precioCuota=floatval($row['cuotCuota']-$row['cuotPago']);
 	$fechaCuota = new DateTime($row['cuotFechaPago']);
 	$diasDebe=$fechaHoy ->diff($fechaCuota);
@@ -65,7 +66,8 @@ $filas = array(
 	'diasMora' =>$diasMora,
 	'deudaCuotas' => round($sumaSa,2),
 	'precioMora' =>$diasMora*$mora,
-	'paraFinalizar' => round($sumaSa+ $diasMora*$mora,2)
+	'seguro' => $seguro,
+	'paraFinalizar' => round($sumaSa+ $diasMora*$mora + $seguro,2)
 );
 
 echo json_encode($filas);

@@ -183,6 +183,7 @@ $fechaHoy = new DateTime();
 	
 						<th>Capital</th>
 						<th>Interés</th>
+						<th>Com. y Serv.</th>
 						<th>Cuota</th>
 						<th>Cancelación</th>
 						<th>Pago</th>
@@ -233,19 +234,22 @@ $fechaHoy = new DateTime();
 	
 	
 				if($respCuot = $cadena->query($sqlCuot)){ $k=0;
-					$sumCapital = 0; $sumInteres =0; $sumCuota =0;
+					$sumCapital = 0; $sumInteres =0; $sumCuota =0;  $sumSeguros = 0;
 					while($rowCuot = $respCuot->fetch_assoc()){
 						if($k>=1){
 							$sumCapital+=$capitalPartido;
 							$sumInteres+=$intGanado;
-							$sumCuota+=$cuota;}
+							$sumCuota+=$cuota;
+							$sumSeguros+= $rowCuot['cuotSeg'];
+						}
 						?>
 					<tr>
 						<td>SP-<?= $rowCuot['idCuota']; ?></td>
 						<td><?php $fechaCu= new DateTime($rowCuot['cuotFechaPago']); echo $fechaCu->format('d/m/Y'); ?></td>
 						<td><? if($k>=1) {echo number_format($capitalPartido,2);} ?></td>
 						<td><? if($k>=1) {echo number_format($intGanado,2);} ?></td>
-						<td><? if($k>=1) {echo number_format($cuota,2);} ?></td>
+						<td><? if($k>=1) {echo number_format($rowCuot['cuotSeg'],2);} ?></td>
+						<td><? if($k>=1) {echo number_format($cuota + $rowCuot['cuotSeg'],2);} ?></td>
 						<td><?php if($rowCuot['cuotCuota']=='0.00' && $rowCuot['cuotPago']=='0.00'): echo "Desembolso"; elseif($rowCuot['cuotFechaCancelacion']=='0000-00-00'): echo 'Pendiente'; else: echo $rowCuot['cuotFechaCancelacion']; endif;  ?></td>
 						<td class="tdPagoCli" data-pago="<?= number_format($rowCuot['cuotPago'],2); ?>"><? if($k>=1) {echo number_format($rowCuot['cuotPago'],2);} ?></td>
 						<td class="hidden"><?= number_format($rowCuot['cuotSaldo'],2); ?></td>
@@ -282,7 +286,8 @@ $fechaHoy = new DateTime();
 							<th></th> <th></th>
 							<th>S/ <?= number_format($sumCapital,2); ?></th>
 							<th>S/ <?= number_format($sumInteres,2); ?></th>
-							<th>S/ <?= number_format($sumCuota,2); ?></th>
+							<th>S/ <?= number_format($sumSeguros,2); ?></th>
+							<th>S/ <?= number_format($sumCuota + $sumSeguros,2); ?></th>
 							<th></th> <th></th><th> </th>
 							
 						</tr>
@@ -507,6 +512,7 @@ $fechaHoy = new DateTime();
 			<div style="padding-left:20px">
 				<p>Cuotas pendientes: <strong><span id="spaCPendientes"></span></strong></p>
 				<p>Costo de cuota: <strong><span id="spaCCosto"></span></strong></p>
+				<p>Com. y Serv.: <strong><span id="spaCSeguro"></span></strong></p>
 				<p>Cuota: <strong>S/ <span id="spaCPrecioCuota"></span></strong></p>
 				<p>Días de mora: <strong><span id="spaCMora"></span></strong></p>
 				<p>Mora: <strong>S/ <span id="spaCPrecioMora"></span></strong></p>
@@ -858,7 +864,7 @@ $('#btnDesembolsar').click(function() {
 		if(resp==true){
 			//location.reload();
 			var seguro = parseFloat($('#spanMontoDado').text()*0.015).toFixed(2);
-			$('#h1Bien').html(`Cobre S/ ${seguro} de seguro al cliente.`);
+			$('#h1Bien').html(''); //`Cobre S/ ${seguro} de seguro al cliente.`
 			$('#modalGuardadoCorrecto').modal('show');
 			$.ajax({url: '<?= $serverLocal;?>impresion/ticketDesembolso.php', type: 'POST', data: { queMichiEs: 'Crédito nuevo', codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), monto: parseFloat($('#spanMontoDado').text()).toFixed(2), seguro: seguro, hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {
 				console.log(resp)
@@ -968,6 +974,7 @@ $('#btnsolicitarDeuda').click(function() {
 	$.ajax({url: 'php/solicitarDeudasHoy.php', type: 'POST', data: { credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>' }}).done(function(resp) {
 		console.log(resp);
 		var data=JSON.parse(resp);
+		console.log( data );
 		if(data.diasMora==0){
 			$('#spaCMora').parent().parent().addClass("hidden");
 			$('#spaCPrecioMora').parent().parent().addClass("hidden");
@@ -979,6 +986,7 @@ $('#btnsolicitarDeuda').click(function() {
 		$('#spaCCosto').text(data.precioCuotas.toFixed(2));
 		$('#spaCMora').text(data.diasMora);
 		$('#spaCPrecioCuota').text(data.deudaCuotas.toFixed(2));
+		$('#spaCSeguro').text(data.seguro.toFixed(2));
 		$('#spaCPrecioMora').text(data.precioMora.toFixed(2));
 		$('#spaCTotal').text(data.paraFinalizar.toFixed(2));
 		$('#mostrarRealizarPagoCombo').modal('show');

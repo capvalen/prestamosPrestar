@@ -98,20 +98,23 @@ if($llamado= $conection->query($sql)){
 						case '3':
 						case '4':
 						?>
-						<thead><tr><th>N° Cuota</th> <th>F. Programada</th> <th>Capital</th> <th>Interés</th> <th>Cuota</th> </tr></thead>
+						<thead><tr><th>N° Cuota</th> <th>F. Programada</th> <th>Capital</th> <th>Interés</th> <th>Com. Serv.</th> <th>Cuota</th> </tr></thead>
 						<tbody> <?php
-						$i=0;
+						$i=0; 
 						$sql2 = "SELECT * FROM `prestamo_cuotas` WHERE `idPrestamo` = {$idPresPost}";
 						if($llamado2 = $cadena->query($sql2)){
 							$totalRows = $llamado2->num_rows;
+							
 							while($respuesta2 = $llamado2->fetch_assoc()){
-								if($i>=1){ ?>
+								if($i>=1){ 
+									$seguro = round( $respuesta2['cuotSeg'] , 1, PHP_ROUND_HALF_UP); ?>
 								<tr>
 									<td><?= $i; ?></td>
 									<td><?php $fecha = new DateTime($respuesta2['cuotFechaPago']); echo $diassemanaN[$fecha->format('w')].', '. $fecha->format('d').' de '. $mesesN[$fecha->format('n')-1]." de ".$fecha->format('Y');?></td>
 									<td><?= number_format(round($capitalPartido,1, PHP_ROUND_HALF_UP),2); ?></td>
 									<td><?= number_format(round($respuesta2['cuotCuota']- $capitalPartido,1, PHP_ROUND_HALF_UP),2); ?></td>
-									<td><?= number_format(round($respuesta2['cuotCuota'], 1, PHP_ROUND_HALF_UP),2);?></td>
+									<td><?= number_format( $seguro ,2);?></td>
+									<td><?= number_format(round($respuesta2['cuotCuota']+ $seguro, 1, PHP_ROUND_HALF_UP),2);?></td>
 									
 								</tr>
 								<?php }
