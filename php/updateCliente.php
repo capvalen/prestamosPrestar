@@ -10,7 +10,7 @@ $sql= "UPDATE `cliente` SET
 `cliSexo`={$_POST['jcCliente']['sexo']},`cliNumHijos`={$_POST['jcCliente']['hijos']},
 `cliDireccionesIgual`={$_POST['jcCliente']['esCasa']},
 `cliCelularPersonal`='{$_POST['jcCliente']['celPersonal']}', `cliCelularReferencia`='{$_POST['jcCliente']['celRefencia']}',`idEstadoCivil`={$_POST['jcCliente']['estadocivil']}
-WHERE `idCliente`= {$idCli};";
+WHERE `idCliente`= '{$idCli}';";
 //echo $sql;
 
 if ($conection->query($sql)) { 

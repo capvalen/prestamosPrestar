@@ -322,7 +322,7 @@ $('#btnAddClientes').click(function() {
 });
 <? if(isset($_GET['idCliente'])){ ?>
 $('#btnEditClientes').click(function() {
-	$.ajax({url: 'php/solicitarTodoCliente.php', type: 'POST', data: { idCli: <?= $idCli; ?>}}).done(function(resp) { console.log(JSON.parse(resp)[0]);
+	$.ajax({url: 'php/solicitarTodoCliente.php', type: 'POST', data: { idCli: '<?= $idCli; ?>'}}).done(function(resp) { console.log(JSON.parse(resp)[0]);
 		var jCliente = JSON.parse(resp)[0];
 		$('#txtPaternoClienteUpd').val(jCliente.cliApellidoPaterno);
 		$('#txtMaternoClienteUpd').val(jCliente.cliApellidoMaterno);
@@ -481,7 +481,7 @@ $('#btnGuardarClienteUpd').click(function() {
 		var hijos =0;
 		if( $('#txtNumHijosUpd').val()=='' ){hijos = $('#txtNumHijosUpd').val();}
 		var jClienteupd = {
-			idCliente: <?php if(isset($_GET['idCliente'])){ echo $idCli;}else{ echo '""';}?>,
+			idCliente: '<?php if(isset($_GET['idCliente'])){ echo $idCli;}else{ echo '""';}?>',
 			dni: $('#txtDniClienteUpd').val(),
 			apellidoPaterno: $('#txtPaternoClienteUpd').val(),
 			apellidoMaterno: $('#txtMaternoClienteUpd').val(),
@@ -513,7 +513,7 @@ $('#btnGuardarClienteUpd').click(function() {
 
 		}
 		$.ajax({url: 'php/updateCliente.php', type: 'POST', data: { jcCliente: jClienteupd }}).done(function(resp) {
-			console.log(resp)
+			//console.log(resp)
 			location.reload();
 		});
 		//console.log(jClienteupd);

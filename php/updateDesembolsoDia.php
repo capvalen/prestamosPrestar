@@ -15,11 +15,11 @@ INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFech
 select null,{$idPrestamo},0,43,now(),`presMontoDesembolso`,'<a href=creditos.php?credito={$_POST['credito']}>CR-{$idPrestamo}</a>',1,1,{$_COOKIE['ckidUsuario']},0
 from prestamo 
 where `idPrestamo`={$idPrestamo};
-INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`, `idAprueba`) 
+";
+/*INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`, `idAprueba`) 
 select null,{$idPrestamo},0,87,now(),`presMontoDesembolso`*0.015,'<a href=creditos.php?credito={$_POST['credito']}>CR-{$idPrestamo}</a>',1,1,{$_COOKIE['ckidUsuario']},0
 from prestamo 
-where `idPrestamo`={$idPrestamo};
-";
+where `idPrestamo`={$idPrestamo};*/
 
 $respDesemb= $cadena->multi_query($sqlDesembolso);
 
@@ -33,7 +33,7 @@ $rowCabez= $respCabez->fetch_assoc();
 $monto = $rowCabez['presMontoDesembolso'];
 $plazo = $rowCabez['presPeriodo'];
 $saldo = $rowCabez['presMontoDesembolso'];
-$modo= $rowCabez['idTipoPrestamo'];
+$modo= $rowCabez['idTipoPrestamo']; 
 
 
 $sqlRegistrado= "SELECT idCuota, cuotFechaPago FROM `prestamo_cuotas`

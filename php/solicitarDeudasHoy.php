@@ -12,6 +12,7 @@ $k=0;
 $sumaSa=0;
 $diasMora =0;
 $precioCuota=0;
+$seguro=0;
 
 $sql="SELECT idCuota, cuotFechaPago, cuotCuota, cuotPago, cuotSeg FROM `prestamo_cuotas`
 where cuotFechaPago <=curdate() and cuotCuota<>0 and idTipoPrestamo in (33, 79)

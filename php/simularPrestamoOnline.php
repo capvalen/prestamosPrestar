@@ -4,7 +4,7 @@
 	<th>Total</th>
 	<th>Plazo</th>
 	<th>Cuota</th>
-	<th>Seguro</th>
+	<th class="hidden">Seguro</th>
 </thead>
 <tbody>
 <tr>
@@ -165,8 +165,8 @@ for ($i=0; $i < $plazo ; $i++) {
 <td>S/ <?= number_format(round($interes,1, PHP_ROUND_HALF_UP),2); ?></td>
 <td>S/ <?= number_format(round($totalpago,1, PHP_ROUND_HALF_UP),2);?></td>
 <td><?= $plazo;?></td>
-<td>S/ <?= number_format(round($cuota,1, PHP_ROUND_HALF_UP),2); ?></td>
-<td>S/ <?= number_format(round($monto*0.015,1, PHP_ROUND_HALF_UP),2);?> </td>
+<td>S/ <?= number_format(round($cuota + ($monto*0.01/$plazo),1, PHP_ROUND_HALF_UP),2); ?></td>
+<td class="hidden">S/ <?= number_format(round($monto*0.01,1, PHP_ROUND_HALF_UP),2);?> </td>
 </tr></tbody>
 </table>
 <table class="table table-hover" style="margin-top:20px">

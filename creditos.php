@@ -100,7 +100,7 @@ $fechaHoy = new DateTime();
 				<div class="col-sm-2"><label for="">Fecha préstamo</label><p><?php $fechaAut= new DateTime($rowCr['presFechaAutom']); echo $fechaAut->format('j/m/Y h:m a'); ?></p></div>
 				<div class="col-sm-2"><label for="">Fecha desemboslo</label><p><?php if($rowCr['presFechaDesembolso']=='Desembolso pendiente'){echo $rowCr['presFechaDesembolso'];}else{$fechaDes= new DateTime($rowCr['presFechaDesembolso']); echo $fechaDes->format('j/m/Y h:m a');} ?></p></div>
 				<div class="col-sm-2"><label for="">Desembolso</label><p>S/ <?= number_format($rowCr['presMontoDesembolso'],2); ?></p> <span class="hidden" id="spanMontoDado" data-monto=<?= $base58->encode($rowCr['presMontoDesembolso']);?>><?= $rowCr['presMontoDesembolso']; ?></span></div>
-				<div class="col-sm-2"><label for="">Meses</label><p><?= $rowCr['tpreDescipcion']; ?></p></div>
+				<div class="col-sm-2"><label for="">Meses</label><p id="spanTipoDescpago"><?= $rowCr['tpreDescipcion']; ?></p></div>
 				<div class="col-sm-2"><label for="">Interés</label><p id="pinteresGlobal" data-int="<?= $base58->encode($rowCr['preInteresPers']."%");?>"><?= $rowCr['preInteresPers']."%"; ?></p></div>
 				<div class="col-sm-2"><label for="">Analista</label><p><?= $rowCr['usuNombres']; ?></p></div>
 			</div>
@@ -838,8 +838,18 @@ $('body').on('click', '#btnImpresionContrato', function(){
 	var fechaPri = moment($('#tableSubIds tbody tr').eq(1).children().eq(1).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
 	var fecha2 = moment($('#tableSubIds tbody tr').last().children().eq(1).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
 	var interes = $('#pinteresGlobal').attr('data-int');
+	var cantCuotas = $('#tableSubIds tbody tr').length-1;
+	var tipoPago = '';
+	switch ($('#spanTipoDescpago').text()) {
+		case "Mensual": tipoPago='MENSUALES'; break;
+		case "Diario": tipoPago='DIARIOS'; break;
+		case "Quincenal": tipoPago='QUINCENALES'; break;
+		case "Semana": tipoPago='SEMANALES'; break;
+		default:
+			break;
+	}
 	
-	var dataUrl="impresion/printContrato.php?credito="+$(this).attr('data-pre')+"&monto="+monto+"&fecha1="+fecha1+"&fecha2="+fecha2+"&fechaPri="+fechaPri+"&interes="+interes;
+	var dataUrl="impresion/printContrato.php?credito="+$(this).attr('data-pre')+"&monto="+monto+"&fecha1="+fecha1+"&fecha2="+fecha2+"&fechaPri="+fechaPri+"&interes="+interes+"&cantCuota="+cantCuotas+"&tPago="+tipoPago;
 	window.open(dataUrl, '_blank' );
 });
 $('#rowBotonesMaestros').on('click', '#btnImpresionPrevia', function(){
@@ -863,7 +873,7 @@ $('#btnDesembolsar').click(function() {
 		console.log(resp)
 		if(resp==true){
 			//location.reload();
-			var seguro = parseFloat($('#spanMontoDado').text()*0.015).toFixed(2);
+			var seguro = "0.00"; //parseFloat($('#spanMontoDado').text()*0.015).toFixed(2);
 			$('#h1Bien').html(''); //`Cobre S/ ${seguro} de seguro al cliente.`
 			$('#modalGuardadoCorrecto').modal('show');
 			$.ajax({url: '<?= $serverLocal;?>impresion/ticketDesembolso.php', type: 'POST', data: { queMichiEs: 'Crédito nuevo', codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), monto: parseFloat($('#spanMontoDado').text()).toFixed(2), seguro: seguro, hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {

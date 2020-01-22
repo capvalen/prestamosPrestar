@@ -77,8 +77,10 @@ include "php/variablesGlobales.php";
 			</div>
 			<div style="padding-top: 30px;">
 			<button class="btn btn-azul btn-outline" id="btnExportar"><i class="icofont-ui-file"></i> Generar archivo</button>
-			<table class="table table-hover" id="resultadoReporte">
-			</table>
+			<div class="table-responsive">
+				<table class="table table-hover" id="resultadoReporte">
+				</table>
+			</div>
 			<div class="hidden" id="divTablaRespuestas"></div>
 
 			<div class="hidden" id="subCuadro">
