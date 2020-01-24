@@ -62,7 +62,7 @@ include "php/variablesGlobales.php";
 
 					</select>
 				</div>
-				<div class="col-xs-6 col-md-6" id="divFechasRango">
+				<div class="col-xs-12 col-md-6" id="divFechasRango">
 					<div class="sandbox-container">
 						<div class="input-daterange input-group" id="datepicker">
 							<input type="text" class=" form-control" id="inputFechaInicio" name="start" />
@@ -207,7 +207,7 @@ $('#sltFiltroReporte').change(function() {
 		case "R3":
 		case "R4":
 		case "R5": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
-		case "R2": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); $('#resultadoReporte').parent().removeClass('hidden'); $('#divTablaRespuestas').addClass('hidden') break;
+		case "R2": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); $('#resultadoReporte').parent().removeClass('hidden'); $('#divTablaRespuestas').addClass('hidden'); break;
 		case "R6": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
 		case "R7": $('#divFechasRango').addClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
 		case "R8": $('#divFechasRango').addClass('hidden'); $('#divFechasRango').addClass('hidden');  $('#divFechaMensual').removeClass('hidden'); break;
