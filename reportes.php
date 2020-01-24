@@ -30,6 +30,8 @@ include "php/variablesGlobales.php";
 	color:#fff;
 	background-color: #a35bb4;
 }
+.tableFixHead { overflow-y: auto; height: 100vh; }
+.tableFixHead thead th { position: sticky; top: 0; background-color: #fff; }
 </style>
 <div id="wrapper">
 	<!-- Sidebar -->
@@ -56,6 +58,7 @@ include "php/variablesGlobales.php";
 						<option value="R8" class="optReporte">Colocación del mes</option>
 						<option value="R6" class="optReporte">Cuadro de control</option>
 						<option value="R7" class="optReporte">Relación de desembolsos</option>
+						<option value="R10" class="optReporte">Reporte diario</option>
 
 					</select>
 				</div>
@@ -68,16 +71,16 @@ include "php/variablesGlobales.php";
 						</div>
 					</div>
 				</div>
-				<div class="col-xs-6 col-md-6 hidden" id="divFechaMensual">
+				<div class="col-xs-6 col-md-6 col-lg-3 hidden" id="divFechaMensual">
 					<input type="text" id="dtpFechaIniciov3" class="form-control text-center" placeholder="Fecha para filtrar datos">
 				</div>
 				<div class="col-xs-6 col-md-3">
 					<button class="btn btn-success btn-outline" id="btnFiltrarReporte"><i class="icofont-search-1"></i> Filtrar reporte</button>
 				</div>
 			</div>
-			<div style="padding-top: 30px;">
-			<button class="btn btn-azul btn-outline" id="btnExportar"><i class="icofont-ui-file"></i> Generar archivo</button>
-			<div class="table-responsive">
+			<div style="padding-top: 20px;">
+			<button class="btn btn-azul btn-outline" id="btnExportar" style="margin-bottom:10px;"><i class="icofont-ui-file"></i> Generar archivo</button>
+			<div class="table-responsive tableFixHead">
 				<table class="table table-hover" id="resultadoReporte">
 				</table>
 			</div>
@@ -197,16 +200,19 @@ $(document).ready(function(){
 	$('#dtpFechaIniciov3').bootstrapMaterialDatePicker('setDate', moment());
 });
 $('#sltFiltroReporte').change(function() {
+	$('#divFechasRango').removeClass('hidden');
+	$('#divFechaMensual').addClass('hidden');
 	switch ($('#sltFiltroReporte').val()) {
 		case "R1":
-		case "R2":
 		case "R3":
 		case "R4":
 		case "R5": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
+		case "R2": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); $('#resultadoReporte').parent().removeClass('hidden'); $('#divTablaRespuestas').addClass('hidden') break;
 		case "R6": $('#divFechasRango').removeClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
 		case "R7": $('#divFechasRango').addClass('hidden'); $('#divFechaMensual').addClass('hidden'); break;
 		case "R8": $('#divFechasRango').addClass('hidden'); $('#divFechasRango').addClass('hidden');  $('#divFechaMensual').removeClass('hidden'); break;
-		case "R9": $('#divFechasRango').addClass('hidden'); $('#resultadoReporte').addClass('hidden'); $('#divFechaMensual').removeClass('hidden'); $('#divTablaRespuestas').removeClass('hidden'); break;
+		case "R9": $('#divFechasRango').addClass('hidden'); $('#resultadoReporte').parent().addClass('hidden'); $('#divFechaMensual').removeClass('hidden'); $('#divTablaRespuestas').removeClass('hidden');break;
+		case "R10": $('#divFechasRango').addClass('hidden'); $('#divFechaMensual').removeClass('hidden'); break;
 		
 		default:
 			break;
@@ -221,6 +227,25 @@ $('#btnFiltrarReporte').click(function() { //console.log('a')
 			}else{
 			$('#resultadoReporte').html(resp);
 			$("#resultadoReporte .table").stupidtable();
+
+			if($('#sltFiltroReporte').val()=='R10' ){ 
+				$.each( $('#resultadoReporte tbody tr') , function(i, objeto){ 
+					var padre = objeto;
+					var siguiente = $(padre).next();
+					console.log($(siguiente).find('.tdApellidos').text() );
+
+					/* if( padre.find('.tdApellidos') == siguiente.find('.tdApellidos')  ){
+						if( padre.attr('data-proceso')== 81 ){
+							var mora = parseFloat(padre.find('.tdMora').text())
+							var antTotal = parseFloat(padre.find('.tdTotal').text())
+							siguiente.find('.tdMora').text(mora);
+							siguiente.find('.tdTotal').text(antTotal+mora);
+							siguiente.find('.tdTotal').css({'color': 'red'});
+						}
+					} */
+				});
+			}
+
 			}
 			if($('#sltFiltroReporte').val()=='R6'){ $('#subCuadro').removeClass('hidden');
 				$('#tdHijoCapital').text( $('#tdCapital').text().replace(',',''));
@@ -288,6 +313,7 @@ function sumarHijos(malla) {
 	$(malla).first().prev().find('.tdConsolidado').text('S/ '+ suma.toFixed(2));
 	$(malla).last().next().find('.tdConsolidado').text('S/ '+ suma.toFixed(2));
 }
+
 </script>
 <?php } ?>
 </body>

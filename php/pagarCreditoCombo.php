@@ -72,7 +72,7 @@ while($row2=$resultado->fetch_assoc()){
 			`idTipoPrestamo` = 80
 			WHERE `idCuota` = {$row2['idCuota']};
 			INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-				VALUES (null,{$idPrestamo},0,87,now(),{$row2['cuotSeg']},'',1,1,{$_COOKIE['ckidUsuario']});
+				VALUES (null,{$idPrestamo},0,88,now(),{$row2['cuotSeg']},'',1,1,{$_COOKIE['ckidUsuario']});
 			INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
 				VALUES (null,{$idPrestamo},{$row2['idCuota']},80,now(),{$soloCuota},'',1,1,{$_COOKIE['ckidUsuario']});";
 			$filas[] = array('cuota' => $row2['idCuota'], 'montoCuota' => $debePendiente, 'queEs'=> 'Cuota cancelada' );

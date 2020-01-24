@@ -10,7 +10,7 @@ $sumaTodo=0; $sumaRecup =0; $sumaGananc=0;
 
 switch ($_POST['caso']) {
 	case 'R1':
-		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso  FROM `caja` c left join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (31, 81, 80, 33) and cajaActivo = 1 order by idPrestamo;";
+		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso  FROM `caja` c left join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (31, 81, 80, 33, 87,88,89) and cajaActivo = 1 order by idPrestamo;";
 		
 		$resultado=$cadena->query($sql);
 		?> 
@@ -197,7 +197,7 @@ switch ($_POST['caso']) {
 		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, `cajaFecha`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso, cliApellidoPaterno, cliApellidoMaterno, cliNombres
 		FROM `caja` c inner join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso
 		inner join involucrados i on i.idPrestamo = c.idPrestamo inner join cliente cl on i.idCliente = cl.idCliente
-		where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (81, 86) and cajaActivo = 1
+		where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (81, 86, 89) and cajaActivo = 1
 		order by idPrestamo;";
 		$resultado=$cadena->query($sql);
 		?> 
@@ -676,6 +676,67 @@ switch ($_POST['caso']) {
 				<td></td>
 			</tr>
 		</tbody> -->
+		<?php
+		break;
+		case "R10":
+			$sumCapital=0; $sumInteres=0; $sumComision=0; $sumCuota=0; $sumMora=0; $sumTotal=0; $total=0;
+		?> 
+			<table class="table table-hover" id="resultadoReporte">
+				<thead>
+					<tr>
+						<th>Apellidos y nombres de Cliente</th>
+						<th>Capital</th>
+						<th>Interés</th>
+						<th>Com. y Ser.</th>
+						<th>Cuota</th>
+						<th>Mora</th>
+						<th>Total pagado</th>
+						<th>Fecha de pago</th>
+					</tr>
+				</thead>
+				<tbody>
+			<?php
+			$casoEspec = [81, 87, 88, 89];
+			$casoMoras = [81, 89];
+			$sql="SELECT c.*, pc.cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres FROM `caja` c
+			left join prestamo p on c.idPrestamo = p.idPrestamo
+			inner join involucrados i on p.idPrestamo = i.idPrestamo
+			inner join cliente cl on cl.idCliente = i.idCliente
+			left join prestamo_cuotas pc on pc.idCuota = c.idCuota
+			where cajaActivo=1
+			and date_format(cajaFecha, '%Y-%m') = '{$_POST['fMes']}' and idTipoProceso not in (43, 86) and cajaFecha >= '2020-01-17'
+			order by cajaFecha asc ; ";
+			//echo $sql;
+			$resultado=$cadena->query($sql);
+			while ($row = $resultado->fetch_assoc() ) {
+				?>
+				<tr data-id="<?= $row['idCaja'];?>" data-proceso="<?= $row['idTipoProceso']; ?>">
+					<td class="tdApellidos"><?= ucwords($row['cliApellidoPaterno']." ".$row['cliApellidoMaterno']." ".$row['cliNombres']); ?></td>
+					<td class="tdCapital"><?php if(!in_array($row['idTipoProceso'], $casoEspec)){ $sumCapital += floatval($row['cuotCuota']-$row['cuotInteres']); echo floatval($row['cuotCuota']-$row['cuotInteres']); }else{ echo 0;} ?></td>
+					<td class="tdInteres"><?php if(!in_array($row['idTipoProceso'], $casoEspec)){ $sumInteres+= floatval($row['cuotInteres']); echo floatval($row['cuotInteres']); }else{ echo 0;} ?></td>
+					<td class="tdComision"><?php if($row['idTipoProceso']==88){ $sumComision+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
+					<td class="tdCuota"><?php if(!in_array($row['idTipoProceso'], $casoEspec)){ $sumCuota+=floatval($row['cuotCuota']); echo floatval($row['cuotCuota']); }else{ echo 0;} ?></td>
+					<td class="tdMora"><?php if(in_array($row['idTipoProceso'], $casoMoras) ){ $sumMora+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
+					<td class="tdTotal"><?php $sumTotal+= floatval($row['cajaValor']); echo $row['cajaValor']; ?></td>
+					<td><?php $fecha= new DateTime($row['cajaFecha']); echo $fecha->format('d/m/Y'); ?></td>
+				</tr>
+							
+			<?php }
+			$i=1;
+			 ?> </tbody>
+			 <tfoot>
+				 <tr>
+					 <th></th>
+					 <th>S/ <?= number_format(round($sumCapital,1), 2); ?></th>
+					 <th>S/ <?= number_format(round($sumInteres,1), 2); ?></th>
+					 <th>S/ <?= number_format(round($sumComision,1), 2); ?></th>
+					 <th>S/ <?= number_format(round($sumCuota,1), 2); ?></th>
+					 <th>S/ <?= number_format(round($sumMora,1), 2); ?></th>
+					 <th>S/ <?= number_format(round($sumTotal,1), 2); ?></th>
+				 </tr>
+			 </tfoot>
+				</table>
+			
 		<?php
 		break;
 	default:

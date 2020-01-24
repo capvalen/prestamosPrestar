@@ -154,6 +154,7 @@ $fechaHoy = new DateTime();
 				<button class="btn btn-warning btn-outline" id="btnDesembolsar"><i class="icofont-money"></i> Desembolsar</button>
 			<?php else:?>
 				<button class="btn btn-infocat btn-outline" id="btnsolicitarDeuda"><i class="icofont-money"></i> Pago global</button>
+				<button class="btn btn-infocat btn-outline" id="btnMoraExtra"><i class="icofont-shield-alt"></i> Mora extraordinaria</button>
 			<?php endif; ?>
 			<?php else: ?> 
 				<div class="col-xs-12 col-md-6"><br>
@@ -178,6 +179,7 @@ $fechaHoy = new DateTime();
 				<table class="table table-hover" id="tableSubIds">
 					<thead>
 					<tr>
+						<th>N°</th>
 						<th>Sub-ID</th>
 						<th>Fecha programada</th>
 	
@@ -244,6 +246,7 @@ $fechaHoy = new DateTime();
 						}
 						?>
 					<tr>
+						<td><?= $k; ?></td>
 						<td>SP-<?= $rowCuot['idCuota']; ?></td>
 						<td><?php $fechaCu= new DateTime($rowCuot['cuotFechaPago']); echo $fechaCu->format('d/m/Y'); ?></td>
 						<td><? if($k>=1) {echo number_format($capitalPartido,2);} ?></td>
@@ -283,7 +286,7 @@ $fechaHoy = new DateTime();
 					</tbody>
 					<tfoot>
 						<tr>
-							<th></th> <th></th>
+							<th></th> <th></th> <th></th>
 							<th>S/ <?= number_format($sumCapital,2); ?></th>
 							<th>S/ <?= number_format($sumInteres,2); ?></th>
 							<th>S/ <?= number_format($sumSeguros,2); ?></th>
@@ -536,6 +539,26 @@ $fechaHoy = new DateTime();
 	</div>
 </div>
 </div>
+<!-- Modal para realizar un pago automtico combo -->
+<div class="modal fade" id="modalMorasExtras" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal-dialog modal-sm" role="document">
+	<div class="modal-content">
+		<div class="modal-header-infocat">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="myModalLabel"><i class="icofont icofont-help-robot"></i> Moras extras</h4>
+		</div>
+		<div class="modal-body">
+			<p>¿Cuánto pagó el cliente de mora?</p>
+			<input type="number" class="form-control inputGrande text-center esMoneda" id="txtMoraExtra">
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-infocat btn-outline" id="btnInsertarMoraExtra" data-dismiss="modal"><i class="icofont-ui-rate-add"></i> Insertar mora</button>
+		</div>
+	
+	</div>
+</div>
+</div>
+
 <?php endif; ?>
 
 <?php include 'footer.php'; ?>
@@ -976,6 +999,22 @@ $('#btnPagarCreditoCompleto').click(function() {
 		console.log(resp)
 		if(resp==true){
 			location.reload();
+		}
+	});
+});
+$('#btnMoraExtra').click(function() {
+	$('#modalMorasExtras').modal('show');
+});
+$('#btnInsertarMoraExtra').click(function() {
+	$.ajax({url: 'php/insertarMoraExtra.php', type: 'POST', data: { credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', mora: $('#txtMoraExtra').val() }}).done(function(resp) {
+		console.log(resp)
+		if(resp==1){
+			$('#h1Bien2').append(`Se guardó correctamente la mora extraordinaria.`);
+			$('#btnPrintTicketPagoGlo').addClass('hidden');
+			$('#modalGuardadoCorrecto2').modal('show');
+			$('#modalGuardadoCorrecto2').on('hidden.bs.modal', function () { 
+				location.reload();
+			});
 		}
 	});
 });
