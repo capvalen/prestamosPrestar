@@ -1,4 +1,9 @@
 <?
+if( !in_array($_COOKIE['ckPower'], $soloCajas )){
+	$permiso = ' and pre.idUsuario = ' . $_COOKIE['ckidUsuario'];
+}else{
+	$permiso ='';
+}
 $sql="SELECT presMontoDesembolso, presPeriodo, tpr.tpreDescipcion,
 u.usuNombres, preInteresPers, i.idCliente, pre.idPrestamo,
 case presFechaDesembolso when '0000-00-00 00:00:00' then 'Desembolso pendiente' else presFechaDesembolso end as `presFechaDesembolso`,
@@ -9,9 +14,13 @@ FROM `prestamo` pre
 	inner join cliente c on c.idCliente = i.idCliente
 inner join usuario u on u.idUsuario = pre.idUsuario
 inner join tipoprestamo tpr on tpr.idTipoPrestamo = pre.idTipoPrestamo
-	where presActivo =1 and presFechaDesembolso <> '0000-00-00 00:00:00' and presAprobado =1 and i.idTipoCliente=1
+	where presActivo =1 and presFechaDesembolso <> '0000-00-00 00:00:00' and presAprobado =1 and i.idTipoCliente=1 {$permiso}
 	order by pre.idPrestamo asc;";
+	//echo $sql;
 $resultado=$cadena->query($sql);
+if($resultado->num_rows>0){
+
+
 while($row=$resultado->fetch_assoc()){ 
 	$fecha = new DateTime($row['presFechaDesembolso']);
 	?>
@@ -26,4 +35,9 @@ while($row=$resultado->fetch_assoc()){
 		<td><?= $fecha->format('d/m/Y');?></td>
 	</tr>
 <? }
+}else{
 ?>
+<tr>
+	<td colspan="6">No hay Créditos asignados a tu usuario.</td>
+</tr>
+<?php } ?>

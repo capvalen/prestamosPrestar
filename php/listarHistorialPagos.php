@@ -2,7 +2,7 @@
 require("conkarl.php");
 date_default_timezone_set('America/Lima');
 
-$sql="SELECT pre.idPrestamo, presMontoDesembolso, pc.cuotCuota, presFechaDesembolso, fechaFinPrestamo,  tpe.tpreDescipcion, presPeriodo, u.usuNick
+$sql="SELECT pre.idPrestamo, presMontoDesembolso, pc.cuotCuota + + pc.cuotSeg as cuotCuota, presFechaDesembolso, fechaFinPrestamo,  tpe.tpreDescipcion, presPeriodo, u.usuNick, retornarCuantoFaltaPagar(pre.idPrestamo) as faltaSaldo
 FROM `prestamo` pre
 inner join prestamo_cuotas pc on pc.idPrestamo = pre.idPrestamo
 inner join tipoprestamo tpe on tpe.idTipoPrestamo = pre.idTipoPrestamo
@@ -20,9 +20,13 @@ while($row=$resultado->fetch_assoc()){ ?>
     <td><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>"><?= $row['idPrestamo']; ?></a></td>
     <td><?= number_format($row['presMontoDesembolso'],2); ?></td>
     <td><?= number_format($row['cuotCuota'],2); ?></td>
-    <td>k</td>
+		<?php if( $row['faltaSaldo']>0 ){ ?>
+			<td class="text-danger"><?= number_format($row['faltaSaldo'],2); ?></td>
+		<?php }else{ ?>
+			<td class="text-primary"><?= number_format($row['faltaSaldo'],2); ?></td>
+		<?php } ?>
     <td><?php if($row['presFechaDesembolso'] <>'0000-00-00 00:00:00'){ $fechaJ= new DateTime( $row['presFechaDesembolso']); echo $fechaJ->format('d/m/Y'); }else{echo 'Pendiente';}?></td>
-    <td><?php if(is_null($row['fechaFinPrestamo'])){ echo 'Vigente';}else{echo $row['fechaFinPrestamo'];} ?></td>
+    <td><?php if(is_null($row['fechaFinPrestamo'])){ echo '<span class="text-success">Vigente</span>';}else{echo '<span>Cancelado</span>'; } ?></td>
     <td><?= $row['tpreDescipcion']."-".$row['presPeriodo']; ?></td>
 
     <?php 

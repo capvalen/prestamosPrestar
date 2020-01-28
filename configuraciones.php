@@ -1,4 +1,5 @@
 <?php include "php/variablesGlobales.php";
+if( !in_array($_COOKIE['ckPower'], $soloAdmis ) ){ header('Location: sinPermiso.php'); exit; }
 include 'php/conkarl.php'; ?>
 <!DOCTYPE html>
 <html lang="es">

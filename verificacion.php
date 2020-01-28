@@ -1,8 +1,9 @@
 <?php 
+include "php/variablesGlobales.php";
+if( !in_array($_COOKIE['ckPower'], $soloAdmis ) ){ header('Location: sinPermiso.php'); exit; }
 header('Content-Type: text/html; charset=utf8');
 date_default_timezone_set('America/Lima');
 include 'php/conkarl.php';
-include "php/variablesGlobales.php";
 require_once('vendor/autoload.php');
 $base58 = new StephenHill\Base58();
 ?>

@@ -23,4 +23,7 @@ $esclavo->set_charset("utf8");
 $prisionero= new mysqli($server, $username, $password, $db);
 $prisionero->set_charset("utf8");
 
+$preferido= new mysqli($server, $username, $password, $db);
+$preferido->set_charset("utf8");
+
 ?>

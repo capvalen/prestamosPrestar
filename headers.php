@@ -9,7 +9,7 @@
 <!-- Custom CSS -->
 <link rel="shortcut icon" href="images/favicon.png">
 <link rel="stylesheet" href="css/sidebarDeslizable.css?version=1.1.10" >
-<link rel="stylesheet" href="css/cssBarraTop.css?version=1.0.9">
+<link rel="stylesheet" href="css/cssBarraTop.css?version=1.0.10">
 <link rel="stylesheet" href="css/estilosElementosv3.css?version=3.0.69" >
 <link rel="stylesheet" href="css/colorsmaterial.css">
 <link rel="stylesheet" href="css/icofont.css?version=1.1"> <!-- iconos extraidos de: http://icofont.com/-->

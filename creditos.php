@@ -33,6 +33,13 @@ $fechaHoy = new DateTime();
 #contenedorCreditosFluid p, #contenedorCreditosFluid table{color: #a35bb4;}
 .modal p{color: #333;}
 .spanIcono{font-size:16px; margin: 0 5px;}
+.text-danger {
+    color: #f9221e;
+}.text-primary {
+    color: #1388ec;
+}.text-success {
+    color: #00b303;
+}
 </style>
 <div id="wrapper">
 	<!-- Sidebar -->
@@ -55,14 +62,14 @@ $fechaHoy = new DateTime();
 	<?php
 	$codCredito='';
 	if( isset($_GET['credito']) ):
-		$codCredito=$base58->decode($_GET['credito']); ?>
+		$codCredito=$base58->decode($_GET['credito']);?>
 
 		<h3 class="purple-text text-lighten-1" id="h3Codigo" data-id="<?= $codCredito; ?>">Crédito CR-<?= $codCredito; ?></h3>
 
 	<?php
 
 	$sqlCr="SELECT presFechaAutom, presMontoDesembolso, presPeriodo, tpr.tpreDescipcion,
-	u.usuNombres, preInteresPers,
+	u.usuNombres, preInteresPers, pre.idUsuario,
 	case presFechaDesembolso when '0000-00-00' then 'Desembolso pendiente' else presFechaDesembolso end as `presFechaDesembolso`,
 	case presAprobado when 0 then 'Sin aprobar' when 2 then 'Rechazado' else 'Aprobado' end as `presAprobado`, 
 	case when ua.usuNombres is Null then '-' else ua.usuNombres end  as `usuarioAprobador`, pre.idTipoPrestamo
@@ -82,6 +89,12 @@ $fechaHoy = new DateTime();
 		<?php if( $respuesta = $conection->query($sqlCr)){
 			$contadorF = $respuesta->num_rows;
 			$rowCr = $respuesta->fetch_assoc();
+
+			if( !in_array($_COOKIE['ckPower'], $soloCajas ) ){
+				if( $rowCr['idUsuario']<> $_COOKIE['ckidUsuario'] ){
+					?> <script> window.location.href = 'sinPermiso.php'; </script> <?php
+				}
+			}
 			
 			if($contadorF!=0):
 			$_POST['plazos'] = $rowCr['presPeriodo'];
@@ -95,6 +108,13 @@ $fechaHoy = new DateTime();
 			<div class="row">
 				<div class="col-sm-2"><label for="">Verificación</label><p><?= $rowCr['presAprobado']; ?></p></div>
 				<div class="col-sm-2"><label for="">Verificador</label><p><?= $rowCr['usuarioAprobador']; ?></p></div>
+				<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )){ ?>
+				<div class="col-sm-2"><label for="">Nuevo Asesor:</label> <br>
+					<select name="" id="sltNuevoAsesr" class=>
+						<?php include "php/OPTUsuarios.php"; ?>
+					</select>
+				</div>
+				<?php } ?>
 			</div>
 			<div class="row">
 				<div class="col-sm-2"><label for="">Fecha préstamo</label><p><?php $fechaAut= new DateTime($rowCr['presFechaAutom']); echo $fechaAut->format('j/m/Y h:m a'); ?></p></div>
@@ -139,7 +159,7 @@ $fechaHoy = new DateTime();
 					</ul>
 				<?php endif;//de desembolso pendiente ?>
 				</div>
-				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && in_array($_COOKIE['ckPower'], $soloAnalistas)): ?>
+				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && in_array($_COOKIE['ckPower'], $soloAdmis)): ?>
 					<button class="btn btn-success btn-outline " id="btnShowVerificarCredito"><i class="icofont-check-circled"></i> Aprobar crédito</button>
 					<button class="btn btn-danger btn-outline " id="btnDenyVerificarCredito"><i class="icofont-thumbs-down"></i> Denegar crédito</button>
 				<?php else: 
@@ -333,7 +353,7 @@ $fechaHoy = new DateTime();
 									<th>N° Crédito</th>
 									<th>Monto desembolsado</th>
 									<th>Cuota</th>
-									<th>Saldo k</th>
+									<th>Saldo</th>
 									<th>Fecha de desembolso</th>
 									<th>Fecha de cancelación</th>
 									<th>Forma de pago</th>
@@ -449,6 +469,7 @@ $fechaHoy = new DateTime();
 		<? endif; //fin de get Credito ?>
 		<? if( !isset($_GET['titular']) && !isset($_GET['credito']) && !isset($_GET['record']) ): ?>
 		<h3 class="purple-text text-lighten-1">Zona créditos</h3><hr>
+		<h4 class="purple-text text-lighten-1">Mi cartera</h4><hr>
 		<p>Comience buscando un crédito en la parte superior o seleccione uno de todos los créditos activos:</p>
 			<table class="table table-hover" id="tableCreditosTodos">
 			<thead>
@@ -573,6 +594,7 @@ $('.selectpicker').selectpicker();
 $('.mitoolTip').tooltip();
 
 $(document).ready(function(){
+	$('#sltNuevoAsesr').val(-1);
 <?php
 if(isset($_GET['titular'])){
 ?>
@@ -663,6 +685,16 @@ $('#tableSubIds tr').last().find('td').eq(5).text('0.00');
   }
 }); */
 
+<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )){ ?>
+$('#sltNuevoAsesr').change(function() { console.log( 'cambio' );
+	$.ajax({url: 'php/cambiarAsesorCredito.php', type: 'POST', data: { codPrest: '<?= $codCredito;?>', idAsesor: $('#sltNuevoAsesr').val() }}).done(function(resp) {
+		console.log(resp)
+		if(resp==1){
+			location.reload();
+		}
+	});
+});
+<?php } ?>
 
 $('#txtPeriodo').keyup(function() {
 	switch( $('#sltTipoPrestamo').selectpicker('val') ){
@@ -857,9 +889,9 @@ $('#h1Bien').on('click', '#btnImpresionPrevia', function(){
 });
 $('body').on('click', '#btnImpresionContrato', function(){
 	var monto = $('#spanMontoDado').attr('data-monto');
-	var fecha1 = moment($('#tableSubIds tbody tr').first().children().eq(1).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
-	var fechaPri = moment($('#tableSubIds tbody tr').eq(1).children().eq(1).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
-	var fecha2 = moment($('#tableSubIds tbody tr').last().children().eq(1).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var fecha1 = moment($('#tableSubIds tbody tr').first().children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var fechaPri = moment($('#tableSubIds tbody tr').eq(2).children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var fecha2 = moment($('#tableSubIds tbody tr').last().children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
 	var interes = $('#pinteresGlobal').attr('data-int');
 	var cantCuotas = $('#tableSubIds tbody tr').length-1;
 	var tipoPago = '';
@@ -1009,6 +1041,10 @@ $('#btnInsertarMoraExtra').click(function() {
 	$.ajax({url: 'php/insertarMoraExtra.php', type: 'POST', data: { credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', mora: $('#txtMoraExtra').val() }}).done(function(resp) {
 		console.log(resp)
 		if(resp==1){
+			var linea = "Mora extra: S/ " + $('#txtMoraExtra').val();
+			$.ajax({url: '<?= $serverLocal;?>impresion/ticketCuotas.php', type: 'POST', data: { queMichiEs: linea, codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {
+					console.log(resp)
+				});			
 			$('#h1Bien2').append(`Se guardó correctamente la mora extraordinaria.`);
 			$('#btnPrintTicketPagoGlo').addClass('hidden');
 			$('#modalGuardadoCorrecto2').modal('show');
@@ -1067,6 +1103,11 @@ $('#btnRealizarDeposito').click(function() {
 				for(i=1; i<data.length; i++){
 					$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);
 					linea = linea + data[i].queEs +': S/ '+parseFloat(data[i].montoCuota).toFixed(2)+"\n";
+				}
+				if(data[0].faltan>0){
+					$linea = linea + "Tiene " + data[0].faltan + " cuotas más a crédito.\n";
+				}else if(data[0].faltan==0){
+					$linea = linea + "Ud. Acaba de finalizar todas sus cuotas.\n";
 				}
 				$.ajax({url: '<?= $serverLocal;?>impresion/ticketCuotas.php', type: 'POST', data: { queMichiEs: linea, codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {
 					console.log(resp)

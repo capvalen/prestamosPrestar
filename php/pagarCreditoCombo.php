@@ -109,6 +109,13 @@ while($row2=$resultado->fetch_assoc()){
 $respuLargo=$prisionero->multi_query($sentenciaLarga);
 
 
+$sqlFaltan="SELECT retornarNumCuotasFaltanToFin({$idPrestamo}) as faltan";
+//echo $sqlFaltan;
+$resultadoFaltan=$preferido->query($sqlFaltan);
+$rowFaltan=$resultadoFaltan->fetch_assoc();
+//$datoFaltan = $row['faltan'];
+$filas[0]['faltan']= $rowFaltan['faltan']; //= array('faltan'=> );
+
 
 //------- Verificamos que el crédito ya está pagado
 $sqlComprobar= "SELECT idPrestamo FROM prestamo_cuotas

@@ -1,9 +1,10 @@
 <?php
+include "php/variablesGlobales.php";
+if( !in_array($_COOKIE['ckPower'], $soloCajas ) ){ header('Location: sinPermiso.php'); exit; }
 date_default_timezone_set('America/Lima');
 if (!isset($_GET['fecha'])) { //si existe lista fecha requerida
 	$_GET['fecha']=date('Y-m-d');
 }
-include "php/variablesGlobales.php";
  ?>
 <!DOCTYPE html>
 <html lang="es">

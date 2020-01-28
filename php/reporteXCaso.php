@@ -739,6 +739,93 @@ switch ($_POST['caso']) {
 			
 		<?php
 		break;
+		case 'R5':
+		
+			$sql="SELECT pre.`idPrestamo`, `fechaFinPrestamo`, presMontoDesembolso, preInteresPers, presPeriodo,
+			cliApellidoPaterno, cliApellidoMaterno, cliNombres, 'Fin de préstamo' as `tipoDescripcion`
+					FROM `prestamo` pre 
+					inner join involucrados i on i.idPrestamo = pre.idPrestamo inner join cliente cl on i.idCliente = cl.idCliente
+					where `fechaFinPrestamo` between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59'
+					order by idPrestamo";
+			$resultado=$cadena->query($sql);
+			?> 
+			<thead>
+					<tr>
+						<th>Préstamo</th>
+						<th>Cliente</th>
+						<th>Proceso</th>
+						<th>Inversión</th>
+						<th>Fecha</th>
+						
+					</tr>
+				</thead>
+				<tbody>
+		<? while($row=$resultado->fetch_assoc()){ 
+			$sumaTodo = $sumaTodo + $row['presMontoDesembolso']; ?>
+				<tr>
+					<td class="tableexport-string"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
+					<td class='mayuscula'><?= $row['cliApellidoPaterno'].' '.$row['cliApellidoMaterno'].', '.$row['cliNombres'];?></td>
+					<td><?= $row['tipoDescripcion']?></td>
+					<td>S/ <?= number_format($row['presMontoDesembolso'],2);?></td>
+					<td><? $fechaCaj= new DateTime($row['fechaFinPrestamo']); echo $fechaCaj->format('d/m/Y h:m a');?></td>
+				</tr>
+		<? } //end de while ?> 
+				</tbody>
+				<tfoot>
+					<td></td>
+					<td></td>
+					<td></td>
+					<th>S/ <?= number_format($sumaTodo,2);?></th>
+					<td></td>
+				</tfoot>
+			<?
+			break;
+		case "R11":
+				$sql="SELECT ca.*, tp.tipoDescripcion, date_format(cajaFecha, '%d/%m/%Y' ) as fecha FROM `caja` ca
+				inner join tipoproceso tp on tp.idtipoproceso = ca.idtipoproceso
+				where ca.idTipoProceso in (87,88) and cajaActivo=1 and date_format(cajaFecha,'%Y-%m-%d') between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' order by cajaFecha; ";
+				$resultado=$cadena->query($sql);
+				$sumMontos=0; $k=0;
+				?>
+				<thead>
+					<tr>
+						<th>N°</th>
+						<th>Préstamo</th>
+						<th>Tipo</th>
+						<th>Fecha</th>
+						<th>Valor</th>
+						<th>Observación</th>
+						
+					</tr>
+				</thead>
+				<tbody>
+				<?php
+				while($row=$resultado->fetch_assoc()){ 
+					$sumMontos+= $row['cajaValor'];
+				?>
+				<tr>
+					<td><?= $k+1; ?></td>
+					<td class="tableexport-string"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo']; ?></a></td>
+					<td><?= $row['tipoDescripcion']; ?></td>
+					<td class="tableexport-string"><?= $row['fecha']; ?></td>
+					<td class="tableexport-string">S/ <?= number_format($row['cajaValor'],2); ?></td>
+					<td class="tableexport-string"><?= $row['cajaObservacion']; ?></td>
+				</tr>
+				<?php
+				$k++; }?>
+				</tbody>
+				<tfoot>
+					<td></td>
+					<td></td>
+					<td></td>
+					<th><?= number_format(round($sumMontos,1), 2); ?></th>
+					<td></td>
+					
+				</tfoot>
+				<?php
+				
+				
+			break;
 	default:
 		# code...
 		break;
