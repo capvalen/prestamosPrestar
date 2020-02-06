@@ -890,7 +890,7 @@ $('#h1Bien').on('click', '#btnImpresionPrevia', function(){
 $('body').on('click', '#btnImpresionContrato', function(){
 	var monto = $('#spanMontoDado').attr('data-monto');
 	var fecha1 = moment($('#tableSubIds tbody tr').first().children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
-	var fechaPri = moment($('#tableSubIds tbody tr').eq(2).children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var fechaPri = moment($('#tableSubIds tbody tr').eq(1).children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
 	var fecha2 = moment($('#tableSubIds tbody tr').last().children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
 	var interes = $('#pinteresGlobal').attr('data-int');
 	var cantCuotas = $('#tableSubIds tbody tr').length-1;
@@ -1106,7 +1106,8 @@ $('#btnRealizarDeposito').click(function() {
 					linea = linea + data[i].queEs +': S/ '+parseFloat(data[i].montoCuota).toFixed(2)+"\n";
 					sumAcumulado+=data[i].montoCuota
 				}
-				linea = linea + "Total: S/ " + parseFloat(sumAcumulado).toFixed(2);
+				linea = linea + "Total: S/ " + parseFloat(sumAcumulado + sumaMora).toFixed(2);
+				
 				if(data[0].faltan>0){
 					$linea = linea + "Tiene " + data[0].faltan + " cuotas más a crédito.\n";
 				}else if(data[0].faltan==0){

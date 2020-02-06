@@ -118,8 +118,8 @@ if($llamado= $conection->query($sql)){
 									<td><?= number_format(round($respuesta2['cuotCuota']+ $seguro, 1, PHP_ROUND_HALF_UP),2);?></td>
 									
 								</tr>
-								<?php }
-								$sumaCapi+= $capitalPartido; $sumaInteres+= ($respuesta2['cuotCuota']-$capitalPartido); $sumaComi+=$seguro; $sumaCuota+=$respuesta2['cuotCuota']+ $seguro;
+								<?php $sumaInteres+= ($respuesta2['cuotCuota']- $capitalPartido); }
+								$sumaCapi+= $capitalPartido;  $sumaComi+=$seguro; $sumaCuota+=$respuesta2['cuotCuota']+ $seguro;
 								$i++;
 							}
 						}
