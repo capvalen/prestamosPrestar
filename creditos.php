@@ -1041,7 +1041,7 @@ $('#btnInsertarMoraExtra').click(function() {
 	$.ajax({url: 'php/insertarMoraExtra.php', type: 'POST', data: { credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', mora: $('#txtMoraExtra').val() }}).done(function(resp) {
 		console.log(resp)
 		if(resp==1){
-			var linea = "Mora extra: S/ " + $('#txtMoraExtra').val();
+			var linea = "Mora extra: S/ " + $('#txtMoraExtra').val() ;
 			$.ajax({url: '<?= $serverLocal;?>impresion/ticketCuotas.php', type: 'POST', data: { queMichiEs: linea, codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {
 					console.log(resp)
 				});			
@@ -1100,10 +1100,13 @@ $('#btnRealizarDeposito').click(function() {
 				}else{ console.log( 'sin mora' );
 					/* for(i=1; i<data.length; i++){$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);} */
 				}
+				let sumAcumulado=0;
 				for(i=1; i<data.length; i++){
 					$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);
 					linea = linea + data[i].queEs +': S/ '+parseFloat(data[i].montoCuota).toFixed(2)+"\n";
+					sumAcumulado+=data[i].montoCuota
 				}
+				linea = linea + "Total: S/ " + parseFloat(sumAcumulado).toFixed(2);
 				if(data[0].faltan>0){
 					$linea = linea + "Tiene " + data[0].faltan + " cuotas más a crédito.\n";
 				}else if(data[0].faltan==0){

@@ -64,6 +64,7 @@ a:focus, a:hover { color: #62286f; }
 					</div>
 				</div>
 			</div>
+			         
 	
 			<div class="row container-fluid">
 					<p class="pheader col-xs-12"><i class="icofont icofont-hard-disk"></i> Datos del cuadre</p>
@@ -586,7 +587,7 @@ $('#btnGuardarCierre').click(function () {
 	}
 });
 $('.modal-GuardadoCorrecto').on('click', '#btnPrintTCierre', function (e) {
-	$.ajax({url: '<?= $servidorLocal;?>printTicketCierre.php', type: 'POST', data: {
+	$.ajax({url: '<?= $servidorLocal;?>impresion/printTicketCierre.php', type: 'POST', data: {
 		apertura: $('#spanApertura').text(),
 		cierre: $('#txtMontoCierre').val(),
 		efectivoEntrada: $('#spanResultadoFinal').attr('sumaEfectivo'),
@@ -678,9 +679,10 @@ $('.btnPrintCajaEsp').click(function () {
 		case '28':
 			queTitulo='* Registro de Producto *\nGracias por registrar su producto';
 			queMonto= $('#spanPresInicial').text(); 
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
+				titulo: queTitulo,
 				fecha: queFecha.replace('a las ', ''),
 				cliente: queDueno,
 				articulo: queArticulo,
@@ -689,7 +691,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '9':
 			queTitulo='* Pago Parcial de Interés *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -701,7 +703,7 @@ $('.btnPrintCajaEsp').click(function () {
 		case '10':
 		case '44':
 			queTitulo='* Cancelación de Interés *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -712,7 +714,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '21':
 			queTitulo='* Venta de producto *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketVenta.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketVenta.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -723,7 +725,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '45':
 			queTitulo='* Amotización al préstamo *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -734,7 +736,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '32':
 			queTitulo='* Fin de préstamo *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -745,7 +747,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '33':
 			queTitulo='* Pago parcial *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -756,7 +758,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '36':
 			queTitulo='* Gastos Adminitrativos *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketGastos.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketGastos.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -767,7 +769,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '38':
 			queTitulo='* Compra *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketCompra.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketCompra.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -777,7 +779,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '43':
 			queTitulo='* Desembolso *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -787,7 +789,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '76':
 			queTitulo='* Pago de cochera *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketGastos.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketGastos.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -798,7 +800,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '80':
 			queTitulo='* Pago de cuota *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -808,7 +810,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '81':
 			queTitulo='* Pago de mora *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -819,7 +821,7 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 		case '87':
 			queTitulo='* Pago de seguro *';
-			$.ajax({url: '<?= $servidorLocal; ?>impresion//printTicketv3.php', type: 'POST', data: {
+			$.ajax({url: '<?= $servidorLocal; ?>impresion/printTicketv3.php', type: 'POST', data: {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
@@ -829,7 +831,13 @@ $('.btnPrintCajaEsp').click(function () {
 			}}).done(function (resp) { 	}); break;
 	}
 	
-	
+	console.log( 'codigo: '+code+"\n",
+				'cliente:' + cliente+"\n",
+				'titulo:' + queTitulo+"\n",
+				'fecha:' + queFecha.replace('a las ', '')+"\n",
+				'cliente:' + queDueno+"\n",
+				'monto:' + queMonto+"\n",
+				'usuario:' + queUser );
 });
 $('body').on('click', '.btnChangeMonedaEsp', function (e) {
 	$('#btnUpdateMoneda').attr('data-caja', $(this).attr('data-caja'));
