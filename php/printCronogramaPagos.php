@@ -9,7 +9,7 @@ $diassemanaN= array("Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","
 $mesesN=array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
 $nomEmpresa = $_COOKIE['cknombreEmpresa'];
 $idPresPost = $base58->decode($_GET['prestamo']);
-$sumaCapi =0; $sumaInteres=0; $sumaComi=0; $sumaCuota=0; $seguro=0;
+$sumaCapi =0; $sumaInteres=0; $sumaComi=0; $sumaCuota=0; $seguro=0; $sumaTodo=0; $todo =0;
 $sql = "SELECT pre.*, lower(concat(TRIM(c.cliApellidoPaterno), ' ', TRIM(c.cliApellidoMaterno), ', ', TRIM(c.cliNombres))) as cliNombres, c.cliDni, tp.tpreDescipcion, lower( concat(a.addrDireccion, ' ', a.addrNumero, ' ', d.distrito, ' - ', p.provincia )) as `direccion`
 FROM `prestamo` pre
 inner join tipoprestamo tp on tp.idTipoPrestamo = pre.idTipoPrestamo
@@ -108,7 +108,9 @@ if($llamado= $conection->query($sql)){
 							
 							while($respuesta2 = $llamado2->fetch_assoc()){
 								if($i>=1){ 
-									$seguro = round( $respuesta2['cuotSeg'] , 1, PHP_ROUND_HALF_UP); ?>
+									$seguro = round( $respuesta2['cuotSeg'] , 1, PHP_ROUND_HALF_UP); 
+									
+									?>
 								<tr>
 									<td><?= $i; ?></td>
 									<td><?php $fecha = new DateTime($respuesta2['cuotFechaPago']); echo $diassemanaN[$fecha->format('w')].', '. $fecha->format('d').' de '. $mesesN[$fecha->format('n')-1]." de ".$fecha->format('Y');?></td>
@@ -116,10 +118,11 @@ if($llamado= $conection->query($sql)){
 									<td><?= number_format(round($respuesta2['cuotCuota']- $capitalPartido,1, PHP_ROUND_HALF_UP),2); ?></td>
 									<td><?= number_format( $seguro ,2);?></td>
 									<td><?= number_format(round($respuesta2['cuotCuota']+ $seguro, 1, PHP_ROUND_HALF_UP),2);?></td>
-									
 								</tr>
-								<?php $sumaInteres+= ($respuesta2['cuotCuota']- $capitalPartido); }
+								<?php $sumaInteres+= ($respuesta2['cuotCuota']- $capitalPartido);
 								$sumaCapi+= $capitalPartido;  $sumaComi+=$seguro; $sumaCuota+=$respuesta2['cuotCuota']+ $seguro;
+								}
+								
 								$i++;
 							}
 						}
