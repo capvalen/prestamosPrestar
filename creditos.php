@@ -1091,28 +1091,30 @@ $('#btnRealizarDeposito').click(function() {
 		var linea ='';
 		$.ajax({url: 'php/pagarCreditoCombo.php', type: 'POST', data: {credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', dinero: $('#txtPagaClienteVariable').val(), exonerar: $('#chkExonerar').prop('checked') }}).done(function(resp) { console.log( resp );
 			var data = JSON.parse(resp); //console.log(data)
+			var sumAcumulado=0, sumaMoras=0;
 			if( data.length >0 ){
 				if(data[0].diasMora>0){ console.log( 'con mora' );
 					$('#tituloPeque2').text('Items cancelados');
 					$('#h1Bien2').append(`<span  data-quees='${data[0].queEs}' data-monto='${data[0].montoCuota}' data-id='0'>Mora: S/ `+ parseFloat(data[0].sumaMora).toFixed(2) +`</span><br>`);
 					linea = linea + data[0].queEs +': S/ '+parseFloat(data[0].sumaMora).toFixed(2)+"\n";
-
+					sumaMoras = parseFloat(data[0].sumaMora);
 				}else{ console.log( 'sin mora' );
 					/* for(i=1; i<data.length; i++){$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);} */
 				}
-				let sumAcumulado=0;
+				
 				for(i=1; i<data.length; i++){
 					$('#h1Bien2').append(`<span data-quees='${data[i].queEs}' data-monto='${data[i].montoCuota}' data-id='${data[i].cuota}'>SP-`+ data[i].cuota +`: S/ `+ parseFloat(data[i].montoCuota).toFixed(2) +`</span><br>`);
 					linea = linea + data[i].queEs +': S/ '+parseFloat(data[i].montoCuota).toFixed(2)+"\n";
 					sumAcumulado+=data[i].montoCuota
 				}
-				linea = linea + "Total: S/ " + parseFloat(sumAcumulado + sumaMora).toFixed(2);
+				linea = linea + "Total: S/ " + parseFloat(sumAcumulado + sumaMoras ).toFixed(2);
 				
 				if(data[0].faltan>0){
-					$linea = linea + "Tiene " + data[0].faltan + " cuotas más a crédito.\n";
+					linea = linea + "Tiene " + data[0].faltan + " cuotas más a crédito.\n";
 				}else if(data[0].faltan==0){
-					$linea = linea + "Ud. Acaba de finalizar todas sus cuotas.\n";
+					linea = linea + "\nUd. Acaba de finalizar todas sus cuotas.\n";
 				}
+				//console.log( linea );
 				$.ajax({url: '<?= $serverLocal;?>impresion/ticketCuotas.php', type: 'POST', data: { queMichiEs: linea, codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {
 					console.log(resp)
 				});

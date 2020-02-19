@@ -6,7 +6,7 @@ $base58 = new StephenHill\Base58();
 $sql = mysqli_query($conection,"SELECT ca.*, tp.tipoDescripcion, u.usuNombres FROM `caja` ca
 inner join tipoproceso tp on tp.idTipoProceso = ca.idTipoProceso
 inner join usuario u on u.idUsuario = ca.idUsuario
-where idPrestamo= {$base58->decode($_POST['credito'])} and ca.idTipoProceso in (81, 86, 87, 88, 89) and cajaActivo=1;");
+where idPrestamo= {$base58->decode($_POST['credito'])} and ca.idTipoProceso in (81, 86, 87, 88, 89) and cajaActivo=1 order by cajaFecha asc;");
 $filas=$sql->num_rows;
 
 if($filas > 0){
