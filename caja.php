@@ -1,11 +1,17 @@
-<?php
+<?php 
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include "php/variablesGlobales.php";
 if( !in_array($_COOKIE['ckPower'], $soloCajas ) ){ header('Location: sinPermiso.php'); exit; }
 date_default_timezone_set('America/Lima');
 if (!isset($_GET['fecha'])) { //si existe lista fecha requerida
 	$_GET['fecha']=date('Y-m-d');
 }
- ?>
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -26,15 +32,28 @@ clear: left; }
 table{color:#5f5f5f;}
 th{color:#a35bb4}
 #dtpFechaIniciov3{color: #a35bb4;}
-#txtMontoApertura, #txtMontoCierre, #txtMontoPagos {font-size: 26px;}
+#txtMontoApertura, #txtMontoCierre, #txtMontoPagos, #txtPasarPagos, #txtPorcentajePagos {font-size: 26px;}
 a{color: #a35bb4;}
 a:focus, a:hover { color: #62286f; }
+#sltHistorialCierres { font-family: "IcoFont", Poppins, sans-serif; }
+.modal-pagoMaestro .close, .modal-pagoMaestro .close { color: #6f5e5e; }
+.modal-pagoMaestro .close:hover, .modal-pagoMaestro .close:hover{color: #ea1010;opacity: 0.7;}
+.btnBotonCajon{
+	margin-top: -37px;
+	height: 40px;
+	margin-bottom: 20px;
+	background-color: transparent;
+}
+.btnBotonCajon:hover, .btnBotonCajon:active,.btnBotonCajon:focus, .btnBotonCajon:active:focus{
+	background-color: transparent;
+	color: #eabff5;
+}
 </style>
 
 
 <div id="wrapper">
 	<!-- Sidebar -->
-	<?php include 'menu-wrapper.php' ?>
+	<?php include 'menu-wrapper.php'; ?>
 	<!-- /#sidebar-wrapper -->
 
 <!-- Page Content -->
@@ -64,7 +83,6 @@ a:focus, a:hover { color: #62286f; }
 					</div>
 				</div>
 			</div>
-			         
 	
 			<div class="row container-fluid">
 					<p class="pheader col-xs-12"><i class="icofont icofont-hard-disk"></i> Datos del cuadre</p>
@@ -80,13 +98,14 @@ a:focus, a:hover { color: #62286f; }
 			</div>
 			
 			<?php if( isset($_GET['cuadre']) ): ?>		
-			<div class="container-fluid col-xs-12 ">
+			<div class="row container-fluid ">
 				<div class="pheader">
 					<h4> <i class="icofont icofont-plus-circle"></i> Entradas de dinero </h4>
 					<?php 
 					if(date('Y-m-d')==$_GET['fecha']){ ?>
-						<div class="dropdown">
-							<button class="btn btn-default dropdown-toggle pull-right " type="button" id="dropdownEntradas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: -37px; color: #a35bb4;"><i class="icofont icofont-ui-rate-add"></i> <span class="caret"></span></button>
+						<div class="dropdown pull-right">
+							<button class="btn btn-default btn-sinBorde btn-outline btnBotonCajon"><i class="icofont icofont-key-hole"></i></button>
+							<button class="btn btn-default dropdown-toggle" type="button" id="dropdownEntradas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: -37px; color: #a35bb4;"><i class="icofont icofont-ui-rate-add"></i> <span class="caret"></span></button>
 							<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownEntradas">
 								<?php include "php/omitidasEntradasLI.php"; ?>
 							</ul>
@@ -96,7 +115,7 @@ a:focus, a:hover { color: #62286f; }
 				
 				<div class=" panel panel-default" id="divEntradas">
 					<div class="table-responsive">
-						<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Cliente</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+						<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
 						<tbody>
 						<?php
 						if( ! isset($_GET['cuadre']) ):
@@ -110,13 +129,14 @@ a:focus, a:hover { color: #62286f; }
 					</div>
 				</div>
 			</div>
-			<div class="row container-fluid ">
+			<div class="row container-fluid  ">
 				<div class="pheader">
 					<h4><i class="icofont icofont-minus-circle"></i> Salidas de dinero</h4>
 					<?php 
 					if(date('Y-m-d')==$_GET['fecha']){ ?>
-						<div class="dropdown">
-							<button class="btn btn-default dropdown-toggle pull-right " type="button" id="dropdownEntradas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: -37px; color: #a35bb4;"><i class="icofont icofont-ui-rate-remove"></i> <span class="caret"></span></button>
+						<div class="dropdown pull-right">
+							<button class="btn btn-default btn-sinBorde btn-outline btnBotonCajon"><i class="icofont icofont-key-hole"></i></button>
+							<button class="btn btn-default dropdown-toggle  " type="button" id="dropdownEntradas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: -37px; color: #a35bb4;"><i class="icofont icofont-ui-rate-remove"></i> <span class="caret"></span></button>
 							<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownEntradas">
 								<?php include "php/omitidasSalidasLI.php"; ?>
 							</ul>
@@ -125,7 +145,7 @@ a:focus, a:hover { color: #62286f; }
 				</div>
 				<div class=" panel panel-default " id="divSalidas">
 					<div class="table-responsive">
-						<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Cliente</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+						<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
 						<tbody>
 						<?php
 							if( ! isset($_GET['cuadre']) ):
@@ -175,34 +195,46 @@ a:focus, a:hover { color: #62286f; }
 <!-- Modal para Abrir caja  -->
 
 <div class="modal fade modal-pagoMaestro" tabindex="-1" role="dialog">
-	<div class="modal-dialog modal-sm">
+	<div class="modal-dialog ">
 		<div class="modal-content">
-			<div class="modal-header-primary">
+			<div class="modal-header-primary hidden">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-tittle"><i class="icofont icofont-animal-cat-alt-3"></i> Insertar proceso especial</h4>
 			</div>
 			<div class="modal-body">
-				<div class="container-fluid">
-					<p>Rellene cuidadosamente la siguiente información</p>
-					<label for="">Tipo de proceso</label>
-					<div id="cmbEstadoPagos">
-					<h5 id="h5TipoPago"></h5></div>
-					<label for="">Monto S/</label>
-					<input type="number" class="form-control input-lg mayuscula text-center esMoneda" id="txtMontoPagos" val="0.00" autocomplete="off">
-					<label for="">Método de pago</label>
-					<div id="divCmbMetodoPago">
-						<select class="form-control selectpicker" id="sltMetodopago" title="Métodos..."  data-width="100%" data-live-search="true" data-size="15">
-							<?php include 'php/listarMonedaOPT.php'; ?>
-						</select>
-					</div> <br>
-					<label for="">¿Observaciones?</label>
-					<input type="text" class="form-control input-lg mayuscula" id="txtObsPagos" autocomplete="off">
-					<div class="divError text-left hidden"><i class="icofont icofont-animal-cat-alt-4"></i> Lo sentimos, <span class="spanError">La cantidad de producto no puede ser cero o negativo.</span></div>
+			<div class="container-fluid">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
+				<div class="row">
+					<div class="col-sm-6">
+						<img class="img-responsive" src="images/youchai.jpg?ver=1.0" style="padding-top:50px">
+					</div>
+					<div class="col-sm-6 deep-purple-text">
+						<h4 class="">Ingresar Proceso Especial</h4>
+						<p>Rellene cuidadosamente la siguiente información</p>
+						<label for="">Tipo de proceso</label>
+						<div id="cmbEstadoPagos"> <h5><strong id="h5TipoPago"></strong></h5> </div>
+						<label id="lblMontoEntregar" for="">Monto en efectivo: (S/)</label>
+						<input type="number" class="form-control input-lg mayuscula text-center esMoneda" id="txtMontoPagos" val="0.00" autocomplete="off">
+						<label id="lblPorcentajePasar" for="">Porcentaje en juego: (%)</label>
+						<input type="number" class="form-control input-lg mayuscula text-center " id="txtPorcentajePagos" val="0.00" autocomplete="off">
+						<label id="lblMontoPasar" for="">Pasar por el P.O.S.: (S/)</label>
+						<input type="number" class="form-control input-lg mayuscula text-center esMoneda" id="txtPasarPagos" val="0.00" autocomplete="off">
+						<label for="">Método de pago</label>
+						<div id="divCmbMetodoPago">
+							<select class="form-control selectpicker" id="sltMetodopago" title="Métodos..."  data-width="100%" data-live-search="true" data-size="15">
+								<?php include 'php/listarMonedaOPT.php'; ?>
+							</select>
+						</div> <br>
+						<label for="">¿Observaciones?</label>
+						<input type="text" class="form-control input-lg mayuscula" id="txtObsPagos" autocomplete="off">
+						<div class="divError text-left hidden"><i class="icofont icofont-animal-cat-alt-4"></i> Lo sentimos, <span class="spanError">La cantidad de producto no puede ser cero o negativo.</span>
+					</div>
+						<button class="btn btn-morado btn-outline btn-block " id="btnInsertPagoOmiso" data-dismiss="modal" ><i class="icofont icofont-bubble-down"></i> Insertar proceso</button>
+					</div>
 				</div>
 			</div>
-			<div class="modal-footer">
-				<button class="btn btn-azul btn-outline" id="btnInsertPagoOmiso" ><i class="icofont icofont-bubble-down"></i> Insertar proceso</button>
-		</div>
+			</div>
+			<div class="modal-footer hidden"></div>
 		</div>
 	</div>
 </div>
@@ -284,36 +316,6 @@ a:focus, a:hover { color: #62286f; }
 </div>
 </div>
 
-
-<!-- Modal para Cambiar tipo de moneda de caja  -->
-<div class="modal fade" id="modalCambiarMonedaCaja" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-<div class="modal-dialog modal-sm" role="document">
-	<div class="modal-content">
-		<div class="modal-header-warning">
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="myModalLabel"> Cambiar tipo de moneda</h4>
-		</div>
-		<div class="modal-body">
-			<div class="container-fluid">
-			<div class="row">
-				<label for="">Método de pago</label>
-				<div id="divCmbMetodoPago3">
-					<select class="form-control selectpicker" id="sltMetodopago3" title="Métodos..."  data-width="100%" data-live-search="true" data-size="15">
-						<?php include 'php/listarMonedaOPT.php'; ?>
-					</select>
-				</div> <br>
-				
-			</div>
-		</div>
-		<div class="divError text-left hidden"><i class="icofont icofont-test-bulb"></i> Lo sentimos, <span class="spanError"></span></div>	<br>
-		<div class="modal-footer">
-			<button class="btn btn-warning btn-outline" id="btnUpdateMoneda"><i class="icofont icofont-save"></i> Actualizar</button>
-		</div>
-	</div>
-	</div>
-</div>
-</div>
-
 <!-- Modal para Cambiar salida de caja  -->
 <div class="modal fade" id="modalCambiarSalidaCaja" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
 <div class="modal-dialog modal-sm" role="document">
@@ -341,7 +343,7 @@ a:focus, a:hover { color: #62286f; }
 </div>
 <!--Modal Para insertar pago maestro -->
 <div class="modal fade modal-cajaMaestra" tabindex="-1" role="dialog">
-	<div class="modal-dialog modal-sm">
+	<div class="modal-dialog moda-sm">
 		<div class="modal-content">
 			<div class="modal-header-success">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
@@ -349,36 +351,36 @@ a:focus, a:hover { color: #62286f; }
 			</div>
 			<div class="modal-body">
 				<div class="container-fluid">
-					<p>Rellene cuidadosamente la siguiente información</p>
-					<label for="">Tipo de pago</label>
-					<div id="cmbEstadoPagos2">
-					<select class="selectpicker mayuscula" id="spTipoPago2" title="Tipos de pago..."  data-width="100%" data-live-search="true" data-size="15">
-						<?php require 'php/detallePagosOPT.php'; ?>
-					</select></div>
-					<label for="">Fecha de pago</label>
-					<input id="dtpCajaFechaPago" type="text" class="form-control input-lg text-center" autocomplete="off">
-					<label class="hidden" for="">Método de pago</label>
-					<div class="hidden" id="divCmbMetodoPago">
-						<select class="form-control selectpicker" id="sltCajaMetodopago" title="Métodos..."  data-width="100%" data-live-search="true" data-size="15">
-							<?php include 'php/listarMonedaOPT.php'; ?>
-						</select>
-					</div>
-					<label for="">Métodos de pago</label>
-					<div id="divCmbMetodoPago2">
-						<select class="form-control selectpicker" id="sltMetodopago2" title="Métodos..."  data-width="100%" data-live-search="true" data-size="15">
-							<?php include 'php/listarMonedaOPT.php'; ?>
-						</select>
-					</div> <br>
-					<label for="">Monto de pago S/</label>
-					<input type="number" class="form-control input-lg mayuscula text-center " id="txtCajaMontoPagos" autocomplete="off" style="font-size: 20px;">
-					<label for="">¿Observaciones?</label>
-					<input type="text" class="form-control input-lg mayuscula" id="txtCajaObsPagos" autocomplete="off">
-					<label for="">¿Activo?</label>
-					<select name="" id="sltActivoV2" class="form-control">
-						<option value="0">Inactivo</option>
-						<option value="1">Activo</option>
+				<p>Rellene cuidadosamente la siguiente información</p>
+				<label for="">Tipo de pago</label>
+				<div id="cmbEstadoPagos2">
+				<select class="selectpicker mayuscula" id="spTipoPago2" title="Tipos de pago..."  data-width="100%" data-live-search="true" data-size="15">
+					<?php require 'php/detallePagosOPT.php'; ?>
+				</select></div>
+				<label for="">Fecha de pago</label>
+				<input id="dtpCajaFechaPago" type="text" class="form-control input-lg text-center" autocomplete="off">
+				<label class="hidden" for="">Método de pago</label>
+				<div class="hidden" id="divCmbMetodoPago">
+					<select class="form-control selectpicker" id="sltCajaMetodopago" title="Métodos..."  data-width="100%" data-live-search="true" data-size="15">
+						<?php include 'php/listarMonedaOPT.php'; ?>
 					</select>
-					<div class="divError text-left hidden"><i class="icofont icofont-animal-cat-alt-4"></i> Lo sentimos, <span class="spanError"></span></div>
+				</div>
+				<label for="">Métodos de pago</label>
+				<div id="divCmbMetodoPago2">
+					<select class="form-control selectpicker" id="sltMetodopago2" title="Métodos..."  data-width="100%" data-live-search="true" data-size="15">
+						<?php include 'php/listarMonedaOPT.php'; ?>
+					</select>
+				</div> <br>
+				<label for="">Monto de pago S/</label>
+				<input type="number" class="form-control input-lg mayuscula text-center " id="txtCajaMontoPagos" autocomplete="off" style="font-size: 20px;">
+				<label for="">¿Observaciones?</label>
+				<input type="text" class="form-control input-lg mayuscula" id="txtCajaObsPagos" autocomplete="off">
+				<label for="">¿Activo?</label>
+				<select name="" id="sltActivoV2" class="form-control">
+					<option value="0">Inactivo</option>
+					<option value="1">Activo</option>
+				</select>
+				<div class="divError text-left hidden"><i class="icofont icofont-animal-cat-alt-4"></i> Lo sentimos, <span class="spanError"></span></div>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -401,7 +403,7 @@ a:focus, a:hover { color: #62286f; }
 datosUsuario();
 $(document).ready(function () {
 	$('#sltHistorialCierres').change(function () {
-		window.location.href = 'caja.php?cuadre='+$('#sltHistorialCierres').val();
+		window.location.href = 'caja.php?fecha='+moment($('#dtpFechaIniciov3').val(),'DD/MM/YYYY').format('YYYY-MM-DD')+'&cuadre='+$('#sltHistorialCierres').val();
 	});
 });
 $('#dtpFechaIniciov3').val('<?php
@@ -442,7 +444,7 @@ function calculoTicketVirtual() {
 	
 
 	cuadre = parseFloat(apertura+efectivosEntrada-efectivosSalida-tarjetasSalida).toFixed(2);
-	sobra = parseFloat(cierre-cuadre);
+	sobra = parseFloat(cuadre-cierre);
 	$('#spanTotalEfectivo').text(cierre.toFixed(2));
 	$('#spanTotalSistema').text( cuadre);
 	
@@ -480,9 +482,9 @@ $('#dtpFechaIniciov3').bootstrapMaterialDatePicker({
 	okText: 'Aceptar', nowText: 'Hoy'
 });
 $('#dtpCajaFechaPago').bootstrapMaterialDatePicker({
-	format: 'DD/MM/YYYY hh:mm a',
+	format: 'DD/MM/YYYY h:mm a',
 	lang: 'es',
-	time: true,
+	shortTime : true,
 	weekStart: 1,
 	cancelText : 'Cerrar',
 	nowButton : true,
@@ -490,10 +492,24 @@ $('#dtpCajaFechaPago').bootstrapMaterialDatePicker({
 	okText: 'Aceptar', nowText: 'Hoy'
 });
 $('#btnCajaAbrir').click(function () {
+	pantallaOver(true);
 	$.ajax({url: 'php/listarUltimoCuadreValor.php', type: 'POST'}).done(function(resp) {
 		$('#txtMontoApertura').val(parseFloat(resp).toFixed(2));
 		$('#txtMontoApertura').attr('data-val',resp);
 	});
+	/* $.ajax({url: '<?= $serverLocal; ?>solicitarTokenCaja.php', type: 'POST'}).done(function(resp) {
+		console.log(resp)
+		if( resp.length ==3){
+
+		}else{
+			listaBugs('sin', resp);	
+		}
+		pantallaOver(false);
+	}).fail(function () {
+		listaBugs('sin', 'Revise la IP del cajero');
+		pantallaOver(false);
+	}); */
+	pantallaOver(false);
 	$('.modal-aperturarCaja').modal('show');
 });
 $('#btnGuardarApertura').click(function () {
@@ -579,15 +595,27 @@ $('#btnGuardarCierre').click(function () {
 			//location.reload();
 			$('#btnCajaCerrar').remove();
 			$('.modal-cerrarCaja').modal('hide');
-			$('.modal-GuardadoCorrecto #spanBien').text('¿Deseas imprimir el ticket de cierre?');
-			$('.modal-GuardadoCorrecto #h1Bien').html( '<button class="btn btn-negro btn-outline" id="btnPrintTCierre"><i class="icofont icofont-print"></i> Ticket de cierre</button>');
-			$('.modal-GuardadoCorrecto').modal('show');
-			location.reload();
+			$('#modalGuardadoCorrecto #spanBien').text('¿Deseas imprimir el ticket de cierre?');
+			$('#modalGuardadoCorrecto #h1Bien').html( '<button class="btn btn-negro btn-outline" id="btnPrintTCierre"><i class="icofont icofont-print"></i> Ticket de cierre</button>');
+			$('#modalGuardadoCorrecto').modal('show');
+			$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () { 
+				location.reload();
+			});
 		});
 	}
 });
-$('.modal-GuardadoCorrecto').on('click', '#btnPrintTCierre', function (e) {
-	$.ajax({url: '<?= $servidorLocal;?>impresion/printTicketCierre.php', type: 'POST', data: {
+$('#modalGuardadoCorrecto').on('click', '#btnPrintTCierre', function (e) {
+	/* console.log(
+			'apertura:'+ $('#spanApertura').text(),
+		"\ncierre:"+ $('#txtMontoCierre').val(),
+		"\nefectivoEntrada:"+ $('#spanResultadoFinal').attr('sumaEfectivo'),
+		"\ntarjetaEntrada "+ parseFloat($('#spanResultadoFinal').attr('sumaMastercard')) + parseFloat($('#spanResultadoFinal').attr('sumaVisa')),
+		"\nbancos "+$('#spanResultadoFinal').attr('sumaBanco'),
+		"\nefectivoSalida:"+ $('#spanResultadoFinal').attr('sumaSalidaEfectivo'),
+		"\ntarjetaSalida:"+ $('#spanResultadoFinal').attr('sumaSalidaTarjeta'),
+		"\nusuario:"+ '<?= $_COOKIE['ckAtiende']; ?>'
+		) */
+	$.ajax({url: '<?= $servidorLocal;?>printTicketCierre.php', type: 'POST', data: {
 		apertura: $('#spanApertura').text(),
 		cierre: $('#txtMontoCierre').val(),
 		efectivoEntrada: $('#spanResultadoFinal').attr('sumaEfectivo'),
@@ -603,13 +631,27 @@ $('.modal-GuardadoCorrecto').on('click', '#btnPrintTCierre', function (e) {
 });
 $('.aLiProcesos').click(function() {
 	//console.log($(this).attr('data-id'));
+	$('#lblMontoEntregar').text('Monto: S/');
+	$('#lblMontoPasar').addClass('hidden');
+	$('#txtPasarPagos').addClass('hidden');
+	$('#txtPorcentajePagos').addClass('hidden'); $('#lblPorcentajePasar').addClass('hidden');
+	if( $(this).attr('data-id')=="74" ){
+		$('#lblMontoEntregar').text('Monto en efectivo: (S/)');
+		$('#lblMontoPasar').removeClass('hidden');
+		$('#txtPasarPagos').removeClass('hidden').val('0.00');
+		$('#txtPorcentajePagos').removeClass('hidden').val(15); $('#lblPorcentajePasar').removeClass('hidden');
+	}
 	$('#h5TipoPago').text($(this).text());
 	$('#cmbEstadoPagos').attr('data-id', $(this).attr('data-id') );
 	$('.modal-pagoMaestro').modal('show');
 });
-$(".modal-pagoMaestro").on("shown.bs.modal", function () { $('#txtMontoPagos').val('0.00').focus(); });
+$(".modal-pagoMaestro").on("shown.bs.modal", function () { $('#sltMetodopago').selectpicker('val','Efectivo').selectpicker('refresh'); $('#txtMontoPagos').val('0.00').focus(); });
 <?php if($_COOKIE['ckPower']==1 || $_COOKIE['ckPower']==8 || $_COOKIE['ckPower']==4) { ?>
+function abriCajon(){
+	$.post('http://127.0.0.1/perucash/soloAbrirCaja.php');
+}
 $('#btnInsertPagoOmiso').click(()=> {
+	pantallaOver(true);
 	var idMoneda= $('#divCmbMetodoPago option:contains("'+$('#sltMetodopago').selectpicker('val')+'")').attr('data-tokens');
 	if(idMoneda == null ){
 		$('.modal-pagoMaestro .divError').removeClass('hidden').find('.spanError').text('Debes seleccionar un método de pago primero');
@@ -618,16 +660,25 @@ $('#btnInsertPagoOmiso').click(()=> {
 			tipo: $('#cmbEstadoPagos').attr('data-id'),
 			valor: $('#txtMontoPagos').val(),
 			moneda: idMoneda,
-			obs: $('#txtObsPagos').val()
+			obs: $('#txtObsPagos').val(),
+			porInteres: $('#txtPorcentajePagos').val()
 		}}).done((resp)=> {
+			pantallaOver(false);
 			if(resp== true){
+				$.post('http://127.0.0.1/perucash/soloAbrirCaja.php');
 				location.reload();
 			}else{
 				$('.modal-GuardadoError').find('#spanMalo').text('El servidor dice: \n' + resp);
 				$('.modal-GuardadoError').modal('show');
 			}
+		}).fail(function (params) {
+			pantallaOver(false);
+			listaBugs(params.responseText);
 		});
 	}
+});
+$('.btnBotonCajon').click(function() {
+	abriCajon();
 });
 $('.btnEditarCajaMaestra').click(function() { 
 	var padre = $(this).parent().parent();
@@ -659,6 +710,20 @@ $('#btnUpdateCajaMaestra').click(function() {
 			location.reload();
 		}
 	});
+});
+$('#txtMontoPagos').keyup(function() {
+	if( $.trim($('#h5TipoPago').text())=='Operación por tarjeta' ){
+		var valor =0;
+		var interes = (100-$('#txtPorcentajePagos').val())/100;
+		if( $('#txtMontoPagos').val()!='' ){
+			valor = parseFloat($('#txtMontoPagos').val());
+		}
+		var resultado = valor/interes; //0.85;
+		$('#txtPasarPagos').val(resultado.toFixed(2));
+		$('#txtObsPagos').val('Monto pasado: S/ ' + resultado.toFixed(2) );
+		
+	}
+	
 });
 $('.btnPrintCajaEsp').click(function () {
 	var padre = $(this).parent().parent();
@@ -858,6 +923,26 @@ $('#btnUpdateMoneda').click(function() {
 		pantallaOver(false);
 		location.reload();
 	}
+});
+$('#txtPasarPagos').keyup(function() {
+	var valor =0;
+	var interes = (100-$('#txtPorcentajePagos').val())/100;
+	if( $('#txtPasarPagos').val()!='' ){
+		valor = parseFloat($('#txtPasarPagos').val());
+	}
+	var resultado = valor*interes; //0.85;
+	$('#txtMontoPagos').val(resultado.toFixed(2));
+	$('#txtObsPagos').val('Monto pasado: S/ ' + valor.toFixed(2) );
+});
+$('#txtPorcentajePagos').keyup(function() {
+	var valor =0;
+	var interes = (100-$('#txtPorcentajePagos').val())/100;
+	if( $('#txtMontoPagos').val()!='' ){
+		valor = parseFloat($('#txtMontoPagos').val());
+	}
+	var resultado = valor/interes; //0.85;
+	$('#txtPasarPagos').val(resultado.toFixed(2));
+	$('#txtObsPagos').val('Monto pasado: S/ ' + resultado.toFixed(2) );
 });
 <?php }
 if( in_array( $_COOKIE['ckPower'], $soloDios)){ ?>
