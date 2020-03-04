@@ -696,7 +696,8 @@ switch ($_POST['caso']) {
 				</thead>
 				<tbody>
 			<?php
-			$casoEspec = [80, 81, 87, 88, 89];
+			$casoCuotas=[33, 80];
+			$casoEspec = [87, 88];
 			$casoMoras = [81, 89];
 			$sql="SELECT c.*, pc.cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres FROM `caja` c
 			left join prestamo p on c.idPrestamo = p.idPrestamo
@@ -704,7 +705,7 @@ switch ($_POST['caso']) {
 			inner join cliente cl on cl.idCliente = i.idCliente
 			left join prestamo_cuotas pc on pc.idCuota = c.idCuota
 			where cajaActivo=1
-			and date_format(cajaFecha, '%Y-%m') = '{$_POST['fMes']}' and idTipoProceso not in (43, 86) and cajaFecha >= '2020-01-17' and not (idTipoProceso = 88 and cajaValor=0)
+			and date_format(cajaFecha, '%Y-%m') = '{$_POST['fMes']}' and idTipoProceso not in (43, 86) and cajaFecha >= '2020-01-17' and not (idTipoProceso = 88 and cajaValor=0) and i.idTipoCliente=1
 			order by cajaFecha asc ; ";
 			//echo $sql;
 			$resultado=$cadena->query($sql);
@@ -712,10 +713,10 @@ switch ($_POST['caso']) {
 				?>
 				<tr data-id="<?= $row['idCaja'];?>" data-cliente="<?= $row['idCliente']; ?>" data-proceso="<?= $row['idTipoProceso']; ?>">
 					<td class="tdApellidos"><?= ucwords($row['cliApellidoPaterno']." ".$row['cliApellidoMaterno']." ".$row['cliNombres']); ?></td>
-					<td class="tdCapital"><?php if(!in_array($row['idTipoProceso'], $casoEspec)){ $sumCapital += floatval($row['cuotCuota']-$row['cuotInteres']); echo floatval($row['cuotCuota']-$row['cuotInteres']); }else{ echo 0;} ?></td>
-					<td class="tdInteres"><?php if(!in_array($row['idTipoProceso'], $casoEspec)){ $sumInteres+= floatval($row['cuotInteres']); echo floatval($row['cuotInteres']); }else{ echo 0;} ?></td>
-					<td class="tdComision"><?php if($row['idTipoProceso']==88 || $row['idTipoProceso']==87 ){ $sumComision+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
-					<td class="tdCuota"><?php if(!in_array($row['idTipoProceso'], $casoEspec)){ $sumCuota+=floatval($row['cuotCuota']); echo floatval($row['cuotCuota']); }else{ echo 0;} ?></td>
+					<td class="tdCapital"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ $sumCapital += floatval($row['cuotCuota']-$row['cuotInteres']); echo floatval($row['cuotCuota']-$row['cuotInteres']); }else{ echo 0;} ?></td>
+					<td class="tdInteres"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ $sumInteres+= floatval($row['cuotInteres']); echo floatval($row['cuotInteres']); }else{ echo 0;} ?></td>
+					<td class="tdComision"><?php if(in_array($row['idTipoProceso'], $casoEspec) ){ $sumComision+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
+					<td class="tdCuota"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ $sumCuota+=floatval($row['cuotCuota']); echo floatval($row['cuotCuota']); }else{ echo 0;} ?></td>
 					<td class="tdMora"><?php if(in_array($row['idTipoProceso'], $casoMoras) ){ $sumMora+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
 					<td class="tdTotal"><?php $sumTotal+= floatval($row['cajaValor']); echo $row['cajaValor']; ?></td>
 					<td class="tdFecha"><?php $fecha= new DateTime($row['cajaFecha']); echo $fecha->format('d/m/Y'); ?></td>

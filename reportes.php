@@ -31,7 +31,7 @@ if( !in_array($_COOKIE['ckPower'], $soloAdmis ) ){ header('Location: sinPermiso.
 	color:#fff;
 	background-color: #a35bb4;
 }
-.tableFixHead { overflow-y: auto; height: 100vh; }
+.tableFixHead { overflow-y: auto; height: 60vh; }
 .tableFixHead thead th { position: sticky; top: 0; background-color: #fff; }
 </style>
 <div id="wrapper">
@@ -352,12 +352,12 @@ function unirCeldas(){
 				fechaA= parseFloat(padre.find('.tdFecha').text());
 
 				
-				padre.find('.tdCapital').text( capital + capitalA);
-				padre.find('.tdInteres').text( interes + interesA);
-				padre.find('.tdComision').text( comision + comisionA);
-				padre.find('.tdCuota').text( cuota + cuotaA);
-				padre.find('.tdMora').text( mora + moraA);
-				padre.find('.tdTotal').text( totalPagado + totalPagadoA);
+				padre.find('.tdCapital').text( parseFloat(capital + capitalA).toFixed(2));
+				padre.find('.tdInteres').text( parseFloat(interes + interesA).toFixed(2));
+				padre.find('.tdComision').text( parseFloat(comision + comisionA).toFixed(2));
+				padre.find('.tdCuota').text( parseFloat(cuota + cuotaA).toFixed(2));
+				padre.find('.tdMora').text( parseFloat(mora + moraA).toFixed(2));
+				padre.find('.tdTotal').text( parseFloat(totalPagado + totalPagadoA).toFixed(2));
 
 				siguiente.addClass('hidden');
 			}
