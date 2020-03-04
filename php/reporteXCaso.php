@@ -696,9 +696,9 @@ switch ($_POST['caso']) {
 				</thead>
 				<tbody>
 			<?php
-			$casoEspec = [81, 87, 88, 89];
+			$casoEspec = [80, 81, 87, 88, 89];
 			$casoMoras = [81, 89];
-			$sql="SELECT c.*, pc.cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres FROM `caja` c
+			$sql="SELECT c.*, pc.cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres FROM `caja` c
 			left join prestamo p on c.idPrestamo = p.idPrestamo
 			inner join involucrados i on p.idPrestamo = i.idPrestamo
 			inner join cliente cl on cl.idCliente = i.idCliente
@@ -710,7 +710,7 @@ switch ($_POST['caso']) {
 			$resultado=$cadena->query($sql);
 			while ($row = $resultado->fetch_assoc() ) {
 				?>
-				<tr data-id="<?= $row['idCaja'];?>" data-proceso="<?= $row['idTipoProceso']; ?>">
+				<tr data-id="<?= $row['idCaja'];?>" data-cliente="<?= $row['idCliente']; ?>" data-proceso="<?= $row['idTipoProceso']; ?>">
 					<td class="tdApellidos"><?= ucwords($row['cliApellidoPaterno']." ".$row['cliApellidoMaterno']." ".$row['cliNombres']); ?></td>
 					<td class="tdCapital"><?php if(!in_array($row['idTipoProceso'], $casoEspec)){ $sumCapital += floatval($row['cuotCuota']-$row['cuotInteres']); echo floatval($row['cuotCuota']-$row['cuotInteres']); }else{ echo 0;} ?></td>
 					<td class="tdInteres"><?php if(!in_array($row['idTipoProceso'], $casoEspec)){ $sumInteres+= floatval($row['cuotInteres']); echo floatval($row['cuotInteres']); }else{ echo 0;} ?></td>
@@ -718,7 +718,7 @@ switch ($_POST['caso']) {
 					<td class="tdCuota"><?php if(!in_array($row['idTipoProceso'], $casoEspec)){ $sumCuota+=floatval($row['cuotCuota']); echo floatval($row['cuotCuota']); }else{ echo 0;} ?></td>
 					<td class="tdMora"><?php if(in_array($row['idTipoProceso'], $casoMoras) ){ $sumMora+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
 					<td class="tdTotal"><?php $sumTotal+= floatval($row['cajaValor']); echo $row['cajaValor']; ?></td>
-					<td><?php $fecha= new DateTime($row['cajaFecha']); echo $fecha->format('d/m/Y'); ?></td>
+					<td class="tdFecha"><?php $fecha= new DateTime($row['cajaFecha']); echo $fecha->format('d/m/Y'); ?></td>
 				</tr>
 							
 			<?php }

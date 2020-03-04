@@ -80,6 +80,7 @@ if( !in_array($_COOKIE['ckPower'], $soloAdmis ) ){ header('Location: sinPermiso.
 					<button class="btn btn-success btn-outline" id="btnFiltrarReporte"><i class="icofont-search-1"></i> Filtrar reporte</button>
 				</div>
 			</div>
+			
 			<div style="padding-top: 20px;">
 			<button class="btn btn-azul btn-outline" id="btnExportar" style="margin-bottom:10px;"><i class="icofont-ui-file"></i> Generar archivo</button>
 			<div class="table-responsive tableFixHead">
@@ -231,21 +232,7 @@ $('#btnFiltrarReporte').click(function() { //console.log('a')
 			$("#resultadoReporte .table").stupidtable();
 
 			if($('#sltFiltroReporte').val()=='R10' ){ 
-				$.each( $('#resultadoReporte tbody tr') , function(i, objeto){ 
-					var padre = objeto;
-					var siguiente = $(padre).next();
-					console.log($(siguiente).find('.tdApellidos').text() );
-
-					/* if( padre.find('.tdApellidos') == siguiente.find('.tdApellidos')  ){
-						if( padre.attr('data-proceso')== 81 ){
-							var mora = parseFloat(padre.find('.tdMora').text())
-							var antTotal = parseFloat(padre.find('.tdTotal').text())
-							siguiente.find('.tdMora').text(mora);
-							siguiente.find('.tdTotal').text(antTotal+mora);
-							siguiente.find('.tdTotal').css({'color': 'red'});
-						}
-					} */
-				});
+				unirCeldas();
 			}
 
 			}
@@ -316,6 +303,72 @@ function sumarHijos(malla) {
 	$(malla).last().next().find('.tdConsolidado').text('S/ '+ suma.toFixed(2));
 }
 
+function unirCeldas(){
+	
+
+	var coincide=false;
+	var index=0; cliAnterior=''; cliActual=''; var padre, siguiente;
+	let capital=0, interes=0, comision=0, cuota=0, mora=0, totalPagado=0, fecha='';
+	let capitalA=0, interesA=0, comisionA=0, cuotaA=0, moraA=0, totalPagadoA=0, fechaA='';
+
+	$.each( $('#resultadoReporte tbody tr') , function(i, objeto){
+
+		if(i==0){ padre = $(this); siguiente = $(this).next(); }else{
+			siguiente=$(this);
+		}
+
+		if( $(padre).attr('data-cliente') == $(siguiente).attr('data-cliente') ){
+			coincide=true;
+		}else{
+			padre=$(this);
+			coincide=false;
+		}
+
+		if(i>0){
+	/* 		if(coincide){ //si hay coincidencia
+				siguiente = $(this); //$('#resultadoReporte tbody tr').eq(index);
+			}else{ //no hay
+				padre = $(this); //$('#resultadoReporte tbody tr').eq(index); 
+				siguiente = $(this).next();
+			} */
+					
+
+			if( coincide ){
+				capital= parseFloat(siguiente.find('.tdCapital').text());
+				interes= parseFloat(siguiente.find('.tdInteres').text());
+				comision= parseFloat(siguiente.find('.tdComision').text());
+				cuota= parseFloat(siguiente.find('.tdCuota').text());
+				mora= parseFloat(siguiente.find('.tdMora').text());
+				totalPagado= parseFloat(siguiente.find('.tdTotal').text());
+				fecha= parseFloat(siguiente.find('.tdFecha').text());
+
+
+				capitalA= parseFloat(padre.find('.tdCapital').text());
+				interesA= parseFloat(padre.find('.tdInteres').text());
+				comisionA= parseFloat(padre.find('.tdComision').text());
+				cuotaA= parseFloat(padre.find('.tdCuota').text());
+				moraA= parseFloat(padre.find('.tdMora').text());
+				totalPagadoA= parseFloat(padre.find('.tdTotal').text());
+				fechaA= parseFloat(padre.find('.tdFecha').text());
+
+				
+				padre.find('.tdCapital').text( capital + capitalA);
+				padre.find('.tdInteres').text( interes + interesA);
+				padre.find('.tdComision').text( comision + comisionA);
+				padre.find('.tdCuota').text( cuota + cuotaA);
+				padre.find('.tdMora').text( mora + moraA);
+				padre.find('.tdTotal').text( totalPagado + totalPagadoA);
+
+				siguiente.addClass('hidden');
+			}
+		}
+
+	
+
+		
+	});
+
+}
 </script>
 <?php } ?>
 </body>
