@@ -59,7 +59,11 @@ $filas[] = array('sumaMora' => $moraTotal, 'diasMora' => $diasMora, 'queEs'=> 'P
 
 $sentenciaLarga ='';
 while($row2=$resultado->fetch_assoc()){
-	$debePendiente = floatval($row2['cuotCuota']-$row2['cuotPago']+$row2['cuotSeg']);
+	if( $row2['idTipoPrestamo']==33 ){ //Ya no cobramos seguro
+		$debePendiente = floatval($row2['cuotCuota']-$row2['cuotPago']); //350-347.5
+	}else{ //cobramos el seguro
+		$debePendiente = floatval($row2['cuotCuota']-$row2['cuotPago']+$row2['cuotSeg']); //350-347.5+2.5
+	}
 	//|echo 'dinero '. $dinero . "\n";
 	//echo 'pendiente '. $debePendiente . "\n";
 	if($dinero >= $debePendiente){
