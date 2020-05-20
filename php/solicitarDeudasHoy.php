@@ -21,7 +21,7 @@ order by cuotFechaPago asc;";
 
 $resultado=$cadena->query($sql);
 while($row=$resultado->fetch_assoc()){
-	//$seguro = floatval($row['cuotSeg']);
+	$seguro = floatval($row['cuotSeg']);
 	$precioCuota=floatval($row['cuotCuota']-$row['cuotPago']);
 	$fechaCuota = new DateTime($row['cuotFechaPago']);
 	$diasDebe=$fechaHoy ->diff($fechaCuota);

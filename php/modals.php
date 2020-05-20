@@ -275,4 +275,24 @@ if( in_array($_COOKIE['ckPower'], $soloAdmis) ){ ?>
 		</div>
 	</div>
 </div>
+
+
+<!-- Modal para: reprogramar fechas -->
+<div class='modal fade' id='modalReprogramarFechas' tabindex='-1' role='dialog' aria-hidden='true'>
+	<div class='modal-dialog modal-sm' >
+	<div class='modal-content '>
+		<div class='modal-header-primary'>
+			<button type='button' class='close' data-dismiss='modal' aria-label='Close' ><span aria-hidden='true'>&times;</span></button>
+			<h4 class='modal-tittle'> Reprogramar fechas</h4>
+		</div>
+		<div class='modal-body'>
+			<p>Indique el primer día que desea empezar a reprogramar todas las fechas sin pagar.</p>
+			<input type="date" class="form-control" id="fechaReprogramacion" value="<?= date('Y-m-d'); ?>">
+		</div>
+		<div class='modal-footer'>
+			<button type='button' class='btn btn-primary btn-outline' id='btnCalibrarFechas'><i class="icofont-paper"></i> Realizar acción</button>
+		</div>
+		</div>
+	</div>
+</div>
 <?php } ?>

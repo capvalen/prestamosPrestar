@@ -110,7 +110,7 @@ $fechaHoy = new DateTime();
 				<div class="col-sm-2"><label for="">Verificador</label><p><?= $rowCr['usuarioAprobador']; ?></p></div>
 				<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )){ ?>
 				<div class="col-sm-2"><label for="">Nuevo Asesor:</label> <br>
-					<select name="" id="sltNuevoAsesr" class=>
+					<select name="" id="sltNuevoAsesr" class="" style="border-radius=3px;">
 						<?php include "php/OPTUsuarios.php"; ?>
 					</select>
 				</div>
@@ -165,6 +165,7 @@ $fechaHoy = new DateTime();
 				<?php else: 
 					if( in_array( $_COOKIE['ckPower'], $soloAdmis) &&  $rowCr['presAprobado']<>"Rechazado"):?>
 					<button class="btn btn-rojoFresa btn-outline" id="btnAnularCredito"><i class="icofont-ui-delete"></i> Anular crédito</button>
+					<button class="btn btn-dark btn-outline" id="btnReprogramarFechas"><i class="icofont-ui-reply"></i> Reprogramar fechas</button>
 				<?php endif; endif; ?>
 				</div>
 
@@ -1016,6 +1017,12 @@ $('#btnDenegarCredito').click(function() {
 			location.reload();
 		}
 	});
+});
+$('#btnReprogramarFechas').click(function() {
+	$("#modalReprogramarFechas").modal('show');
+});
+$('#btnCalibrarFechas').click(function() {
+	$.post('http://infocatsoluciones.com/app/prestamosPrestar/php/reprogramacionFechas.php', {nuevaFecha: $('#fechaReprogramacion').val(), idPrestamo: '<?= $codCredito; ?>' }, function(resp){ console.log(resp); location.reload(); });
 });
 <?php }
 if( in_array($_COOKIE['ckPower'], $soloCajas) ){ ?>
