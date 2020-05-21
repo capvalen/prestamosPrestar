@@ -27,7 +27,7 @@ while($row=$resultado->fetch_assoc()){
 	$diasDebe=$fechaHoy ->diff($fechaCuota);
 	$restaDias= floatval($diasDebe->format('%a'));
 
-	$sumaSa+=floatval($precioCuota);
+	$sumaSa+=floatval($precioCuota + $seguro );
 //echo $restaDias."\n";
 	if($restaDias>0){
 		//sumar Dia y Mora
@@ -63,12 +63,15 @@ while($row=$resultado->fetch_assoc()){
 //if($diasMora<>0){$diasMora-=1;}
 $filas = array(
 	'tantasCuotas'=> $k,
-	'precioCuotas'=> $precioCuota,
+	'precioCuotas'=> $precioCuota + $seguro,
 	'diasMora' =>$diasMora,
 	'deudaCuotas' => round($sumaSa,2),
 	'precioMora' =>$diasMora*$mora,
-	'seguro' => $seguro,
-	'paraFinalizar' => round($sumaSa+ $diasMora*$mora + $seguro,2)
+	'seguro' => 0,
+	'seg_nocuenta' => $seguro,
+	'mora_neta' => $mora,
+	'paraFinalizar' => round( ($precioCuota  + $seguro )*$k + $diasMora*$mora ,2) // round($sumaSa+ $diasMora*$mora ,2) //$seguro
+	//146.3)*4
 );
 
 echo json_encode($filas);
