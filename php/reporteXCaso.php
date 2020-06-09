@@ -699,13 +699,13 @@ switch ($_POST['caso']) {
 			$casoCuotas=[33, 80];
 			$casoEspec = [87, 88];
 			$casoMoras = [81, 89];
-			$sql="SELECT c.*, pc.cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres FROM `caja` c
+			$sql="SELECT c.*, pc.cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres, cuotSeg, cuotPago FROM `caja` c
 			left join prestamo p on c.idPrestamo = p.idPrestamo
 			inner join involucrados i on p.idPrestamo = i.idPrestamo
 			inner join cliente cl on cl.idCliente = i.idCliente
 			left join prestamo_cuotas pc on pc.idCuota = c.idCuota
 			where cajaActivo=1
-			and date_format(cajaFecha, '%Y-%m') = '{$_POST['fMes']}' and idTipoProceso not in (43, 86) and cajaFecha >= '2020-01-17' and not (idTipoProceso = 88 and cajaValor=0) and i.idTipoCliente=1
+			and date_format(cajaFecha, '%Y-%m') = '{$_POST['fMes']}' and idTipoProceso not in (43, 86) and cajaFecha >= '2020-01-17' and not (idTipoProceso = 88 and cajaValor=0) and not (idTipoProceso = 88 and cajaFecha > '2020-05-01') and i.idTipoCliente=1
 			order by cajaFecha asc ; ";
 			//echo $sql;
 			$resultado=$cadena->query($sql);
@@ -713,12 +713,81 @@ switch ($_POST['caso']) {
 				?>
 				<tr data-id="<?= $row['idCaja'];?>" data-cliente="<?= $row['idCliente']; ?>" data-proceso="<?= $row['idTipoProceso']; ?>">
 					<td class="tdApellidos"><?= ucwords($row['cliApellidoPaterno']." ".$row['cliApellidoMaterno']." ".$row['cliNombres']); ?></td>
-					<td class="tdCapital"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ $sumCapital += floatval($row['cuotCuota']-$row['cuotInteres']); echo floatval($row['cuotCuota']-$row['cuotInteres']); }else{ echo 0;} ?></td>
-					<td class="tdInteres"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ $sumInteres+= floatval($row['cuotInteres']); echo floatval($row['cuotInteres']); }else{ echo 0;} ?></td>
-					<td class="tdComision"><?php if(in_array($row['idTipoProceso'], $casoEspec) ){ $sumComision+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
-					<td class="tdCuota"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ $sumCuota+=floatval($row['cuotCuota']); echo floatval($row['cuotCuota']); }else{ echo 0;} ?></td>
+					<td class="tdCapital"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){/*  $sumCapital += floatval($row['cuotCuota']-$row['cuotInteres']); echo floatval($row['cuotCuota']-$row['cuotInteres']); */ 
+						if($row['idTipoProceso'] ==33){
+							if(  $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
+								$parcial = floatval($row['cajaValor']) - floatval($row['cuotSeg']) - floatval($row['cuotInteres']);
+							}else{
+								$parcial = 0;
+							}
+						}else{
+							if( $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
+								$parcial = floatval($row['cuotCuota'] - floatval($row['cuotInteres']));
+							}else{
+								$parcial = 0;
+							}
+						}
+						$sumCapital += $parcial;
+						echo $parcial;
+					}else{ echo 0;} ?></td>
+					<td class="tdInteres"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ /* $sumInteres+= floatval($row['cuotInteres']); echo floatval($row['cuotInteres']); */
+						if($row['idTipoProceso'] ==33){
+							$intev3 = floatval($row['cajaValor']) - floatval($row['cuotSeg']) ;
+							if(  $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
+								$intev3 = floatval( $row['cuotInteres'] );
+							}else{
+								$intev3 = floatval( $row['cajaValor'] );
+							}
+						}else{
+							if( $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
+								$intev3 = floatval( $row['cuotInteres'] );
+							}else{
+								$intev3 = $row['cajaValor']  ;
+							}
+						}
+						$sumInteres += $intev3; echo $intev3;
+					}else{ echo 0;} ?></td>
+					<!-- <td class="tdComision"><?php if(in_array($row['idTipoProceso'], $casoEspec) ){ $sumComision+=floatval($row['cuotSeg']); echo floatval($row['cuotSeg']); }else{ echo 0;} ?></td> -->
+					<td class="tdComision"><?php if(in_array($row['idTipoProceso'], $casoCuotas) ){ /* $comisionv3 =floatval($row['cuotSeg']);   */
+						if($row['idTipoProceso'] ==33){
+							if( $row['cajaValor'] >= $row['cuotSeg'] ){
+								$comisionv3 = floatval($row['cuotSeg']);
+							}else{
+								$comisionv3 = floatval($row['cajaValor']);
+							}
+						}else{
+							if( $row['cajaValor'] > $row['cuotSeg'] ){
+								$comisionv3 = floatval($row['cuotSeg']);
+							}else{
+								$comisionv3 = 0; $row['cajaValor'];
+							}
+						}
+						$sumComision+=$comisionv3;
+						echo $comisionv3;
+					}else{ echo 0;} ?></td>
+					<td class="tdCuota"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ /* $sumCuota+=floatval($row['cuotCuota']); echo floatval($row['cuotCuota']); */
+						/* if( $row['idTipoProceso'] ==33 ){
+							$cuotav3 = floatval($row['cajaValor'] + $row['cuotSeg'] );
+						}else{
+							$cuotav3 = floatval( $parcial + $intev3  + $row['cuotSeg'] );
+						} */
+						$cuotav3 = floatval( $parcial + $intev3  + $comisionv3 );
+						$sumCuota+= $cuotav3; 
+						echo $cuotav3;
+					}else{ echo 0;} ?></td>
 					<td class="tdMora"><?php if(in_array($row['idTipoProceso'], $casoMoras) ){ $sumMora+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
-					<td class="tdTotal"><?php $sumTotal+= floatval($row['cajaValor']); echo $row['cajaValor']; ?></td>
+					<td class="tdTotal"><?php /* $sumTotal+= floatval($row['cajaValor']); echo $row['cajaValor']; */
+						if( $row['cajaFecha']<='2020-05-19'){
+							if(in_array($row['idTipoProceso'], $casoCuotas)){
+								$pagov3 = $row['cuotPago'];
+							}else{
+								$pagov3 = $row['cajaValor'];
+							}
+						}else{
+							$pagov3 = $row['cajaValor'];
+						}
+						echo $pagov3;
+					 ?></td>
 					<td class="tdFecha"><?php $fecha= new DateTime($row['cajaFecha']); echo $fecha->format('d/m/Y'); ?></td>
 				</tr>
 							

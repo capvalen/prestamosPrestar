@@ -232,7 +232,7 @@ $('#btnFiltrarReporte').click(function() { //console.log('a')
 			$("#resultadoReporte .table").stupidtable();
 
 			if($('#sltFiltroReporte').val()=='R10' ){ 
-				unirCeldas();
+				//unirCeldas();
 			}
 
 			}

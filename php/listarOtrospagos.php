@@ -6,7 +6,7 @@ $base58 = new StephenHill\Base58();
 $sql = mysqli_query($conection,"SELECT ca.*, tp.tipoDescripcion, u.usuNombres FROM `caja` ca
 inner join tipoproceso tp on tp.idTipoProceso = ca.idTipoProceso
 inner join usuario u on u.idUsuario = ca.idUsuario
-where idPrestamo= {$base58->decode($_POST['credito'])} and ca.idTipoProceso in (81, 86, 87, 88, 89) and cajaActivo=1 order by cajaFecha asc;");
+where idPrestamo= {$base58->decode($_POST['credito'])} and ca.idTipoProceso in (81, 86, 87, 88, 89) and cajaActivo=1 order by cajaFecha asc ;"); //Borrado 88
 $filas=$sql->num_rows;
 
 if($filas > 0){
@@ -29,10 +29,12 @@ $k=1;
 <?php
 
 while($row = mysqli_fetch_array($sql, MYSQLI_ASSOC))
-{?>
+{ $fecha= new DateTime($row['cajaFecha']);
+  if( $fecha->format('d/m/Y') < "2020-05-01" and $row['idTipoProceso']!=88 ) {
+  ?>
 <tr>
-  <td><?= $k;?></td>
-  <td><?php $fecha= new DateTime($row['cajaFecha']); echo $fecha->format('d/m/Y'); ?></td>
+  <td data-id="<?= $row['idCaja']; ?>"><?= $k;?></td>
+  <td><?= $fecha->format('d/m/Y'); ?></td>
   <td><?= $row['tipoDescripcion'];?></td>
   <td>S/ <?= number_format($row['cajaValor'],2);?></td>
   <td><?= $row['cajaObservacion'];?></td>
@@ -40,7 +42,7 @@ while($row = mysqli_fetch_array($sql, MYSQLI_ASSOC))
 </tr>
 <?php 
 $k++;
-}
+} }
 mysqli_close($conection); //desconectamos la base de datos
 ?>
   </tbody>

@@ -62,7 +62,7 @@ while($row2=$resultado->fetch_assoc()){
 	if( $row2['idTipoPrestamo']==33 ){ //Ya no cobramos seguro
 		$debePendiente = floatval($row2['cuotCuota'] - $row2['cuotPago']);
 	}else{ //cobramos el seguro
-		$debePendiente = floatval( $row2['cuotCuota'] + $row2['cuotSeg'] -$row2['cuotPago'] );
+		$debePendiente = floatval( $row2['cuotCuota'] + $row2['cuotSeg'] -$row2['cuotPago'] ); //145+1.3
 	}
 	//|echo 'dinero '. $dinero . "\n";
 	//echo 'pendiente '. $debePendiente . "\n";
