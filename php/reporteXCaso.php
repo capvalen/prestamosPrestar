@@ -722,6 +722,7 @@ switch ($_POST['caso']) {
 							}
 						}else{
 							if( $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
+								
 								$parcial = floatval($row['cuotCuota'] - floatval($row['cuotInteres']));
 							}else{
 								$parcial = 0;
@@ -742,24 +743,27 @@ switch ($_POST['caso']) {
 							if( $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
 								$intev3 = floatval( $row['cuotInteres'] );
 							}else{
-								$intev3 = $row['cajaValor']  ;
+								$intev3 = $row['cajaValor'] ;
 							}
 						}
 						$sumInteres += $intev3; echo $intev3;
 					}else{ echo 0;} ?></td>
-					<!-- <td class="tdComision"><?php if(in_array($row['idTipoProceso'], $casoEspec) ){ $sumComision+=floatval($row['cuotSeg']); echo floatval($row['cuotSeg']); }else{ echo 0;} ?></td> -->
 					<td class="tdComision"><?php if(in_array($row['idTipoProceso'], $casoCuotas) ){ /* $comisionv3 =floatval($row['cuotSeg']);   */
 						if($row['idTipoProceso'] ==33){
-							if( $row['cajaValor'] >= $row['cuotSeg'] ){
-								$comisionv3 = floatval($row['cuotSeg']);
+							if( $row['cajaValor']<= $intev3 ){
+								$comisionv3 =0;
 							}else{
-								$comisionv3 = floatval($row['cajaValor']);
+								if( $row['cajaValor'] >= $row['cuotSeg'] ){
+									$comisionv3 = floatval($row['cuotSeg']);
+								}else{
+									$comisionv3 = floatval($row['cajaValor']);
+								}
 							}
 						}else{
 							if( $row['cajaValor'] > $row['cuotSeg'] ){
 								$comisionv3 = floatval($row['cuotSeg']);
 							}else{
-								$comisionv3 = 0; $row['cajaValor'];
+								$comisionv3 = 0; // $row['cajaValor'];
 							}
 						}
 						$sumComision+=$comisionv3;
@@ -778,14 +782,15 @@ switch ($_POST['caso']) {
 					<td class="tdMora"><?php if(in_array($row['idTipoProceso'], $casoMoras) ){ $sumMora+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
 					<td class="tdTotal"><?php /* $sumTotal+= floatval($row['cajaValor']); echo $row['cajaValor']; */
 						if( $row['cajaFecha']<='2020-05-19'){
-							if(in_array($row['idTipoProceso'], $casoCuotas)){
-								$pagov3 = $row['cuotPago'];
-							}else{
+							if( $row['idTipoProceso'] ==33 ){
 								$pagov3 = $row['cajaValor'];
+							}else{
+								$pagov3 = $row['cuotPago'];
 							}
 						}else{
 							$pagov3 = $row['cajaValor'];
 						}
+						$sumTotal+= $pagov3;
 						echo $pagov3;
 					 ?></td>
 					<td class="tdFecha"><?php $fecha= new DateTime($row['cajaFecha']); echo $fecha->format('d/m/Y'); ?></td>
