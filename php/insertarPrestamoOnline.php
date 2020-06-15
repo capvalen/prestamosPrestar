@@ -177,7 +177,7 @@ for ($j=0; $j <  count($jsonSimple) ; $j++) {
 		if($j>=1){
 			$saldo = $saldo-$cuota; $dia=1;
 		}
-		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`, `cuotSeg`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',{$jsonSimple[$j]['cuota']},'0000-00-00',0,{$saldo},'0','', 79, {$seguro} );";
+		$sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `cuotFechaPago`, `cuotCuota`, `cuotFechaCancelacion`, `cuotPago`, `cuotCapital`,`cuotInteres`, `cuotSaldo`, `cuotVo`, `cuotObservaciones`,`idTipoPrestamo`, `cuotSeg`) VALUES (null,$idPrestamo,'{$nueva->format('Y-m-d')}',{$jsonSimple[$j]['cuota']},'0000-00-00',0, {$capitalPartido}, {$interes}, {$saldo}, 0, '', 79, {$seguro} );";
 	}
 
 }

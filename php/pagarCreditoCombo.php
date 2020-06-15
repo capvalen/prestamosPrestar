@@ -60,16 +60,16 @@ $filas[] = array('sumaMora' => $moraTotal, 'diasMora' => $diasMora, 'queEs'=> 'P
 $sentenciaLarga ='';
 while($row2=$resultado->fetch_assoc()){
 	if( $row2['idTipoPrestamo']==33 ){ //Ya no cobramos seguro
-		$debePendiente = floatval($row2['cuotCuota'] - $row2['cuotPago']);
+		$debePendiente = floatval($row2['cuotCuota'] + $row2['cuotSeg'] - $row2['cuotPago']);
 	}else{ //cobramos el seguro
-		$debePendiente = floatval( $row2['cuotCuota'] + $row2['cuotSeg'] -$row2['cuotPago'] ); //145+1.3
+		$debePendiente = floatval( $row2['cuotCuota'] + $row2['cuotSeg'] -$row2['cuotPago'] ); //
 	}
 	//|echo 'dinero '. $dinero . "\n";
 	//echo 'pendiente '. $debePendiente . "\n";
 	if($dinero >= $debePendiente){
 		//echo 'Pago completo delinterés;
 		if( $row2['idTipoPrestamo']==33 ){
-			$soloCuota = floatval($row2['cuotCuota']-$row2['cuotPago']);
+			$soloCuota = floatval($row2['cuotCuota'] + $row2['cuotSeg'] - $row2['cuotPago']);
 			
 			$sentenciaLarga = $sentenciaLarga. "UPDATE `prestamo_cuotas` SET 
 			`cuotFechaCancelacion`= now(),
@@ -88,14 +88,11 @@ while($row2=$resultado->fetch_assoc()){
 			`idTipoPrestamo` = 80
 			WHERE `idCuota` = {$row2['idCuota']};
 			INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-				VALUES (null,{$idPrestamo},0,88,now(),{$row2['cuotSeg']},'',1,1,{$_COOKIE['ckidUsuario']});
-			INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
 				VALUES (null,{$idPrestamo},{$row2['idCuota']},80,now(),{$soloCuota},'',1,1,{$_COOKIE['ckidUsuario']});";
 		}
-
 		
 			$filas[] = array('cuota' => $row2['idCuota'], 'montoCuota' => $debePendiente, 'queEs'=> 'Cuota cancelada' );
-	}else{  //145+1.3-0 = 146.3 -100 = 46.3
+	}else{  //
 		if( $dinero <= 0){
 			break;
 		}else{
@@ -108,9 +105,8 @@ while($row2=$resultado->fetch_assoc()){
 			`idTipoPrestamo` = 33
 			WHERE `idCuota` = {$row2['idCuota']};
 			INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-			VALUES (null,{$idPrestamo},{$row2['idCuota']},33,now(),{$dinero},'',1,1,{$_COOKIE['ckidUsuario']});
-			INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-				VALUES (null,{$idPrestamo},0,88,now(),{$row2['cuotSeg']},'',1,1,{$_COOKIE['ckidUsuario']});";
+			VALUES (null,{$idPrestamo},{$row2['idCuota']},33,now(),{$dinero},'',1,1,{$_COOKIE['ckidUsuario']});";
+
 			$filas[] = array('cuota' => $row2['idCuota'], 'montoCuota' => $dinero, 'queEs'=> 'Adelanto cuota' );
 
 		} 

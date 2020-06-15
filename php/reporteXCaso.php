@@ -699,7 +699,7 @@ switch ($_POST['caso']) {
 			$casoCuotas=[33, 80];
 			$casoEspec = [87, 88];
 			$casoMoras = [81, 89];
-			$sql="SELECT c.*, pc.cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres, cuotSeg, cuotPago FROM `caja` c
+			$sql="SELECT c.*, ifnull(pc.cuotCuota,0) as cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres, cuotSeg, cuotPago, pc.cuotCapital, pc.cuotInteres FROM `caja` c
 			left join prestamo p on c.idPrestamo = p.idPrestamo
 			inner join involucrados i on p.idPrestamo = i.idPrestamo
 			inner join cliente cl on cl.idCliente = i.idCliente
@@ -710,75 +710,23 @@ switch ($_POST['caso']) {
 			//echo $sql;
 			$resultado=$cadena->query($sql);
 			while ($row = $resultado->fetch_assoc() ) {
+				if($row['cuotCuota']==0){ $porcPago=0; }else{ $porcPago = round($row['cajaValor'] / ($row['cuotCuota'] + $row['cuotSeg'] ), 5); }
+				
 				?>
 				<tr data-id="<?= $row['idCaja'];?>" data-cliente="<?= $row['idCliente']; ?>" data-proceso="<?= $row['idTipoProceso']; ?>">
 					<td class="tdApellidos"><?= ucwords($row['cliApellidoPaterno']." ".$row['cliApellidoMaterno']." ".$row['cliNombres']); ?></td>
-					<td class="tdCapital"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){/*  $sumCapital += floatval($row['cuotCuota']-$row['cuotInteres']); echo floatval($row['cuotCuota']-$row['cuotInteres']); */ 
-						if($row['idTipoProceso'] ==33){
-							if(  $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
-								$parcial = floatval($row['cajaValor']) - floatval($row['cuotSeg']) - floatval($row['cuotInteres']);
-							}else{
-								$parcial = 0;
-							}
-						}else{
-							if( $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
-								
-								$parcial = floatval($row['cuotCuota'] - floatval($row['cuotInteres']));
-							}else{
-								$parcial = 0;
-							}
-						}
-						$sumCapital += $parcial;
-						echo $parcial;
-					}else{ echo 0;} ?></td>
-					<td class="tdInteres"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ /* $sumInteres+= floatval($row['cuotInteres']); echo floatval($row['cuotInteres']); */
-						if($row['idTipoProceso'] ==33){
-							$intev3 = floatval($row['cajaValor']) - floatval($row['cuotSeg']) ;
-							if(  $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
-								$intev3 = floatval( $row['cuotInteres'] );
-							}else{
-								$intev3 = floatval( $row['cajaValor'] );
-							}
-						}else{
-							if( $row['cajaValor'] >= floatval( $row['cuotInteres'] + $row['cuotSeg'] ) ){
-								$intev3 = floatval( $row['cuotInteres'] );
-							}else{
-								$intev3 = $row['cajaValor'] ;
-							}
-						}
-						$sumInteres += $intev3; echo $intev3;
-					}else{ echo 0;} ?></td>
-					<td class="tdComision"><?php if(in_array($row['idTipoProceso'], $casoCuotas) ){ /* $comisionv3 =floatval($row['cuotSeg']);   */
-						if($row['idTipoProceso'] ==33){
-							if( $row['cajaValor']<= $intev3 ){
-								$comisionv3 =0;
-							}else{
-								if( $row['cajaValor'] >= $row['cuotSeg'] ){
-									$comisionv3 = floatval($row['cuotSeg']);
-								}else{
-									$comisionv3 = floatval($row['cajaValor']);
-								}
-							}
-						}else{
-							if( $row['cajaValor'] > $row['cuotSeg'] ){
-								$comisionv3 = floatval($row['cuotSeg']);
-							}else{
-								$comisionv3 = 0; // $row['cajaValor'];
-							}
-						}
-						$sumComision+=$comisionv3;
-						echo $comisionv3;
-					}else{ echo 0;} ?></td>
-					<td class="tdCuota"><?php if(in_array($row['idTipoProceso'], $casoCuotas)){ /* $sumCuota+=floatval($row['cuotCuota']); echo floatval($row['cuotCuota']); */
-						/* if( $row['idTipoProceso'] ==33 ){
-							$cuotav3 = floatval($row['cajaValor'] + $row['cuotSeg'] );
-						}else{
-							$cuotav3 = floatval( $parcial + $intev3  + $row['cuotSeg'] );
-						} */
-						$cuotav3 = floatval( $parcial + $intev3  + $comisionv3 );
-						$sumCuota+= $cuotav3; 
-						echo $cuotav3;
-					}else{ echo 0;} ?></td>
+					<td class="tdCapital">
+						<?php if($porcPago==0){ echo 0; $tdCapital =0; }else{ $tdCapital = round($row['cuotCapital'] * $porcPago, 2); $sumCapital += $tdCapital; echo $tdCapital;} ?>
+					</td>
+					<td class="tdInteres">
+						<?php if($porcPago==0){ echo 0; $tdInteres =0; }else{ $tdInteres = round($row['cuotInteres'] * $porcPago, 2); $sumInteres += $tdInteres; echo $tdInteres;} ?>
+					</td>
+					<td class="tdComision">
+						<?php if($porcPago==0){ echo 0; $tdComision =0; }else{ $tdComision = round($row['cuotSeg'] * $porcPago, 2); $sumComision += $tdComision; echo $tdComision;} ?>
+					</td>
+					<td class="tdCuota">
+						<?php if($porcPago==0){ echo 0; $tdCuota =0; }else{ $tdCuota = round(($row['cuotCuota'] + $row['cuotSeg']) * $porcPago, 2); $sumCuota += $tdCuota; echo $tdCuota;} ?>
+					</td>
 					<td class="tdMora"><?php if(in_array($row['idTipoProceso'], $casoMoras) ){ $sumMora+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
 					<td class="tdTotal"><?php /* $sumTotal+= floatval($row['cajaValor']); echo $row['cajaValor']; */
 						if( $row['cajaFecha']<='2020-05-19'){
