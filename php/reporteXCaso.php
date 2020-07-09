@@ -10,7 +10,7 @@ $sumaTodo=0; $sumaRecup =0; $sumaGananc=0;
 
 switch ($_POST['caso']) {
 	case 'R1':
-		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso  FROM `caja` c left join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (31, 81, 80, 33, 87,88,89) and cajaActivo = 1 order by idPrestamo;";
+		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso, date_format(c.cajaFecha, '%d/%m/%Y') as cajaFecha  FROM `caja` c left join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (31, 81, 80, 33, 87,88,89) and cajaActivo = 1 order by idPrestamo;";
 		
 		$resultado=$cadena->query($sql);
 		?> 
@@ -22,6 +22,7 @@ switch ($_POST['caso']) {
 				<th data-sort="float">Monto Pagado</th>
 				<th data-sort="float">Recuperación</th>
 				<th data-sort="float">Ganancia</th>
+				<th data-sort="float">Fecha</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -59,6 +60,7 @@ switch ($_POST['caso']) {
 			<? } else{ ?>
 				<td class="tableexport-string" data-sort-value="0"></td><td data-sort-value="0"></td>
 			<? } ?>
+			<td class="tableexport-string"><?= $row['cajaFecha']; ?></td>
 			</tr>
 <? } //end de while ?> 
 			</tbody>
@@ -76,7 +78,7 @@ switch ($_POST['caso']) {
 
 
 		case 'R2':
-		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso, cajaObservacion  FROM `caja` c left join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (43,85,84,83,82,40,41) and cajaActivo = 1 order by idPrestamo;";
+		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso, cajaObservacion, date_format(c.cajaFecha, '%d/%m/%Y') as cajaFecha  FROM `caja` c left join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (43,85,84,83,82,40,41) and cajaActivo = 1 order by idPrestamo;";
 		
 		$resultado=$cadena->query($sql);
 		?> 
@@ -86,7 +88,7 @@ switch ($_POST['caso']) {
 					
 					<th>Proceso</th>
 					<th>Inversión</th>
-					
+					<th>Fecha</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -96,6 +98,7 @@ switch ($_POST['caso']) {
 				<td class="tableexport-string" ><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
 				<td class="tableexport-string" ><?= $row['tipoDescripcion']?> <? if($row['cajaObservacion']<>''){echo '<span class="mayucula">«'.$row['cajaObservacion'].'»</span>';}?></td>
 				<td class="tableexport-string" >S/ <?= number_format($row['cajaValor'],2);?></td>
+				<td class="tableexport-string"><?= $row['cajaFecha']; ?></td>
 			</tr>
 <? } //end de while ?> 
 			</tbody>
@@ -446,7 +449,7 @@ switch ($_POST['caso']) {
 			FROM cliente c
 			inner join involucrados i on i.idCliente = c.idCliente
 			inner join prestamo pre on pre.idPrestamo = i.idPrestamo
-			WHERE pre.presActivo=1 and pre.presAprobado<>2  and pre.presFechaDesembolso <> '0000-00-00' and date_format(presFechaDesembolso,'%Y-%m') = '{$_POST['fMes']}' ; ";
+			WHERE pre.presAprobado<>2 and pre.presFechaDesembolso <> '0000-00-00' and date_format(presFechaDesembolso,'%Y-%m') = '{$_POST['fMes']}' ; "; //pre.presActivo=1 and
 		echo $sql;
 		$resultado=$cadena->query($sql);
 		$i=1;
@@ -454,7 +457,7 @@ switch ($_POST['caso']) {
 			$sumMontos+= $row['presMontoDesembolso'];
 			$sumPagados+=$row['sumPagados']; $sumPendientes+= $row['sumNoPagados'];
 			$numPagado+=$row['pagados']; $numPendiente+=$row['noPagados']; ?>
-		<tr>
+		<tr data-id="<?= $row['idPrestamo']; ?>">
 			<td> <?= $i; ?> </td>
 			<td class="text-capitalize"> <?= $row['cliNombre']; ?> </td>
 			<td class="tableexport-string"> <?= $row['preInteresPers']."%"; ?> </td>
@@ -762,7 +765,7 @@ switch ($_POST['caso']) {
 			
 		<?php
 		break;
-		case 'R5':
+		case 'R59999999999999999':
 		
 			$sql="SELECT pre.`idPrestamo`, `fechaFinPrestamo`, presMontoDesembolso, preInteresPers, presPeriodo,
 			cliApellidoPaterno, cliApellidoMaterno, cliNombres, 'Fin de préstamo' as `tipoDescripcion`
@@ -849,6 +852,47 @@ switch ($_POST['caso']) {
 				
 				
 			break;
+			case 'R12':
+				$sql="SELECT `idCaja`, c.`idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`, `cajaInteres`, `cajaAsociado`, tp.tipoDescripcion
+				FROM `caja` c inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (90, 91) and cajaActivo = 1 order by cajaFecha; ";
+				
+				$resultado=$cadena->query($sql);
+				?> 
+				<thead>
+					<tr>
+						<th data-sort="string">Tipo proceso</th>
+						<th data-sort="string">Fecha</th>
+						<th data-sort="float">Monto</th>
+						<th data-sort="float">Porcentaje</th>
+						<th data-sort="string">Asociado</th>
+						<th data-sort="string">Observaciones</th>
+					</tr>
+				</thead>
+				<tbody>
+			<? while($row=$resultado->fetch_assoc()){ 
+				$sumaTodo = $sumaTodo + $row['cajaValor']; ?>
+					<tr>
+						<td class="tableexport-string" data-sort-value="<?= $row['tipoDescripcion'];?>"><?= $row['tipoDescripcion']; ?></td>
+						<td class="tableexport-string" data-sort-value="<?= $row['cajaFecha'];?>"><?= $row['cajaFecha']; ?></td>
+						<td class="tableexport-string" data-sort-value="<?= $row['cajaValor'];?>"><?= number_format($row['cajaValor'],2); ?></td>
+						<td class="tableexport-string" data-sort-value="<?= $row['cajaInteres'];?>"><?= $row['cajaInteres']; ?> %</td>
+						<td class="tableexport-string mayuscula" data-sort-value="<?= $row['cajaAsociado'];?>"><?= $row['cajaAsociado']; ?></td>
+						<td class="tableexport-string" data-sort-value="<?= $row['cajaObservacion'];?>"><?= $row['cajaObservacion']; ?></td>
+						
+					
+					</tr>
+		<? } //end de while ?> 
+					</tbody>
+					<tfoot>
+						<td></td>
+						<td></td>
+						
+						<th>S/ <?= number_format($sumaTodo,2);?></th>
+						<th></th>
+						<th></th>	
+					</tfoot>
+				<?
+				break;
 	default:
 		# code...
 		break;

@@ -49,14 +49,15 @@ if( !in_array($_COOKIE['ckPower'], $soloAdmis ) ){ header('Location: sinPermiso.
 			<div class="row">
 				<div class="col-xs-6 col-md-3">
 					<select name="" class="form-control" id="sltFiltroReporte">
+						<option value="R9" class="optReporte">Balance general y EE.FF</option>
 						<option value="R3" class="optReporte">Créditos nuevos</option>
 						<option value="R5" class="optReporte">Créditos Finalizados</option>
+						<option value="R8" class="optReporte">Colocación del mes</option>
 						<!-- <option value="R5" class="optReporte">Créditos recurrentes</option> -->
 						<option value="R4" class="optReporte">Moras cobradas</option>
 						<option value="R1" class="optReporte">Movimientos de entrada</option>
 						<option value="R2" class="optReporte">Movimientos de Salida</option>
-						<option value="R9" class="optReporte">Balance general y EE.FF</option>
-						<option value="R8" class="optReporte">Colocación del mes</option>
+						<option value="R12" class="optReporte">Inyecciones</option>
 						<option value="R6" class="optReporte">Cuadro de control</option>
 						<option value="R7" class="optReporte">Relación de desembolsos</option>
 						<option value="R11" class="optReporte">Reporte Seguros/ Com. y Serv</option>

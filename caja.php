@@ -217,6 +217,8 @@ a:focus, a:hover { color: #62286f; }
 						<input type="number" class="form-control input-lg mayuscula text-center esMoneda" id="txtMontoPagos" val="0.00" autocomplete="off">
 						<label id="lblPorcentajePasar" for="">Porcentaje en juego: (%)</label>
 						<input type="number" class="form-control input-lg mayuscula text-center " id="txtPorcentajePagos" val="0.00" autocomplete="off">
+						<label id="lblSocioData" for="">Datos del socio:</label>
+						<input type="text" class="form-control input-lg mayuscula text-center " id="txtSocioData" val="0.00" autocomplete="off">
 						<label id="lblMontoPasar" for="">Pasar por el P.O.S.: (S/)</label>
 						<input type="number" class="form-control input-lg mayuscula text-center esMoneda" id="txtPasarPagos" val="0.00" autocomplete="off">
 						<label for="">Método de pago</label>
@@ -635,11 +637,18 @@ $('.aLiProcesos').click(function() {
 	$('#lblMontoPasar').addClass('hidden');
 	$('#txtPasarPagos').addClass('hidden');
 	$('#txtPorcentajePagos').addClass('hidden'); $('#lblPorcentajePasar').addClass('hidden');
+	$('#lblSocioData').addClass('hidden'); $('#txtSocioData').addClass('hidden');
 	if( $(this).attr('data-id')=="74" ){
 		$('#lblMontoEntregar').text('Monto en efectivo: (S/)');
 		$('#lblMontoPasar').removeClass('hidden');
 		$('#txtPasarPagos').removeClass('hidden').val('0.00');
 		$('#txtPorcentajePagos').removeClass('hidden').val(15); $('#lblPorcentajePasar').removeClass('hidden');
+	}
+	if( $(this).attr('data-id')==90 || $(this).attr('data-id')==91 ){
+		$('#lblPorcentajePasar').removeClass('hidden');
+		$('#txtPorcentajePagos').removeClass('hidden');
+		$('#lblSocioData').removeClass('hidden');
+		$('#txtSocioData').removeClass('hidden');
 	}
 	$('#h5TipoPago').text($(this).text());
 	$('#cmbEstadoPagos').attr('data-id', $(this).attr('data-id') );
@@ -661,7 +670,8 @@ $('#btnInsertPagoOmiso').click(()=> {
 			valor: $('#txtMontoPagos').val(),
 			moneda: idMoneda,
 			obs: $('#txtObsPagos').val(),
-			porInteres: $('#txtPorcentajePagos').val()
+			porInteres: $('#txtPorcentajePagos').val(),
+			socio: $('#txtSocioData').val()
 		}}).done((resp)=> {
 			pantallaOver(false);
 			if(resp== true){
@@ -711,7 +721,7 @@ $('#btnUpdateCajaMaestra').click(function() {
 		}
 	});
 });
-$('#txtMontoPagos').keyup(function() {
+/* $('#txtMontoPagos').keyup(function() {
 	if( $.trim($('#h5TipoPago').text())=='Operación por tarjeta' ){
 		var valor =0;
 		var interes = (100-$('#txtPorcentajePagos').val())/100;
@@ -723,8 +733,7 @@ $('#txtMontoPagos').keyup(function() {
 		$('#txtObsPagos').val('Monto pasado: S/ ' + resultado.toFixed(2) );
 		
 	}
-	
-});
+}); */
 $('.btnPrintCajaEsp').click(function () {
 	var padre = $(this).parent().parent();
 	var queMonto, queTitulo;
