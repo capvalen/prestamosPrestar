@@ -1,6 +1,36 @@
 <?php 
 include "php/variablesGlobales.php";
-include "php/sumaEstados.php";
+if( !in_array($_COOKIE['ckPower'], $soloAdmis ) ){ header('Location: sinPermiso.php'); exit; }
+
+if (isset($_GET['año']) && isset($_GET['mes']) ){
+	$sqlVariables="SELECT * FROM `balanceGeneral` where balaAño = {$_GET['año']} and balaMes = {$_GET['mes']}; ";
+	$resultadoVariables=$preferido->query($sqlVariables);
+	if($resultadoVariables->num_rows>0){
+		include "php/sumaEstados.php";
+		while($rowVariables=$resultadoVariables->fetch_assoc()){ 
+			switch ($rowVariables['balaVariable']) {
+				case 'A111Disponible': $A111Disponible = $rowVariables['balaValor']; break;
+				case 'A1111Caja': $A1111Caja = $rowVariables['balaValor']; break;
+				case 'A112Bancos': $A112Bancos = $rowVariables['balaValor']; break;
+				case 'A112CuentasPorCobrar': $A112CuentasPorCobrar = $rowVariables['balaValor']; break;
+				case 'A113OtrasCuentas': $A113OtrasCuentas = $rowVariables['balaValor']; break;
+				case 'A114Adelantos': $A114Adelantos = $rowVariables['balaValor']; break;
+				case 'A115Mercaderia': $A115Mercaderia = $rowVariables['balaValor']; break;
+				case 'A121Inmueble': $A121Inmueble = $rowVariables['balaValor']; break;
+				case 'A1211Terrenos': $A1211Terrenos = $rowVariables['balaValor']; break;
+				case 'A1213Unidad': $A1213Unidad = $rowVariables['balaValor']; break;
+				case 'A211Proveedores': $A211Proveedores = $rowVariables['balaValor']; break;
+				case 'A212OrasCuentas': $A212OrasCuentas = $rowVariables['balaValor']; break;
+				case 'A31Patrimonio': $A31Patrimonio = $rowVariables['balaValor']; break;
+				case 'listaMaquinarias': $listaMaquinarias = $rowVariables['balaJson']; break;
+				case 'listaPrestamosMenor': $listaPrestamosMenor = $rowVariables['balaJson']; break;
+				case 'listaPrestamos': $listaPrestamos = $rowVariables['balaJson']; break;
+				default: break;
+			}
+		}
+	}
+	
+}
 
  ?>
 <!DOCTYPE html>
@@ -53,16 +83,43 @@ include "php/sumaEstados.php";
 				<div class="row">
 					<h2 class="purple-text text-lighten-1">Balances</h2>
 					
-					<div class="form-group">
-						<label for="my-select">Text</label>
-						<select id="my-select" class="custom-select" name="">
-							<option>Text</option>
-						</select>
+					<div class="form-inline">
+						<div class="form-group">
+							<label for="my-select">Fecha de balance</label>
+							<select id="sltAño" class="custom-select form-control" style="margin-bottom: 0px;">
+								<option value="-1">Año</option>
+								<<?php for ($i=2020; $i <= date('Y') ; $i++) { ?>>
+								<option value="<?= $i; ?>" <?php if (isset($_GET['año'])){ if($_GET['año']==$i){echo "selected"; }} ?> ><?= $i; ?></option>
+								<?php } ?>
+							</select>
+						</div>
+						<div class="form-group">
+							<select id="sltMes" class="custom-select form-control" style="margin-bottom: 0px;">
+								<option value="-1">Mes</option>
+								<option value="1" <?php if (isset($_GET['mes'])){ if($_GET['mes']==1){echo "selected"; }} ?> >Enero</option>
+								<option value="2" <?php if (isset($_GET['mes'])){ if($_GET['mes']==2){echo "selected"; }} ?> >Febrero</option>
+								<option value="3" <?php if (isset($_GET['mes'])){ if($_GET['mes']==3){echo "selected"; }} ?> >Marzo</option>
+								<option value="4" <?php if (isset($_GET['mes'])){ if($_GET['mes']==4){echo "selected"; }} ?> >Abril</option>
+								<option value="5" <?php if (isset($_GET['mes'])){ if($_GET['mes']==5){echo "selected"; }} ?> >Mayo</option>
+								<option value="6" <?php if (isset($_GET['mes'])){ if($_GET['mes']==6){echo "selected"; }} ?> >Junio</option>
+								<option value="7" <?php if (isset($_GET['mes'])){ if($_GET['mes']==7){echo "selected"; }} ?> >Julio</option>
+								<option value="8" <?php if (isset($_GET['mes'])){ if($_GET['mes']==8){echo "selected"; }} ?> >Agosto</option>
+								<option value="9" <?php if (isset($_GET['mes'])){ if($_GET['mes']==9){echo "selected"; }} ?> >Septiembre</option>
+								<option value="10" <?php if (isset($_GET['mes'])){ if($_GET['mes']==10){echo "selected"; }} ?> >Octubre</option>
+								<option value="11" <?php if (isset($_GET['mes'])){ if($_GET['mes']==11){echo "selected"; }} ?> >Noviembre</option>
+								<option value="12" <?php if (isset($_GET['mes'])){ if($_GET['mes']==12){echo "selected"; }} ?> >Diciembre</option>
+							</select>
+							</div>
+							<div class="form-group">
+							<button class="btn btn-success btn-outline" onclick="verificarMeses()"><i class="icofont icofont-search"></i> Buscar</button>
+							</div>
 					</div>
+					
 					
 				</div>
 				<hr>
 				
+			<?php if(isset($_GET['año']) && isset($_GET['mes']) && $resultadoVariables->num_rows>0 ): ?>
 				<div class="row" id="ambosBalances">
 					<div class="col-md-6 col-sm-12 container-fluid" id="divBalanceGeneral">
 						<div class="row titulo"> <div class="col-xs-12">
@@ -128,7 +185,11 @@ include "php/sumaEstados.php";
 						</div>
 						<div class="row" v-for="(maquinas, index) in listaMaquinarias">
 							<div class="col-xs-2"><span>{{maquinas.cantidad}}</span></div>
-							<div class="col-xs-5"><button class="btn btn-xs btn-danger btn-outline btn-sinBorde" @click="borrarMaquinaria(index)"><i class="icofont icofont-close"></i></button> <label for="">{{maquinas.descripcion}}</label></div>
+							<div class="col-xs-5">
+								<button class="btn btn-xs btn-danger btn-outline btn-sinBorde" @click="borrarLista(index, 'maquinaria')"><i class="icofont icofont-close"></i></button>
+								<label for="">{{maquinas.descripcion}}</label>
+								<button class="btn btn-xs btn-primary btn-outline btn-sinBorde" @click="abrirEditar(index, 'maquinaria')"><i class="icofont icofont-edit"></i></button> 
+							</div>
 							<div class="col-xs-3"><label for="">{{parseFloat(maquinas.precio).toFixed(2)}}</label></div>
 							<div class="col-xs-2"><label for="">{{parseFloat(maquinas.precio * maquinas.cantidad).toFixed(2) }}</label></div>
 						</div>
@@ -162,9 +223,13 @@ include "php/sumaEstados.php";
 								<div class="col-xs-3 encabezado"><label for="">Monto de cuota.</label></div>
 								<div class="col-xs-2 encabezado"><label for="">Saldo</label></div>
 							</div>
-							<div class="row" v-for="prestamoMenor in listaPrestamosMenor">
+							<div class="row" v-for="(prestamoMenor, index) in listaPrestamosMenor">
 								<div class="col-xs-2"><label for="">{{prestamoMenor.cuotas}}</label></div>
-								<div class="col-xs-5"><label for="">{{prestamoMenor.institucion}}</label></div>
+								<div class="col-xs-5">
+									<button class="btn btn-xs btn-danger btn-outline btn-sinBorde" @click="borrarlista(index, 'prestamosMenor')"><i class="icofont icofont-close"></i></button>
+									<label for="">{{prestamoMenor.institucion}}</label>
+									<button class="btn btn-xs btn-primary btn-outline btn-sinBorde" @click="abrirEditar(index, 'prestamosMenor')"><i class="icofont icofont-edit"></i></button> 
+								</div>
 								<div class="col-xs-3"><label for="">{{prestamoMenor.monto}}</label></div>
 								<div class="col-xs-2"><label for="">{{prestamoMenor.cuotas * prestamoMenor.monto }}</label></div>
 							</div>
@@ -182,9 +247,13 @@ include "php/sumaEstados.php";
 							<div class="col-xs-3 encabezado"><label for="">Monto de cuota.</label></div>
 							<div class="col-xs-2 encabezado"><label for="">Saldo</label></div>
 						</div>
-						<div class="row" v-for="prestamo in listaPrestamos">
+						<div class="row" v-for="(prestamo, index) in listaPrestamos">
 							<div class="col-xs-2"><label for="">{{prestamo.cuotas}}</label></div>
-							<div class="col-xs-5"><label for="">{{prestamo.institucion}}</label></div>
+							<div class="col-xs-5">
+								<button class="btn btn-xs btn-danger btn-outline btn-sinBorde" @click="borrarlista(index, 'prestamosMayor')"><i class="icofont icofont-close"></i></button>
+								<label for="">{{prestamo.institucion}}</label>
+								<button class="btn btn-xs btn-primary btn-outline btn-sinBorde" @click="abrirEditar(index, 'prestamosMayor')"><i class="icofont icofont-edit"></i></button> 
+							</div>
 							<div class="col-xs-3"><label for="">{{prestamo.monto}}</label></div>
 							<div class="col-xs-2"><label for="">{{prestamo.cuotas * prestamo.monto }}</label></div>
 						</div>
@@ -227,23 +296,21 @@ include "php/sumaEstados.php";
 							<div class="col-sm-4"><label for="">S/ <span>{{parseFloat(sumaGastosOperativos).toFixed(2)}}</span></label></div>
 						</div>
 						<div class="row">
-							<div class="col-xs-8"><label for="">Gastos de personal</label> <button class="btn btn-primary btn-xs btn-outline" onclick="$('#modalPersonal').modal('show');"><i class="icofont icofont-plus"></i></button></div>
+							<div class="col-xs-8"><label for="">Gastos de personal</label> </div>
 							<div class="col-sm-4"><label for="">S/ <span>{{parseFloat(sumaGastoPersonal).toFixed(2)}}</span></label></div>
 						</div>
 						<div class="row">
-							<div class="col-xs-2 encabezado"><label for="">Cantidad</label></div>
-							<div class="col-xs-5 encabezado"><label for="">Cargo</label></div>
+							<div class="col-xs-6 encabezado"><label for="">Cargo</label></div>
 							<div class="col-xs-3 encabezado"><label for="">Sueldo</label></div>
-							<div class="col-xs-2 encabezado"><label for="">Total</label></div>
+							<div class="col-xs-3 encabezado"><label for="">Total</label></div>
 						</div>
 						<div class="row" v-for="personal in listaPersonal">
-							<div class="col-xs-2"><label for="">{{personal.cantidad}}</label></div>
-							<div class="col-xs-5"><label for="">{{personal.cargo}}</label></div>
+							<div class="col-xs-6"><label class="mayuscula">{{personal.cargo}}</label></div>
 							<div class="col-xs-3"><label for="">{{personal.sueldo}}</label></div>
-							<div class="col-xs-2"><label for="">{{personal.cantidad * personal.sueldo}}</label></div>
+							<div class="col-xs-3"><label for="">{{personal.cantidad * personal.sueldo}}</label></div>
 						</div>
 						<div class="row">
-							<div class="col-sm-8"><label for="">Gastos de servicios</label> <button class="btn btn-primary btn-xs btn-outline" onclick="$('#modalServicio').modal('show');"><i class="icofont icofont-plus"></i></button></div>
+							<div class="col-sm-8"><label for="">Gastos de servicios</label> </div>
 							<div class="col-sm-4"><label for="">S/ <span>{{parseFloat(sumaServicios).toFixed(2)}}</span></label></div>
 						</div>
 						<div class="row">
@@ -259,7 +326,7 @@ include "php/sumaEstados.php";
 							<div class="col-sm-4"><label for="">S/ <span>{{parseFloat(sumaUtilidadOperativa).toFixed(2)}}</span></label></div>
 						</div>
 						<div class="row">
-							<div class="col-sm-8"><label for="">Otros ingresos</label> <button class="btn btn-primary btn-xs btn-outline" onclick="$('#modalOtros').modal('show');"><i class="icofont icofont-plus"></i></button></div>
+							<div class="col-sm-8"><label for="">Otros ingresos</label> </div>
 							<div class="col-sm-4"><label for="">S/ <span>{{parseFloat(sumaOtrosIngresos).toFixed(2)}}</span></label></div>
 						</div>
 						<div class="row"  v-for="otros in listaOtrosIngresos">
@@ -279,17 +346,27 @@ include "php/sumaEstados.php";
 							<div class="col-sm-4"><label for="">S/ <span>{{prestamo2.cuotas * prestamo2.monto }}</span></label></div>
 						</div>
 						<div class="row">
-							<div class="col-sm-8"><label for="">Utilidad del negocio</label></div>
+							<div class="col-sm-8"><label for=""><strong>Utilidad neta del negocio</strong></label></div>
 							<div class="col-sm-4"><label for="">S/ <span>{{parseFloat(sumaTotal).toFixed(2)}}</span></label></div>
 						</div>
 
 
+						<div class="row col-xs-12 text-right">
+							<button class="btn btn-primary " onclick="guardarBalance()"><i class="icofont icofont-save"></i> Guardar cambios en el balance</button>
+						</div>
 
 
 
 
 					</div>
 				</div>
+			<?php else:  //sino resultadoVariables>0? ?>
+				<p>No se encuentra ningún balance encontrado en esta fecha, puede cambiar la fecha.</p>
+				<?php if (isset($_GET['año']) and isset($_GET['mes']) ){ ?>
+					<p>Puede crear un balance:</p>
+					<button class="btn btn-primary btn-outline" onclick="inicializarBalance()"><i class="icofont icofont-archive"></i> Crear balance</button>
+				<?php } ?>
+			<?php endif //Finaliza resultadoVariables>0?>
 
 				
 			<!-- Fin de contenido principal -->
@@ -429,6 +506,28 @@ include "php/sumaEstados.php";
     </div>
   </div>
 </div>
+<!-- Modal para otros ingresos-->
+<div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Editar</h4>
+      </div>
+      <div class="modal-body">
+				<label for="">Cantidad</label>
+				<input type="text" class="form-control" v-model="maqCantidad">
+				<label for="">Descripción</label>
+				<input type="text" class="form-control" v-model="maqDescripcion">
+				<label for="">Monto</label>
+				<input type="number" class="form-control esMoneda" v-model="maqPrecio">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" @click="actualizarDato()">Actualizar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 </div><!-- /#wrapper -->
@@ -442,6 +541,7 @@ include "php/sumaEstados.php";
 <?php include 'php/existeCookie.php'; ?>
 
 <?php if ( isset($_COOKIE['ckidUsuario']) ){?>
+
 <script>
 datosUsuario();
 
@@ -449,18 +549,81 @@ $(document).ready(function(){
 	
 });
 
+<?php if(isset($_GET['año']) && isset($_GET['mes']) && $resultadoVariables->num_rows>0 ): ?>
+
 var app = new Vue({
   el: '#wrapper',
   data: {
-		maqCantidad: 1, maqDescripcion:'', maqPrecio: 0,
-		A121Inmueble:0, A1211Terrenos:0, A111Disponible:0, A1111Caja:0, A112Bancos:0, A112CuentasPorCobrar:0, A113OtrasCuentas:0, A114Adelantos:0, A115Mercaderia:0, A1213Unidad:0, A211Proveedores: 0, A212OrasCuentas: 0, A213PrestamosMenor: 0, A31Patrimonio: 0,
+		maqCantidad: 1, maqDescripcion:'', maqPrecio: 0, queActualizo: '', elInidice:0,
+		A121Inmueble:<?= $A121Inmueble;?>, A1211Terrenos:<?= $A1211Terrenos;?>, A111Disponible:<?= $A111Disponible;?>, A1111Caja:<?= $A1111Caja;?>, A112Bancos:<?= $A112Bancos;?>, A112CuentasPorCobrar:<?= $A112CuentasPorCobrar;?>, A113OtrasCuentas:<?= $A113OtrasCuentas;?>, A114Adelantos:<?= $A114Adelantos;?>, A115Mercaderia:<?= $A115Mercaderia;?>, A1213Unidad:<?= $A1213Unidad;?>, A211Proveedores: <?= $A211Proveedores;?>, A212OrasCuentas: <?= $A212OrasCuentas;?>, A31Patrimonio: <?= $A31Patrimonio;?>,
 		capitalConInteres: <?= $sumaTodoCapitales; ?>, soloCapital: <?= $sumaCapital; ?>,
-    listaMaquinarias: [{cantidad: 1, descripcion: 'Pcs', precio: 5000 }], listaPrestamosMenor:[{cuotas: 2, institucion: "Interbank", monto: 15}], listaPrestamos:[{cuotas: 3, institucion: "BCP", monto: 43.5}], listaPersonal:[{cantidad: 2, cargo: 'Asesor', sueldo: 500}], listaServicios:[{servicio: 'Luz', monto: 75}], listaOtrosIngresos: [{descripcion: 'Mora', monto: <?= $sumaMora?>}]
+    listaMaquinarias: <?= $listaMaquinarias; ?>, listaPrestamosMenor: <?= $listaPrestamosMenor; ?>, listaPrestamos: <?= $listaPrestamos; ?>, listaPersonal:<?= $planilla; ?>, listaServicios:<?= $servicios; ?>, listaOtrosIngresos: [{descripcion: 'Mora', monto: <?= $sumaMora?>}]
 	},
 	methods:{
-		borrarMaquinaria(index){
-			this.listaMaquinarias.splice(index,1);
-		}
+		borrarLista(index, tipo){
+			switch (tipo) {
+				case 'maquinaria':
+					this.listaMaquinarias.splice(index,1);
+					break;
+				case 'prestamosMenor':
+					this.listaPrestamosMenor.splice(index,1);
+					break;
+				case 'prestamosMayor':
+					this.listaPrestamos.splice(index,1);
+					break;
+				default: console.log( "no se encontro nada" );
+					break;
+			}
+			
+		},
+		abrirEditar(index, tipo){
+			switch (tipo) {
+				case 'maquinaria':
+					this.maqCantidad = this.listaMaquinarias[index].cantidad;
+					this.maqDescripcion = this.listaMaquinarias[index].descripcion;
+					this.maqPrecio = this.listaMaquinarias[index].precio;
+					break;
+				case 'prestamosMenor':
+					this.maqCantidad = this.listaPrestamosMenor[index].cuotas;
+					this.maqDescripcion = this.listaPrestamosMenor[index].institucion;
+					this.maqPrecio = this.listaPrestamosMenor[index].monto;
+					break;
+				case 'prestamosMayor':
+					this.maqCantidad = this.listaPrestamos[index].cuotas;
+					this.maqDescripcion = this.listaPrestamos[index].institucion;
+					this.maqPrecio = this.listaPrestamos[index].monto;
+					break;
+				default:
+					break;
+			}
+			
+			this.queActualizo = tipo;
+			this.elInidice=index;
+			$('#modalEditar').modal('show');
+		},
+		actualizarDato(){
+			switch (this.queActualizo) {
+				case 'maquinaria':
+					this.listaMaquinarias[this.elInidice].cantidad = this.maqCantidad;
+					this.listaMaquinarias[this.elInidice].descripcion = this.maqDescripcion;
+					this.listaMaquinarias[this.elInidice].precio = this.maqPrecio;
+					break;
+				case 'prestamosMenor':
+					this.listaPrestamosMenor[this.elInidice].cuotas = this.maqCantidad;
+					this.listaPrestamosMenor[this.elInidice].institucion = this.maqDescripcion;
+					this.listaPrestamosMenor[this.elInidice].monto = this.maqPrecio;
+					break;
+				case 'prestamosMayor':
+					this.listaPrestamos[this.elInidice].cuotas = this.maqCantidad;
+					this.listaPrestamos[this.elInidice].institucion = this.maqDescripcion;
+					this.listaPrestamos[this.elInidice].monto = this.maqPrecio;
+					break;
+				default:
+					break;
+			}
+			$('#modalEditar').modal('hide');
+		},
+		
 	},
 	computed:{
 		sumaMaquinas(){
@@ -525,7 +688,7 @@ var app = new Vue({
 		},
 		sumaOtrosIngresos(){
 			var otros =0;
-			this.listaServicios.forEach(e => {
+			this.listaOtrosIngresos.forEach(e => {
 				otros += parseFloat(e.monto);
 			});
 			return otros;
@@ -584,6 +747,61 @@ function limpiarGlobales(){
 $("body").on('focus', 'input',function(){
   this.select();
 });
+function guardarBalance(){
+	let maquinarias, menor, mayor;
+	if(app.listaMaquinarias.length==0){ maquinarias='[]'; }else{ maquinarias=app.listaMaquinarias; }
+	if(app.listaPrestamosMenor.length==0){ menor='[]'; }else{ menor=app.listaPrestamosMenor; }
+	if(app.listaPrestamos.length==0){ mayor='[]'; }else{ mayor=app.listaPrestamos; }
+	$.ajax({url: 'php/guardarBalance.php', type: 'POST', data: { año:'<?= $_GET['año']?>',mes: '<?= $_GET['mes']?>',
+		A111Disponible : app.A111Disponible,
+		A1111Caja : app.A1111Caja,
+		A112Bancos : app.A112Bancos,
+		A112CuentasPorCobrar : app.A112CuentasPorCobrar,
+		A113OtrasCuentas : app.A113OtrasCuentas,
+		A114Adelantos : app.A114Adelantos,
+		A115Mercaderia : app.A115Mercaderia,
+		A121Inmueble : app.A121Inmueble,
+		A1211Terrenos : app.A1211Terrenos,
+		A1213Unidad : app.A1213Unidad,
+		A211Proveedores : app.A211Proveedores,
+		A212OrasCuentas : app.A212OrasCuentas,
+		A31Patrimonio : app.A31Patrimonio,
+		listaMaquinarias : maquinarias,
+		listaPrestamosMenor : menor,
+		listaPrestamos : mayor
+	}}).done(function(resp) {
+		console.log(resp)
+		if(resp=='todo ok'){
+			$('#modalGuardadoCorrecto #h1Bien').text('Balance guardado correctamente');
+			$('#modalGuardadoCorrecto').modal('show');
+			
+		}
+	});
+}
+
+	
+<?php endif //Finaliza resultadoVariables>0 ?>
+
+<?php if (isset($_GET['año']) && isset($_GET['mes'])): ?>
+function inicializarBalance(){
+	$.ajax({url: 'php/inicializarBalance.php', type: 'POST', data: { año: '<?= $_GET['año']; ?>', mes: '<?= $_GET['mes']; ?>'}}).done(function(resp) { console.log( resp );
+		if(resp=='todo ok'){ console.log( 'balance creado' );
+			location.reload();
+		}
+	});
+}
+<?php endif ?>
+
+function verificarMeses(){
+	if( $('#sltAño').val()==-1 ){
+		alert('Seleccione primero un año de la lista.');
+	}else if( $('#sltMes').val()==-1 ){
+		alert('Seleccione un mes de la lista.');
+	}else{
+		window.location.href = 'balanceGeneral.php?año='+ $('#sltAño').val() +'&mes=' +$('#sltMes').val();
+	}
+
+}
 </script>
 <?php } ?>
 </body>
