@@ -31,7 +31,7 @@
 					if( file_exists($imagen) ):?>
 					<img src="<?= $imagen; ?>" class="img-responsive img-circle" style=" display: inline-block; padding: 0 40px;">
 				<? else: ?>
-					<img src="https://perucash.com/app/images/usuarios/noimg.svg?ver=1.1" class="img-responsive img-circle" style=" display: inline-block; padding: 0 40px;">
+					<img src="https://perucash.com/app/images/usuarios/noimg.jpg?ver=1.1" class="img-responsive img-circle" style=" display: inline-block; padding: 0 40px;">
 				<? endif;?>
 				<br>
                <label for="">Mi nombre</label> <input type="text" id="txtNombre" class="form-control text-center mayuscula" readonly value="<?= $_COOKIE['cknomCompleto'];?>">
@@ -42,7 +42,7 @@
 					<p class="perror hidden" style="color: rgb(213, 0, 0);"></p>
 					<button class="btn btn-azul btn-outline btn-block btn.lg" id="btnCambiarContrasena"><i class="icofont icofont-ui-fire-wall"></i> Actualizar mi contraseña</button>
             </div>
-            <div class="col-xs-12 col-sm-7 col-lg-8 ">
+				<div class="col-xs-12 col-sm-7 col-lg-8 hidden">
 					<h4>Mis comisiones</h4>
 					<p>Pronto acá se mostrarán las comisiones de cada usuario</p>
 				</div>

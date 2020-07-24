@@ -59,9 +59,6 @@ if (isset($_GET['año']) && isset($_GET['mes']) ){
 	padding-top: 10px;padding-bottom: 10px;
 }
 #ambosBalances label{font-weight: 500;}
-#ambosBalances .row:hover{
-	background-color: #eee;
-}
 #ambosBalances .titulo,
 #ambosBalances .encabezado
 { border:1px solid #ddd;}
@@ -801,6 +798,18 @@ function verificarMeses(){
 		window.location.href = 'balanceGeneral.php?año='+ $('#sltAño').val() +'&mes=' +$('#sltMes').val();
 	}
 
+}
+
+$("body").on('.ocultar-mostrar-menu', 'click',function() {
+	ocultar();
+});
+function ocultar(){//console.log('oc')
+	$("#wrapper").toggleClass("toggled");
+	//$('.navbar-fixed-top').css('left','0');
+	$('.navbar-fixed-top').toggleClass('encoger');
+	$('#btnColapsador').addClass('collapsed');
+	$('#btnColapsador').attr('aria-expanded','false');
+	$('#navbar').removeClass('in');
 }
 </script>
 <?php } ?>

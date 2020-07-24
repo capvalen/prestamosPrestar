@@ -114,19 +114,21 @@ a:focus, a:hover { color: #62286f; }
 				</div>
 				
 				<div class=" panel panel-default" id="divEntradas">
-					<div class="table-responsive">
-						<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
-						<tbody>
-						<?php
-						if( ! isset($_GET['cuadre']) ):
-							// require_once 'php/reporteIngresoDia.php';+
-							echo "<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>";
-						else:
-							require_once 'php/reporteIngresoDiaxCuadre.php';
-						endif;
-						?>
-						</tbody> </table>
+					<div class="panel-body">
 					</div>
+						<div class="table-responsive">
+							<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+							<tbody>
+							<?php
+							if( ! isset($_GET['cuadre']) ):
+								// require_once 'php/reporteIngresoDia.php';+
+								echo "<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>";
+							else:
+								require_once 'php/reporteIngresoDiaxCuadre.php';
+							endif;
+							?>
+							</tbody> </table>
+						</div>
 				</div>
 			</div>
 			<div class="row container-fluid  ">
@@ -144,19 +146,21 @@ a:focus, a:hover { color: #62286f; }
 					<?php } ?>
 				</div>
 				<div class=" panel panel-default " id="divSalidas">
-					<div class="table-responsive">
-						<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
-						<tbody>
-						<?php
-							if( ! isset($_GET['cuadre']) ):
-								// require_once 'php/reporteEgresoDia.php';+
-								echo "<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>";
-							else:
-								require_once 'php/reporteEgresoDiaxCuadre.php';
-							endif;
-						?>
-						</tbody> </table>
+					<div class="panel-body">
 					</div>
+						<div class="table-responsive">
+							<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+							<tbody>
+							<?php
+								if( ! isset($_GET['cuadre']) ):
+									// require_once 'php/reporteEgresoDia.php';+
+									echo "<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>";
+								else:
+									require_once 'php/reporteEgresoDiaxCuadre.php';
+								endif;
+							?>
+							</tbody> </table>
+						</div>
 				</div>
 			</div>
 			<div class="row container-fluid ">
@@ -941,7 +945,7 @@ $('#txtPasarPagos').keyup(function() {
 	}
 	var resultado = valor*interes; //0.85;
 	$('#txtMontoPagos').val(resultado.toFixed(2));
-	$('#txtObsPagos').val('Monto pasado: S/ ' + valor.toFixed(2) );
+	/* $('#txtObsPagos').val('Monto pasado: S/ ' + valor.toFixed(2) ); */
 });
 $('#txtPorcentajePagos').keyup(function() {
 	var valor =0;
@@ -951,7 +955,7 @@ $('#txtPorcentajePagos').keyup(function() {
 	}
 	var resultado = valor/interes; //0.85;
 	$('#txtPasarPagos').val(resultado.toFixed(2));
-	$('#txtObsPagos').val('Monto pasado: S/ ' + resultado.toFixed(2) );
+	/* $('#txtObsPagos').val('Monto pasado: S/ ' + resultado.toFixed(2) ); */
 });
 <?php }
 if( in_array( $_COOKIE['ckPower'], $soloDios)){ ?>
