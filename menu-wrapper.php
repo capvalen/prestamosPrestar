@@ -27,14 +27,14 @@ $nomArchivo = basename($_SERVER['PHP_SELF']); ?>
 		<li <?php if($nomArchivo =='simulador.php') echo 'class="active"'; ?>>
 				<a href="simulador.php"><i class="icofont icofont-robot"></i> Simulador</a>
 		</li>
-		<?php if( $_COOKIE['ckPower']==1){ ?>
+		<?php if(isset($_COOKIE['ckPower'])){ if( $_COOKIE['ckPower']==1){ ?>
 			<li <?php if($nomArchivo =='balanceGeneral.php') echo 'class="active"'; ?>>
 				<a href="balanceGeneral.php"><i class="icofont icofont-ui-copy"></i> Balance general</a>
 		</li>
 		<li <?php if($nomArchivo =='configuraciones.php') echo 'class="active"'; ?>>
 				<a href="configuraciones.php"><i class="icofont-settings"></i> Configuraciones</a>
 		</li>
-		 <?php } ?>
+		 <?php }} ?>
 		<li>
 				<a href="#!" class="ocultar-mostrar-menu"><i class="icofont icofont-swoosh-left"></i> Ocultar menú</a>
 		</li>

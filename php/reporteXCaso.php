@@ -807,44 +807,55 @@ switch ($_POST['caso']) {
 			<?
 			break;
 		case "R11":
-				$sql="SELECT ca.*, tp.tipoDescripcion, date_format(cajaFecha, '%d/%m/%Y' ) as fecha FROM `caja` ca
+				$sql="SELECT ca.*, tp.tipoDescripcion, date_format(cajaFecha, '%d/%m/%Y' ) as fecha, pc.cuotCuota, pc.cuotSeg
+				FROM `caja` ca
 				inner join tipoproceso tp on tp.idtipoproceso = ca.idtipoproceso
-				where ca.idTipoProceso in (87,88) and cajaActivo=1 and date_format(cajaFecha,'%Y-%m-%d') between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' order by cajaFecha; ";
+				inner join prestamo_cuotas pc on pc.idCuota = ca.idCuota
+				where ca.idTipoProceso in (33,80) and cajaActivo=1 and date_format(cajaFecha,'%Y-%m-%d') between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' order by cajaFecha; ";
 				$resultado=$cadena->query($sql);
 				$sumMontos=0; $k=0;
 				?>
 				<thead>
 					<tr>
 						<th>N°</th>
+						<th>Código</th>
 						<th>Préstamo</th>
 						<th>Tipo</th>
+						<th>Valor de Cuota</th>
 						<th>Fecha</th>
-						<th>Valor</th>
+						<th>Com. y Serv.</th>
 						<th>Observación</th>
 						
 					</tr>
 				</thead>
 				<tbody>
 				<?php
-				while($row=$resultado->fetch_assoc()){ 
-					$sumMontos+= $row['cajaValor'];
+				while($row=$resultado->fetch_assoc()){
 				?>
 				<tr>
 					<td><?= $k+1; ?></td>
+					<td><i>SP-<?= $row['idCaja']; ?></i></td>
 					<td class="tableexport-string"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo']; ?></a></td>
-					<td><?= $row['tipoDescripcion']; ?></td>
+					<td>Com. y Seg de: <?= $row['tipoDescripcion']; ?></td>
+					<td><?= $row['cajaValor']; ?></td>
 					<td class="tableexport-string"><?= $row['fecha']; ?></td>
-					<td class="tableexport-string">S/ <?= number_format($row['cajaValor'],2); ?></td>
+					<td class="tableexport-string">S/ <?php
+						if($row['idTipoProceso']==80){$seguroV3 = $row['cuotSeg']; }
+						if($row['idTipoProceso']==33){$porcentaje=$row['cajaValor']/($row['cuotCuota']+$row['cuotSeg']); $seguroV3 = round($row['cuotSeg']*$porcentaje, 1);}
+						echo number_format($seguroV3,2);
+					 ?></td>
 					<td class="tableexport-string"><?= $row['cajaObservacion']; ?></td>
 				</tr>
 				<?php
+				$sumMontos+= $seguroV3;
 				$k++; }?>
 				</tbody>
 				<tfoot>
 					<td></td>
 					<td></td>
+					<td></td><td></td><td></td>
 					<td></td>
-					<th><?= number_format(round($sumMontos,1), 2); ?></th>
+					<th>S/ <?= number_format(round($sumMontos,1), 2); ?></th>
 					<td></td>
 					
 				</tfoot>

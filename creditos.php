@@ -7,6 +7,7 @@ $base58 = new StephenHill\Base58();
 include "php/variablesGlobales.php";
 $hayCaja= require_once("php/comprobarCajaHoy.php");
 $fechaHoy = new DateTime();
+$estadoMora = null;
 ?>
 
 <!DOCTYPE html>
@@ -72,7 +73,8 @@ $fechaHoy = new DateTime();
 	u.usuNombres, preInteresPers, pre.idUsuario,
 	case presFechaDesembolso when '0000-00-00' then 'Desembolso pendiente' else presFechaDesembolso end as `presFechaDesembolso`,
 	case presAprobado when 0 then 'Sin aprobar' when 2 then 'Rechazado' else 'Aprobado' end as `presAprobado`, 
-	case when ua.usuNombres is Null then '-' else ua.usuNombres end  as `usuarioAprobador`, pre.idTipoPrestamo
+	case when ua.usuNombres is Null then '-' else ua.usuNombres end  as `usuarioAprobador`, pre.idTipoPrestamo,
+	`preMoraFija`, `preMoraFecha`
 	FROM `prestamo` pre
 	inner join usuario u on u.idUsuario = pre.idUsuario
 	left join usuario ua on ua.idUsuario = pre.idUsuarioAprobador
@@ -89,6 +91,7 @@ $fechaHoy = new DateTime();
 		<?php if( $respuesta = $conection->query($sqlCr)){
 			$contadorF = $respuesta->num_rows;
 			$rowCr = $respuesta->fetch_assoc();
+			$estadoMora =false;
 
 			if( !in_array($_COOKIE['ckPower'], $soloCajas ) ){
 				if( $rowCr['idUsuario']<> $_COOKIE['ckidUsuario'] ){
@@ -110,9 +113,15 @@ $fechaHoy = new DateTime();
 				<div class="col-sm-2"><label for="">Verificador</label><p><?= $rowCr['usuarioAprobador']; ?></p></div>
 				<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )){ ?>
 				<div class="col-sm-2"><label for="">Nuevo Asesor:</label> <br>
-					<select name="" id="sltNuevoAsesr" class="" style="border-radius=3px;">
+					<select name="" id="sltNuevoAsesr" class="form-control input-sm" style="margin-bottom: 0px;">
 						<?php include "php/OPTUsuarios.php"; ?>
 					</select>
+				</div>
+				<div class="col-sm-2"><label for="">Mora fija:</label> <br>
+					<input type="text" id="txtMoraFijaAsignar" class="form-control input-sm" autocomplete="nope" style="margin-bottom: 0px; height: 30px!important;" value="<?php if ( strlen($rowCr['preMoraFecha'])>0 ){
+						if( $rowCr['preMoraFecha'] == date('Y-m-d')){ $estadoMora=true; echo $rowCr['preMoraFija']; } else{ echo ""; $estadoMora=false; }
+					}else{ echo ''; $estadoMora=false; }
+					?>">
 				</div>
 				<?php } ?>
 			</div>
@@ -155,7 +164,9 @@ $fechaHoy = new DateTime();
 					</button>
 					<ul class="dropdown-menu">
 						<li id="btnImpresionPrevia" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Cronograma</a></li>
+						<li id="btnImpresionPreviaPDF" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Cronograma PDF</a></li>
 						<li id="btnImpresionContrato" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Contrato</a></li>
+						<li id="btnImpresionContratoPDF" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Contrato PDF</a></li>
 					</ul>
 				<?php endif;//de desembolso pendiente ?>
 				</div>
@@ -545,10 +556,9 @@ $fechaHoy = new DateTime();
 				<p>Pago total: <strong>S/ <span id="spaCTotal"></span></strong></p>
 			</div>
 			<div class="">
-				<div class="checkbox checkbox-infocat checkbox-circle">
-					<input id="chkExonerar" class="styled" type="checkbox" >
-					<label for="chkExonerar"> Exonerar mora </label>
-				</div>
+				<label for="">Mora</label>
+				<input type="number" class="form-control input-lg text-center inputGrande esMoneda" id="txtPagaClienteMora" style="margin: 0;" readonly>
+
 				<label for="">¿Cuánto dinero dispone el cliente?</label>
 				<input type="number" class="form-control input-lg text-center inputGrande esMoneda" id="txtPagaClienteVariable" style="margin: 0;">
 			</div>
@@ -694,6 +704,21 @@ $('#sltNuevoAsesr').change(function() { console.log( 'cambio' );
 			location.reload();
 		}
 	});
+});
+$('#txtMoraFijaAsignar').keypress(function (e) { 
+	if(e.keyCode == 13){ 
+		$.ajax({url: 'php/guardarMoraFijo.php', type: 'POST', data: { mora:$('#txtMoraFijaAsignar').val(), idPrestamo: '<?= $codCredito;?>'  }}).done(function(resp) {
+			//console.log(resp)
+			if(resp=='ok'){
+				$('#spanBien').text('Mora fija, guardado correctamente')
+				$('#h1Bien').html(``);
+				$('#modalGuardadoCorrecto').modal('show');
+				$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () { 
+					location.reload();
+				});
+			}
+		});
+	}
 });
 <?php } ?>
 
@@ -888,6 +913,12 @@ $('#h1Bien').on('click', '#btnImpresionPrevia', function(){
 	var dataUrl="php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre');
 	window.open(dataUrl, '_blank' );
 });
+$('#contenedorCreditosFluid').on('click', '#btnImpresionPreviaPDF', function(){
+	//console.log( 'aca' );
+	var dataUrl="http://infocatsoluciones.com/app/prestamosPrestar/php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre')+"&pdf=true";
+	console.log( dataUrl );
+	window.open("http://api.pdflayer.com/api/convert?access_key=c8d5869563f6ffbefdc884ca83dfe5e2&document_url="+encodeURIComponent(dataUrl), '_blank' );
+});
 $('body').on('click', '#btnImpresionContrato', function(){
 	var monto = $('#spanMontoDado').attr('data-monto');
 	var fecha1 = moment($('#tableSubIds tbody tr').first().children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
@@ -907,6 +938,27 @@ $('body').on('click', '#btnImpresionContrato', function(){
 	
 	var dataUrl="impresion/printContrato.php?credito="+$(this).attr('data-pre')+"&monto="+monto+"&fecha1="+fecha1+"&fecha2="+fecha2+"&fechaPri="+fechaPri+"&interes="+interes+"&cantCuota="+cantCuotas+"&tPago="+tipoPago;
 	window.open(dataUrl, '_blank' );
+});
+$('body').on('click', '#btnImpresionContratoPDF', function(){
+	var monto = $('#spanMontoDado').attr('data-monto');
+	var fecha1 = moment($('#tableSubIds tbody tr').first().children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var fechaPri = moment($('#tableSubIds tbody tr').eq(1).children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var fecha2 = moment($('#tableSubIds tbody tr').last().children().eq(2).text(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+	var interes = $('#pinteresGlobal').attr('data-int');
+	var cantCuotas = $('#tableSubIds tbody tr').length-1;
+	var tipoPago = '';
+	switch ($('#spanTipoDescpago').text()) {
+		case "Mensual": tipoPago='MENSUALES'; break;
+		case "Diario": tipoPago='DIARIOS'; break;
+		case "Quincenal": tipoPago='QUINCENALES'; break;
+		case "Semana": tipoPago='SEMANALES'; break;
+		default:
+			break;
+	}
+	
+	var dataUrl="http://infocatsoluciones.com/app/prestamosPrestar/impresion/printContrato.php?credito="+$(this).attr('data-pre')+"&monto="+monto+"&fecha1="+fecha1+"&fecha2="+fecha2+"&fechaPri="+fechaPri+"&interes="+interes+"&cantCuota="+cantCuotas+"&tPago="+tipoPago+"&pdf=true";
+	console.log( dataUrl );
+	window.open("http://api.pdflayer.com/api/convert?access_key=c8d5869563f6ffbefdc884ca83dfe5e2&document_url="+encodeURIComponent(dataUrl), '_blank' );
 });
 $('#rowBotonesMaestros').on('click', '#btnImpresionPrevia', function(){
 	var dataUrl="php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre');
@@ -1079,8 +1131,17 @@ $('#btnsolicitarDeuda').click(function() {
 		$('#spaCMora').text(data.diasMora);
 		$('#spaCPrecioCuota').text(data.deudaCuotas.toFixed(2));
 		$('#spaCSeguro').text(data.seguro.toFixed(2));
-		$('#spaCPrecioMora').text(data.precioMora.toFixed(2));
-		$('#spaCTotal').text(data.paraFinalizar.toFixed(2));
+		
+		<?php if( $estadoMora ): ?>
+			$('#spaCPrecioMora').text(<?= $rowCr['preMoraFija'];?>);
+			$('#spaCTotal').text(parseFloat(parseFloat(data.deudaCuotas.toFixed(2)) + parseFloat('<?= $rowCr['preMoraFija']; ?>')).toFixed(2) );
+			$.laMora = parseFloat(<?= $rowCr['preMoraFija'];?>);
+		<?php else: ?>
+			$('#spaCPrecioMora').text(data.precioMora.toFixed(2));
+			$('#spaCTotal').text(data.paraFinalizar.toFixed(2));
+			$.laMora=data.precioMora;
+		<?php endif; ?>
+		$('#txtPagaClienteMora').val($.laMora.toFixed(2));
 		$('#mostrarRealizarPagoCombo').modal('show');
 		
 	});
@@ -1092,11 +1153,12 @@ $('#btnRealizarDeposito').click(function() {
 		$('#mostrarRealizarPagoCombo .divError').removeClass('hidden').find('.spanError').text('No se permiten valores negativos o ceros.');
 	}/* else if($('#txtPagaClienteVariable').val() > parseFloat($('#spaCTotal').text())  ){
 		$('#mostrarRealizarPagoCombo .divError').removeClass('hidden').find('.spanError').html('El monto máximo que se puede depositar es <strong>S/ '+$('#spaCTotal').text()+'</strong> .');
-	} */else if( $('#txtPagaClienteVariable').val() < parseFloat($('#spaCPrecioMora').text()) ){
+	} else if( $('#txtPagaClienteVariable').val() < parseFloat($('#spaCPrecioMora').text()) ){
 		$('#mostrarRealizarPagoCombo .divError').removeClass('hidden').find('.spanError').html('Debe adeltar y cubrir mínimo la mora <strong>S/ '+$('#spaCPrecioMora').text()+'</strong> .');
-	}else{
+	}*/
+	else{
 		var linea ='';
-		$.ajax({url: 'php/pagarCreditoCombo.php', type: 'POST', data: {credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', dinero: $('#txtPagaClienteVariable').val(), exonerar: $('#chkExonerar').prop('checked') }}).done(function(resp) { console.log( resp ); 
+		$.ajax({url: 'php/pagarCreditoCombo.php', type: 'POST', data: {credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', dinero: $('#txtPagaClienteVariable').val(), exonerar: $('#chkExonerar').prop('checked'), cliMora: $.laMora }}).done(function(resp) { console.log( resp ); 
 			var data = JSON.parse(resp); //console.log(data)
 			var sumAcumulado=0, sumaMoras=0;
 			if( data.length >0 ){

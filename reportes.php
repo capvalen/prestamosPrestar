@@ -60,7 +60,7 @@ if( !in_array($_COOKIE['ckPower'], $soloAdmis ) ){ header('Location: sinPermiso.
 						<option value="R12" class="optReporte">Inyecciones</option>
 						<option value="R6" class="optReporte">Cuadro de control</option>
 						<option value="R7" class="optReporte">Relación de desembolsos</option>
-						<option value="R11" class="optReporte">Reporte Seguros/ Com. y Serv</option>
+						<option value="R11" class="optReporte">Reporte Com. y Serv</option>
 						<option value="R10" class="optReporte">Reporte diario</option>
 
 					</select>

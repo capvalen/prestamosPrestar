@@ -36,26 +36,24 @@ while($row=$resultado->fetch_assoc()){
 $resultado->data_seek(0);
 //echo $_POST['exonerar']=='true';
 
-if( $_POST['exonerar']=='true' && $diasMora>0 ): // -> Se exonera de mora
-   /* HACER INSERT a CAJA por MORA por sólo lo que el cliente diga */
+/* if( $_POST['exonerar']=='true' && $diasMora>0 ): // -> Se exonera de mora
+  // HACER INSERT a CAJA por MORA por sólo lo que el cliente diga
 	$sqlMora="INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
 	VALUES (null,{$idPrestamo},0,86,now(),0,'Se condonó {$diasMora} días por el periodo {$primFecha} y {$ultFecha}',1,1,{$_COOKIE['ckidUsuario']});";
 	//echo $sqlMora;
 	
-	$resultadoMora=$esclavo->query($sqlMora);
-else: // -> Se paga la mora
-	if($diasMora>0){ //$diasMora-=1;
+	$resultadoMora=$esclavo->query($sqlMora); */
+if($diasMora>0): // -> Se paga la mora $diasMora-=1;
 		$moraTotal = $diasMora*$mora;
 		/* HACER INSERT a CAJA por MORA por X días*/
+		if ( $_POST['cliMora']< $moraTotal ){ $extra=" de un total de S/ ".$moraTotal; }else{$extra='';}
 		$sqlMora="INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-		VALUES (null,{$idPrestamo},0,81,now(),{$moraTotal},'Mora por {$diasMora} días por el periodo {$primFecha} y {$ultFecha}',1,1,{$_COOKIE['ckidUsuario']});";
+		VALUES (null,{$idPrestamo},0,81,now(),{$_POST['cliMora']},'Mora por el periodo {$primFecha} y {$ultFecha}{$extra}',1,1,{$_COOKIE['ckidUsuario']});";
 	//echo "mora pagada ".$moraTotal."\n";
-	$dinero -= $moraTotal;
 	$resultadoMora=$esclavo->query($sqlMora);
-	}
 endif;
 
-$filas[] = array('sumaMora' => $moraTotal, 'diasMora' => $diasMora, 'queEs'=> 'Pago mora', 'montoCuota' => $moraTotal,  );
+$filas[] = array('sumaMora' => $_POST['cliMora'], 'diasMora' => $diasMora, 'queEs'=> 'Pago mora', 'montoCuota' => $_POST['cliMora']  );
 
 $sentenciaLarga ='';
 
@@ -123,33 +121,37 @@ while($row2=$resultado->fetch_assoc()){
 //------------------
 
 //echo $sentenciaLarga;
-$respuLargo=$prisionero->multi_query($sentenciaLarga);
-
-
-$sqlFaltan="SELECT retornarNumCuotasFaltanToFin({$idPrestamo}) as faltan";
-//echo $sqlFaltan;
-$resultadoFaltan=$preferido->query($sqlFaltan);
-$rowFaltan=$resultadoFaltan->fetch_assoc();
-//$datoFaltan = $row['faltan'];
-$filas[0]['faltan']= $rowFaltan['faltan']; //= array('faltan'=> );
-
-
-//------- Verificamos que el crédito ya está pagado
-$sqlComprobar= "SELECT idPrestamo FROM prestamo_cuotas
-where  idPrestamo = {$idPrestamo} and idTipoPrestamo in (33, 79) and idTipoPrestamo <>43;"; //cuotFechaPago <=curdate() and
-$resultadoComprobar=$esclavo->query($sqlComprobar);
-$numLineas=$resultadoComprobar->num_rows;
-
-if($numLineas==0){
-	$sqlUpdFin="UPDATE `prestamo` SET 
-	`presActivo`=2, `fechaFinPrestamo`=now()
-	where `idPrestamo`={$idPrestamo};";
-	$cadena->query($sqlUpdFin);
-}
-
-if($respuLargo){
+$prisionero->multi_query($sentenciaLarga);
+if( $prisionero-> next_result() ){
 	//echo true;
+
+	//sleep(1);
+	$sqlFaltan="SELECT retornarNumCuotasFaltanToFin({$idPrestamo}) as faltan";
+	//echo $sqlFaltan;
+	$resultadoFaltan=$preferido->query($sqlFaltan);
+	$rowFaltan=$resultadoFaltan->fetch_assoc();
+	//$datoFaltan = $row['faltan'];
+	$filas[0]['faltan']= $rowFaltan['faltan']; //= array('faltan'=> );
+	
+
+
+	//------- Verificamos que el crédito ya está pagado
+	$sqlComprobar= "SELECT idPrestamo FROM prestamo_cuotas
+	where  idPrestamo = {$idPrestamo} and idTipoPrestamo in (33, 79) and idTipoPrestamo <>43;"; //cuotFechaPago <=curdate() and
+	$resultadoComprobar=$esclavo->query($sqlComprobar);
+	$numLineas=$resultadoComprobar->num_rows;
+	//echo "faltan pagar " . $numLineas;
+
+	if($numLineas==0){
+		$sqlUpdFin="UPDATE `prestamo` SET 
+		`presActivo`=2, `fechaFinPrestamo`=now()
+		where `idPrestamo`={$idPrestamo};";
+		$cadena->query($sqlUpdFin);
+	}
+
 	echo json_encode($filas);
+}else{
+	echo "error en pagar cuentas";
 }
 
 ?>

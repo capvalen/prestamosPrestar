@@ -7,7 +7,9 @@ require_once('../vendor/autoload.php');
 $base58 = new StephenHill\Base58();
 $diassemanaN= array("Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado");
 $mesesN=array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-$nomEmpresa = $_COOKIE['cknombreEmpresa'];
+if(!isset($_GET['pdf'])){
+	$nomEmpresa = $_COOKIE['cknombreEmpresa'];
+}else{ $nomEmpresa ="Prestar Huancayo"; }
 $idPresPost = $base58->decode($_GET['prestamo']);
 $sumaCapi =0; $sumaInteres=0; $sumaComi=0; $sumaCuota=0; $seguro=0; $sumaTodo=0; $todo =0;
 $sql = "SELECT pre.*, lower(concat(TRIM(c.cliApellidoPaterno), ' ', TRIM(c.cliApellidoMaterno), ', ', TRIM(c.cliNombres))) as cliNombres, c.cliDni, tp.tpreDescipcion, lower( concat(a.addrDireccion, ' ', a.addrNumero, ' ', d.distrito, ' - ', p.provincia )) as `direccion`
@@ -83,9 +85,11 @@ if($llamado= $conection->query($sql)){
 				<p><strong>Dirección:</strong> <span class='mayuscula'><?= $respuesta['direccion'];?></span></p>
 			</div>
 			<div class="col-xs-6">
+			<?php if(!isset($_GET['pdf'])){ ?>
 				<p><strong>Oficina:</strong> <span><?= $_COOKIE['cksucursalEmpresa'] ?></span></p>
 				<p><strong>Asesor:</strong> <span class='mayuscula'><?= $_COOKIE['ckAtiende'] ?></span></p>
 				<p><strong>Periodo:</strong> <span><?= $respuesta['tpreDescipcion'];?></span></p>
+			<?php } ?>
 				<p><strong>F. Desembolso:</strong> <span><? $fecha1= new DateTime( $respuesta['presFechaDesembolso']); echo $fecha1->format('d/m/Y h:m a');?></span></p>
 			</div>
 		</div>
