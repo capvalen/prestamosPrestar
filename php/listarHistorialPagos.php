@@ -1,3 +1,11 @@
+<style>
+.tdPagoATiempo, .tdVigente{
+	color: #284cff;
+}
+.tdPagoFueraTiempo, .tdVigenteDebe{
+	color: #ff2828;
+}
+</style>
 <?php
 require("conkarl.php");
 date_default_timezone_set('America/Lima');
@@ -15,55 +23,72 @@ order by cuotfechaPago desc;";
 
 $resultado=$cadena->query($sql);
 while($row=$resultado->fetch_assoc()){ ?>
-  <tr>
-    <td>Huancayo</td>
-    <td><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>"><?= $row['idPrestamo']; ?></a></td>
-    <td><?= number_format($row['presMontoDesembolso'],2); ?></td>
-    <td><?= number_format($row['cuotCuota'],2); ?></td>
+	<tr>
+		<td>Huancayo</td>
+		<td><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>"><?= $row['idPrestamo']; ?></a></td>
+		<td><?= number_format($row['presMontoDesembolso'],2); ?></td>
+		<td><?= number_format($row['cuotCuota'],2); ?></td>
 		<?php if( $row['faltaSaldo']>0 ){ ?>
 			<td class="text-danger"><?= number_format($row['faltaSaldo'],2); ?></td>
 		<?php }else{ ?>
 			<td class="text-primary"><?= number_format($row['faltaSaldo'],2); ?></td>
 		<?php } ?>
-    <td><?php if($row['presFechaDesembolso'] <>'0000-00-00 00:00:00'){ $fechaJ= new DateTime( $row['presFechaDesembolso']); echo $fechaJ->format('d/m/Y'); }else{echo 'Pendiente';}?></td>
-    <td><?php if(is_null($row['fechaFinPrestamo'])){ echo '<span class="text-success">Vigente</span>';}else{echo '<span>Cancelado</span>'; } ?></td>
-    <td><?= $row['tpreDescipcion']."-".$row['presPeriodo']; ?></td>
+		<td><?php if($row['presFechaDesembolso'] <>'0000-00-00 00:00:00'){ $fechaJ= new DateTime( $row['presFechaDesembolso']); echo $fechaJ->format('d/m/Y'); }else{echo 'Pendiente';}?></td>
+		<td><?php if(is_null($row['fechaFinPrestamo'])){ echo '<span class="text-success">Vigente</span>';}else{echo '<span>Cancelado</span>'; } ?></td>
+		<td><?= $row['tpreDescipcion']."(".$row['presPeriodo'].")"; ?></td>
 
-    <?php 
-    $idPres= $row['idPrestamo'];
-    $sqlCuot="SELECT i.idCliente, cuotFechaPago, cuotFechaCancelacion FROM `prestamo_cuotas` pc
-    inner join involucrados i on i.idPrestamo = pc.idPrestamo 
-    where i.idTipoCliente=1 and pc.idPrestamo = {$idPres} and cuotCuota>0";
+		<?php 
+		$idPres= $row['idPrestamo'];
+		$sqlCuot="SELECT i.idCliente, cuotFechaPago, cuotFechaCancelacion FROM `prestamo_cuotas` pc
+		inner join involucrados i on i.idPrestamo = pc.idPrestamo 
+		where i.idTipoCliente=1 and pc.idPrestamo = {$idPres} and cuotCuota>0";
 
-    $fechaHoy= new DateTime(date("Y-m-d"));
-    $i=1;
-    $resultadoCuot=$esclavo->query($sqlCuot);
-    while($rowCuot=$resultadoCuot->fetch_assoc()){ 
-      if($i<=15){ $i++; }else{
-        if($i==16){ echo '<tr><td colspan=8>'; }
-        $i=2;
-      }
-      if($rowCuot['cuotFechaCancelacion']=='0000-00-00'):
-        $fechaCuota= new DateTime($rowCuot['cuotFechaPago']);
-        $interval = $fechaCuota->diff($fechaHoy);
-        echo "<td><span class='tdVigente'>". $interval->format('%r%a')."</span></td>";
-      else:
-        $fechaCuota= new DateTime($rowCuot['cuotFechaCancelacion']);
-        $fechaPago= new DateTime($rowCuot['cuotFechaPago']);
-        $interval = $fechaPago->diff($fechaCuota);
-        echo "<td><span class=''>". $interval->format('%r%a')."</span></td>";
-      endif;
-    }
-    for ($j=$i; $j <=15 ; $j++) { 
-      echo "<td></td>";
-      if($i==15){
-        echo '</tr>';
-      }
-    }
-    
-    ?>
+		$fechaHoy= new DateTime(date("Y-m-d"));
+		$i=1;
+		$resultadoCuot=$esclavo->query($sqlCuot);
+		while($rowCuot=$resultadoCuot->fetch_assoc()){ 
+			if($i<=15){ $i++; }else{
+				if($i==16){ echo '<tr><td colspan=8>'; }
+				$i=2;
+			}
+			if($rowCuot['cuotFechaCancelacion']=='0000-00-00'):
+				$fechaCuota= new DateTime($rowCuot['cuotFechaPago']);
+				$interval = $fechaHoy->diff($fechaCuota);
+				if( $interval->format('%r%a') >= 0 ){
+					//Esta en buena fecha
+					echo "<td><span class='tdVigente'>". $interval->format('%R%a')."</span></td>";
+				}else{
+					//Esta con mora
+					echo "<td><span class='tdVigenteDebe'>". $interval->format('%R%a')."</span></td>";
+				}
+				
+				
+			else:
+				$fechaCuota= new DateTime($rowCuot['cuotFechaCancelacion']);
+				$fechaPago= new DateTime($rowCuot['cuotFechaPago']);
+				$interval = $fechaCuota->diff($fechaPago);
+				
 
-  </tr>
+				if( $interval->format('%r%a') >= 0 ){
+					//Esta en buena fecha
+					echo "<td><span class='tdPagoATiempo'><ins>". $interval->format('%R%a')."</ins></span></td>";
+				}else{
+					//Esta con mora
+					echo "<td><span class='tdPagoFueraTiempo'><ins>". $interval->format('%R%a')."</ins></span></td>";
+				}
+
+			endif;
+		}
+		for ($j=$i; $j <=15 ; $j++) { 
+			echo "<td></td>";
+			if($i==15){
+				echo '</tr>';
+			}
+		}
+		
+		?>
+
+	</tr>
 <?php }
 
 ?>

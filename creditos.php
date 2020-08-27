@@ -117,8 +117,8 @@ $estadoMora = null;
 						<?php include "php/OPTUsuarios.php"; ?>
 					</select>
 				</div>
-				<div class="col-sm-2"><label for="">Mora fija:</label> <br>
-					<input type="text" id="txtMoraFijaAsignar" class="form-control input-sm" autocomplete="nope" style="margin-bottom: 0px; height: 30px!important;" value="<?php if ( strlen($rowCr['preMoraFecha'])>0 ){
+				<div class="col-sm-2"><label for="">Mora fija: <i class="icofont icofont-info-circle mitoolTip" data-toggle="tooltip" data-placement="top" title="Ponga el valor y luego presione enter"></i></label> <br>
+					<input type="number" id="txtMoraFijaAsignar" class="form-control input-sm" min="0" step="0.5" style="margin-bottom: 0px; height: 30px!important;" value="<?php if ( strlen($rowCr['preMoraFecha'])>0 ){
 						if( $rowCr['preMoraFecha'] == date('Y-m-d')){ $estadoMora=true; echo $rowCr['preMoraFija']; } else{ echo ""; $estadoMora=false; }
 					}else{ echo ''; $estadoMora=false; }
 					?>">
@@ -176,7 +176,7 @@ $estadoMora = null;
 				<?php else: 
 					if( in_array( $_COOKIE['ckPower'], $soloAdmis) &&  $rowCr['presAprobado']<>"Rechazado"):?>
 					<button class="btn btn-rojoFresa btn-outline" id="btnAnularCredito"><i class="icofont-ui-delete"></i> Anular crédito</button>
-					<button class="btn btn-dark btn-outline" id="btnReprogramarFechas"><i class="icofont-ui-reply"></i> Reprogramar fechas</button>
+					<button class="btn btn-dark btn-outline hidden" id="btnReprogramarFechas"><i class="icofont-ui-reply"></i> Reprogramar fechas</button>
 				<?php endif; endif; ?>
 				</div>
 
@@ -186,7 +186,7 @@ $estadoMora = null;
 				<button class="btn btn-warning btn-outline" id="btnDesembolsar"><i class="icofont-money"></i> Desembolsar</button>
 			<?php else:?>
 				<button class="btn btn-infocat btn-outline" id="btnsolicitarDeuda"><i class="icofont-money"></i> Pago global</button>
-				<button class="btn btn-infocat btn-outline" id="btnMoraExtra"><i class="icofont-shield-alt"></i> Mora extraordinaria</button>
+				<button class="btn btn-infocat btn-outline hidden" id="btnMoraExtra"><i class="icofont-shield-alt"></i> Mora extraordinaria</button>
 			<?php endif; ?>
 			<?php else: ?> 
 				<div class="col-xs-12 col-md-6"><br>
@@ -550,7 +550,7 @@ $estadoMora = null;
 				<p>Costo de cuota: <strong><span id="spaCCosto"></span></strong></p>
 				<!-- <p>Com. y Serv.: <strong><span id="spaCSeguro"></span></strong></p> -->
 				<!-- <p>Cuota: <strong>S/ <span id="spaCPrecioCuota"></span></strong></p> -->
-				<p>Días de mora: <strong><span id="spaCMora"></span></strong></p>
+				<p class="hidden">Días de mora: <strong><span id="spaCMora"></span></strong></p>
 				<p>Mora: <strong>S/ <span id="spaCPrecioMora"></span></strong></p>
 				<hr style="margin-top: 10px; margin-bottom: 10px; border-top: 1px solid #c1c1c1;margin-right: 50px;">
 				<p>Pago total: <strong>S/ <span id="spaCTotal"></span></strong></p>
@@ -1120,15 +1120,15 @@ $('#btnsolicitarDeuda').click(function() {
 		var data=JSON.parse(resp);
 		console.log( data );
 		if(data.diasMora==0){
-			$('#spaCMora').parent().parent().addClass("hidden");
+			//$('#spaCMora').parent().parent().addClass("hidden");
 			$('#spaCPrecioMora').parent().parent().addClass("hidden");
 		}else{
-			$('#spaCMora').parent().parent().removeClass("hidden");
+			//$('#spaCMora').parent().parent().removeClass("hidden");
 			$('#spaCPrecioMora').parent().parent().removeClass("hidden");
 		}
 		$('#spaCPendientes').text(data.tantasCuotas);
 		$('#spaCCosto').text(data.precioCuotas.toFixed(2));
-		$('#spaCMora').text(data.diasMora);
+		//$('#spaCMora').text(data.diasMora);
 		$('#spaCPrecioCuota').text(data.deudaCuotas.toFixed(2));
 		$('#spaCSeguro').text(data.seguro.toFixed(2));
 		
