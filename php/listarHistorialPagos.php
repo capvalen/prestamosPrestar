@@ -53,7 +53,7 @@ while($row=$resultado->fetch_assoc()){ ?>
 			}
 			if($rowCuot['cuotFechaCancelacion']=='0000-00-00'):
 				$fechaCuota= new DateTime($rowCuot['cuotFechaPago']);
-				$interval = $fechaHoy->diff($fechaCuota);
+				$interval = $fechaCuota->diff($fechaHoy);
 				if( $interval->format('%r%a') >= 0 ){
 					//Esta en buena fecha
 					echo "<td><span class='tdVigente'>". $interval->format('%R%a')."</span></td>";
@@ -66,7 +66,7 @@ while($row=$resultado->fetch_assoc()){ ?>
 			else:
 				$fechaCuota= new DateTime($rowCuot['cuotFechaCancelacion']);
 				$fechaPago= new DateTime($rowCuot['cuotFechaPago']);
-				$interval = $fechaCuota->diff($fechaPago);
+				$interval = $fechaPago->diff($fechaCuota);
 				
 
 				if( $interval->format('%r%a') >= 0 ){

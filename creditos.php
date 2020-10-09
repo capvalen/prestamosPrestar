@@ -129,7 +129,15 @@ $estadoMora = null;
 				<div class="col-sm-2"><label for="">Fecha préstamo</label><p><?php $fechaAut= new DateTime($rowCr['presFechaAutom']); echo $fechaAut->format('j/m/Y h:m a'); ?></p></div>
 				<div class="col-sm-2"><label for="">Fecha desemboslo</label><p><?php if($rowCr['presFechaDesembolso']=='Desembolso pendiente'){echo $rowCr['presFechaDesembolso'];}else{$fechaDes= new DateTime($rowCr['presFechaDesembolso']); echo $fechaDes->format('j/m/Y h:m a');} ?></p></div>
 				<div class="col-sm-2"><label for="">Desembolso</label><p>S/ <?= number_format($rowCr['presMontoDesembolso'],2); ?></p> <span class="hidden" id="spanMontoDado" data-monto=<?= $base58->encode($rowCr['presMontoDesembolso']);?>><?= $rowCr['presMontoDesembolso']; ?></span></div>
-				<div class="col-sm-2"><label for="">Meses</label><p id="spanTipoDescpago"><?= $rowCr['tpreDescipcion']; ?></p></div>
+				<div class="col-sm-2"><label for="">Meses</label>
+					
+					<select name="" id="cmbPeriodos" class="form-control input-sm" style="margin-botom:0px;">
+						<option value="1">Diario</option>
+						<option value="2">Semanal</option>
+						<option value="3">Mensual</option>
+						<option value="4">Quincenal</option>
+					</select>
+				</div>
 				<div class="col-sm-2"><label for="">Interés</label><p id="pinteresGlobal" data-int="<?= $base58->encode($rowCr['preInteresPers']."%");?>"><?= $rowCr['preInteresPers']."%"; ?></p></div>
 				<div class="col-sm-2"><label for="">Analista</label><p><?= $rowCr['usuNombres']; ?></p></div>
 			</div>
@@ -606,6 +614,9 @@ $('.mitoolTip').tooltip();
 
 $(document).ready(function(){
 	$('#sltNuevoAsesr').val(-1);
+	<?php if (isset($_GET['credito'])){ ?>
+	$('#cmbPeriodos').val('<?= $rowCr['idTipoPrestamo']; ?>');
+	<?php } ?>
 <?php
 if(isset($_GET['titular'])){
 ?>
@@ -719,6 +730,22 @@ $('#txtMoraFijaAsignar').keypress(function (e) {
 			}
 		});
 	}
+});
+<?php if (isset($_GET['credito'])){ ?>
+$('#cmbPeriodos').change(function() {
+	//if($('#cmbPeriodos').val() != '<?= $rowCr['idTipoPrestamo']?>' ){
+		//console.log('seguro?' );
+		$('#modalCambiarTipoFechas').modal('show');
+	//}
+});
+<?php } ?>
+$('#btnCambioTipoFechas').click(function() {
+	$.ajax({url: 'php/cambiarTipoFechas.php', type: 'POST', data: {idPrestamo: '<?= $codCredito;?>', modo: $('#cmbPeriodos').val(), fechaNueva: $('#fechaNuevaReprogramacion').val() }}).done(function(resp) {
+		console.log(resp)
+		if(resp=='ok'){
+			location.reload();
+		}
+	});
 });
 <?php } ?>
 

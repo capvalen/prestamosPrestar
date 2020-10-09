@@ -924,7 +924,7 @@ $('body').on('click', '.btnChangeMonedaEsp', function (e) {
 $('#btnUpdateMoneda').click(function() {
 	pantallaOver(true);
 	var idCaja= $(this).attr('data-caja');
-	var mone = $("#divCmbMetodoPago3 option:contains('"+ $('#divCmbMetodoPago3 .dropdown-toggle').attr('title') +"')").attr('data-tokens');
+	var mone = $("#sltMonedaUpd").val();
 	if(mone==null){
 		pantallaOver(false);
 		$('#modalCambiarMonedaCaja .divError').removeClass('hidden').find('.spanError').text('Tienes que seleccionar un tipo de moneda antes de guardar');

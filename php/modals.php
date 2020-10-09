@@ -212,6 +212,32 @@
 </div>
 </div>
 
+<!-- Modal para: Cambiar la moneda de caja -->
+<div class='modal fade' id='modalCambiarMonedaCaja' tabindex='-1' role='dialog' aria-hidden='true'>
+	<div class='modal-dialog modal-sm' >
+	<div class='modal-content '>
+		<div class='modal-header-warning'>
+			<button type='button' class='close' data-dismiss='modal' aria-label='Close' ><span aria-hidden='true'>&times;</span></button>
+			<h4 class='modal-tittle'> Cambiar moneda</h4>
+		</div>
+		<div class='modal-body'>
+			<p>Seleccione el tipo de moneda que va a cambiar</p>
+			
+			<select id="sltMonedaUpd" class="form-control" name="">
+				<option value="1">Efectivo</option>
+				<option value="2">Deposito bancario</option>
+				<option value="3">Tarjeta Mastercard</option>
+				<option value="4">Tarjeta Visa</option>
+			</select>
+			<div class="divError text-left animated fadeIn hidden" style="margin-bottom: 20px;"><i class="icofont-cat-alt-3"></i> Lo sentimos, <span class="spanError">La cantidad de producto no puede ser cero o negativo.</span></div>
+		</div>
+		<div class='modal-footer'>
+			<button type='button' class='btn btn-warning| btn-outline' id='btnUpdateMoneda'><i class="icofont-check-circled"></i> Actualizar</button>
+		</div>
+		</div>
+	</div>
+</div>
+
 
 <?php if(isset($_GET['credito']) && $rowCr['presAprobado']=== 'Sin aprobar'): ?>
 <!-- Modal para: Aprobar Credito -->
@@ -291,6 +317,28 @@ if( in_array($_COOKIE['ckPower'], $soloAdmis) ){ ?>
 		</div>
 		<div class='modal-footer'>
 			<button type='button' class='btn btn-primary btn-outline' id='btnCalibrarFechas'><i class="icofont-paper"></i> Realizar acción</button>
+		</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal para: preguntar si es seguro -->
+<div class='modal fade' id='modalCambiarTipoFechas' tabindex='-1' role='dialog' aria-hidden='true'>
+	<div class='modal-dialog modal-sm' >
+	<div class='modal-content '>
+		<div class='modal-header-primary'>
+			<button type='button' class='close' data-dismiss='modal' aria-label='Close' ><span aria-hidden='true'>&times;</span></button>
+			<h4 class='modal-tittle'> Confirmar cambio</h4>
+		</div>
+		<div class='modal-body'>
+			<p>Indique si desea confirmar el cambio de fechas.</p>
+			<p>
+				Ingrese la fecha desde cual se reprogramará:
+			</p>
+			<input type="date" class="form-control" id="fechaNuevaReprogramacion" value="<?= date('Y-m-d'); ?>">
+		</div>
+		<div class='modal-footer'>
+			<button type='button' class='btn btn-primary btn-outline' id='btnCambioTipoFechas'><i class="icofont-paper"></i> Realizar acción</button>
 		</div>
 		</div>
 	</div>
