@@ -124,6 +124,9 @@ $estadoMora = null;
 					?>">
 				</div>
 				<?php } ?>
+				<?php if(in_array($_COOKIE['ckPower'], $soloCaja )){ if ( strlen($rowCr['preMoraFecha'])>0 ){ 
+						if( $rowCr['preMoraFecha'] == date('Y-m-d')){ $estadoMora=true; echo "Mora fija: ". number_format($rowCr['preMoraFija'],2); } else{ echo "Mora normal"; $estadoMora=false; }
+					}else{ echo ''; $estadoMora=false; }} ?>
 			</div>
 			<div class="row">
 				<div class="col-sm-2"><label for="">Fecha préstamo</label><p><?php $fechaAut= new DateTime($rowCr['presFechaAutom']); echo $fechaAut->format('j/m/Y h:m a'); ?></p></div>
@@ -569,6 +572,13 @@ $estadoMora = null;
 
 				<label for="">¿Cuánto dinero dispone el cliente?</label>
 				<input type="number" class="form-control input-lg text-center inputGrande esMoneda" id="txtPagaClienteVariable" style="margin: 0;">
+				<label for="">Tipo de pago</label>
+				<select id="sltMonedaUpd" class="form-control" name="">
+					<option value="1">Efectivo</option>
+					<option value="2">Deposito bancario</option>
+					<option value="3">Tarjeta Mastercard</option>
+					<option value="4">Tarjeta Visa</option>
+				</select>
 			</div>
 		</div>
 		<div class="modal-footer">
@@ -1185,7 +1195,7 @@ $('#btnRealizarDeposito').click(function() {
 	}*/
 	else{
 		var linea ='';
-		$.ajax({url: 'php/pagarCreditoCombo.php', type: 'POST', data: {credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', dinero: $('#txtPagaClienteVariable').val(), exonerar: $('#chkExonerar').prop('checked'), cliMora: $.laMora }}).done(function(resp) { console.log( resp ); 
+		$.ajax({url: 'php/pagarCreditoCombo.php', type: 'POST', data: {credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', dinero: $('#txtPagaClienteVariable').val(), exonerar: $('#chkExonerar').prop('checked'), cliMora: $.laMora, moneda: $('#sltMonedaUpd').val() }}).done(function(resp) { console.log( resp ); 
 			var data = JSON.parse(resp); //console.log(data)
 			var sumAcumulado=0, sumaMoras=0;
 			if( data.length >0 ){
