@@ -343,4 +343,44 @@ if( in_array($_COOKIE['ckPower'], $soloAdmis) ){ ?>
 		</div>
 	</div>
 </div>
+
+<!-- Modal para: agregar un nuevo socio -->
+<div class='modal fade' id='modalLlamarDNISocio' tabindex='-1' role='dialog' aria-hidden='true'>
+	<div class='modal-dialog modal-sm' >
+	<div class='modal-content '>
+		<div class='modal-header-primary'>
+			<button type='button' class='close' data-dismiss='modal' aria-label='Close' ><span aria-hidden='true'>&times;</span></button>
+			<h4 class='modal-tittle'> Agregar Socio</h4>
+		</div>
+		<div class='modal-body'>
+			<p>Ingrese el DNI del socio que desee agregar</p>
+			<input type="text" class="form-control text-center" id="txtDniSocioAdd" value="" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+			<p class="text-danger">No se puede agregar: <strong id="noSocioAdd"></strong></p>
+			<p class="text-success text-capitalize">Se encontró <strong class="text-capitalize" id="siSocioAdd"></strong></p>
+		</div>
+		<div class='modal-footer'>
+			<button type='button' class='btn btn-primary btn-outline' id='btnAsociarDNI'><i class="icofont-paper"></i> Consultar DNI</button>
+			<button type='button' class='btn btn-success btn-outline' id='btnSiAsociarDNI'><i class="icofont-paper"></i> Asociar DNI</button>
+		</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal para: eliminar un socio -->
+<div class='modal fade' id='modalBorrarSocioClick' tabindex='-1' role='dialog' aria-hidden='true'>
+	<div class='modal-dialog modal-sm' >
+	<div class='modal-content '>
+		<div class='modal-header-danger'>
+			<button type='button' class='close' data-dismiss='modal' aria-label='Close' ><span aria-hidden='true'>&times;</span></button>
+			<h4 class='modal-tittle'> Borrar cambio</h4>
+		</div>
+		<div class='modal-body'>
+			<p>¿Está seguro que desea borrar al socio?</p>
+		</div>
+		<div class='modal-footer'>
+			<button type='button' class='btn btn-danger btn-outline' id='btnBorrarDefSocio'><i class="icofont icofont-trash"></i> Borrar</button>
+		</div>
+		</div>
+	</div>
+</div>
 <?php } ?>

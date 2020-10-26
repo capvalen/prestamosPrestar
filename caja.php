@@ -762,7 +762,7 @@ $('.btnPrintCajaEsp').click(function () {
 				cliente: cliente,
 				titulo: queTitulo,
 				fecha: queFecha.replace('a las ', ''),
-				cliente: queDueno,
+				
 				articulo: queArticulo,
 				monto: queMonto,
 				usuario: queUser
@@ -774,7 +774,7 @@ $('.btnPrintCajaEsp').click(function () {
 				cliente: cliente,
 				titulo: queTitulo,
 				fecha: queFecha.replace('a las ', ''),
-				cliente: queDueno,
+				
 				monto: queMonto,
 				usuario: queUser
 			}}).done(function (resp) { 	}); break;
@@ -786,7 +786,7 @@ $('.btnPrintCajaEsp').click(function () {
 				cliente: cliente,
 				titulo: queTitulo,
 				fecha: queFecha.replace('a las ', ''),
-				cliente: queDueno,
+				
 				monto: queMonto,
 				usuario: queUser
 			}}).done(function (resp) { 	}); break;
@@ -819,7 +819,7 @@ $('.btnPrintCajaEsp').click(function () {
 				cliente: cliente,
 				titulo: queTitulo,
 				fecha: queFecha.replace('a las ', ''),
-				cliente: queDueno,
+				
 				monto: queMonto,
 				usuario: queUser
 			}}).done(function (resp) { 	}); break;
@@ -830,7 +830,7 @@ $('.btnPrintCajaEsp').click(function () {
 				cliente: cliente,
 				titulo: queTitulo,
 				fecha: queFecha.replace('a las ', ''),
-				cliente: queDueno,
+				
 				monto: queMonto,
 				usuario: queUser
 			}}).done(function (resp) { 	}); break;
@@ -841,7 +841,7 @@ $('.btnPrintCajaEsp').click(function () {
 				cliente: cliente,
 				titulo: queTitulo,
 				fecha: queFecha.replace('a las ', ''),
-				cliente: queDueno,
+				
 				monto: queMonto,
 				usuario: queUser
 			}}).done(function (resp) { 	}); break;

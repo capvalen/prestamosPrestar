@@ -147,7 +147,11 @@ $estadoMora = null;
 
 			<hr>
 			
-			<p><strong>Clientes asociados a éste préstamo:</strong></p>
+			<p><strong>Clientes asociados a éste préstamo:</strong>
+				<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )):?>
+			 <button onclick="$('#btnAsociarDNI').removeClass('hidden'); $('#btnSiAsociarDNI').addClass('hidden'); $('#siSocioAdd').parent().addClass('hidden'); $('#noSocioAdd').parent().addClass('hidden'); $('#modalLlamarDNISocio').modal('show')" class="btn btn-sm btn-success btn-outline"><div class="icofont icofont-plus"></div></button>
+				<?php endif; ?>
+		</p>
 
 			<div class="row">
 				<ul>
@@ -158,7 +162,9 @@ $estadoMora = null;
 				$k=0;
 				if( $respuestaInv=$conection->query($sqlInv) ){
 					while( $rowInv=$respuestaInv->fetch_assoc() ){  ?>
-						<li class="mayuscula"><a href="clientes.php?idCliente=<?= $base58->encode(substr('000000'.$rowInv['idCliente'], -7));?>"><span id="<? if($k==0){echo 'spanTitular';} ?>" ><?= $rowInv['datosCliente']; ?></span><?= " [".$rowInv['tipcDescripcion']."]"?></a></li>
+						<li class="mayuscula" style="padding: 20px 0;">
+							<a href="clientes.php?idCliente=<?= $base58->encode(substr('000000'.$rowInv['idCliente'], -7));?>"><span id="<? if($k==0){echo 'spanTitular';} ?>" ><?= $rowInv['datosCliente']; ?></span><?= " [".$rowInv['tipcDescripcion']."]"?></a> <?php if($k>0){ ?><span><button class="btn btn-danger btn-outline btn-xs" onclick="$.idBorrarSocio = <?=$rowInv['idCliente'];?>; $('#modalBorrarSocioClick').modal('show'); "><i class="icofont icofont-close"></i></button></span><?php }?>
+						</li>
 			<?php $k++; }
 				}
 			?>
@@ -740,6 +746,54 @@ $('#txtMoraFijaAsignar').keypress(function (e) {
 			}
 		});
 	}
+});
+$('#txtDniSocioAdd').change(function() {
+	$('#btnAsociarDNI').removeClass('hidden');
+	$('#btnSiAsociarDNI').addClass('hidden');
+	$('#siSocioAdd').parent().addClass('hidden');
+	$('#noSocioAdd').parent().addClass('hidden');
+});
+$('#btnAsociarDNI').click(function() {
+	$('#btnAsociarDNI').removeClass('hidden');
+	$('#btnSiAsociarDNI').addClass('hidden');
+	$('#siSocioAdd').parent().addClass('hidden');
+	$('#noSocioAdd').parent().addClass('hidden');
+	$.ajax({url: 'php/buscarSocio.php', type: 'POST', data: {idPrestamo: '<?= $codCredito;?>', dni: $('#txtDniSocioAdd').val() }}).done(function(resp) {
+		console.log(resp);
+		if( resp.includes('Libre: ') ){
+			$('#siSocioAdd').text( resp.substring(0, resp.indexOf('//-//')));
+			
+			$codigoSocio = parseInt(resp.substring(resp.indexOf('//-//')+5, resp.length ));
+			
+			$('#btnSiAsociarDNI').removeClass('hidden');
+			$('#siSocioAdd').parent().removeClass('hidden');
+			$('#btnAsociarDNI').addClass('hidden');
+			console.log( $codigoSocio );
+		}else{
+			
+			$('#noSocioAdd').parent().removeClass('hidden');
+			$('#noSocioAdd').text(resp);
+			$codigoSocio ='';
+		}
+	});
+});
+$('#btnSiAsociarDNI').click(function() {
+	if($codigoSocio !== ''){
+		$.ajax({url: 'php/insertarSocioAPrestamo.php', type: 'POST', data: {prestamo: '<?= $codCredito;?>', socio: $codigoSocio }}).done(function(resp) {
+			console.log(resp)
+			if(resp=='ok'){
+				location.reload();
+			}
+		});
+	}
+});
+$('#btnBorrarDefSocio').click(function() {
+	$.ajax({url: 'php/borrarrSocioDePrestamo.php', type: 'POST', data: {prestamo: '<?= $codCredito;?>', socio: $.idBorrarSocio }}).done(function(resp) {
+			console.log(resp)
+			if(resp=='ok'){
+				location.reload();
+			}
+		});
 });
 <?php if (isset($_GET['credito'])){ ?>
 $('#cmbPeriodos').change(function() {
