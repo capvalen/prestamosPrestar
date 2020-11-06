@@ -121,11 +121,11 @@ while($row2=$resultado->fetch_assoc()){
 //------------------
 
 //echo $sentenciaLarga;
-$prisionero->multi_query($sentenciaLarga);
-if( $prisionero-> next_result() ){
+
+if( $prisionero->multi_query($sentenciaLarga) ){ //$prisionero-> next_result()
 	//echo true;
 
-	//sleep(1);
+	sleep(1);
 	$sqlFaltan="SELECT retornarNumCuotasFaltanToFin({$idPrestamo}) as faltan";
 	//echo $sqlFaltan;
 	$resultadoFaltan=$preferido->query($sqlFaltan);

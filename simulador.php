@@ -63,6 +63,15 @@ include "php/variablesGlobales.php";
 							<label for="">Fecha primer pago</label>
 							<input type="text" id="dtpFechaPrimerv3" class="form-control text-center" placeholder="Fecha para controlar citas" autocomplete="off">
 						</div>
+						<div class="col-xs-6 col-sm-3" id="divTipoInteres">
+							<label for="">Tipo de interés</label>
+							<div class="form-group">
+								<select id="sltTipoInteres" class="form-control" name="">
+									<option value="1">Simple (Clásico)</option>
+									<option value="2">Francés (Acumulado)</option>
+								</select>
+							</div>
+						</div>
 						
 						<div class="col-xs-6 col-sm-3">
 							<button class="btn btn-azul btn-lg btn-outline btnSinBorde" style="margin-top: 10px;" id="btnSimularPagos"><i class="icofont-support-faq"></i> Simular</button>
@@ -76,11 +85,11 @@ include "php/variablesGlobales.php";
 				<p><strong>Resultados:</strong></p>
 				<div class="container row" id="divVariables">
 				</div>
-				<table class="table table-hover" id="tableSimulacion">
+				<div class="" id="tableSimulacion">
 				<!-- <thead id="theadResultados">
 				</thead>
 				<tbody id="tbodyResultados"></tbody>-->
-				</table> 
+				</div> 
 				</div>
 			</div>
 
@@ -142,24 +151,43 @@ $('#dtpFechaPrimerv3').bootstrapMaterialDatePicker({
 	cancelText : '<i class="icofont-close"></i> Cerrar'
 });
 $('#btnSimularPagos').click(function() {
+
 	if( $('#sltTipoPrestamo').val()=='' || $('#txtPeriodo').val()=='' || $('#txtMontoPrinc').val()=='' ||  parseFloat($('#txtPeriodo').val())==0 || parseFloat($('#txtMontoPrinc').val())==0 ){
 		//console.log('falta algo')
 		$('#labelFaltaCombos').removeClass('hidden');
 	}else{
 		$('#labelFaltaCombos').addClass('hidden');
-	$.ajax({url: 'php/simularPrestamoOnline.php', type: 'POST', data: {
-		modo: $('#sltTipoPrestamo').val(),
-		periodo: $('#txtPeriodo').val(),
-		monto: $('#txtMontoPrinc').val(),
-		tasaInt: $('#txtInteres').val(),
-		fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
-		primerPago: moment($('#dtpFechaPrimerv3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD')
-		}}).done(function(resp) {// console.log(resp)
-		$('#tableSimulacion').html(resp);
-	//	$('#tbodyResultados td').last().text('0.00');
-	});
-	$('#divVariables').children().remove();
+
+		if( $('#sltTipoInteres').val()==1 ){
+			$.ajax({url: 'php/simularPrestamoOnline.php', type: 'POST', data: {
+				modo: $('#sltTipoPrestamo').val(),
+				periodo: $('#txtPeriodo').val(),
+				monto: $('#txtMontoPrinc').val(),
+				tasaInt: $('#txtInteres').val(),
+				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+				primerPago: moment($('#dtpFechaPrimerv3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD')
+				}}).done(function(resp) {// console.log(resp)
+				$('#tableSimulacion').html(resp);
+			//	$('#tbodyResultados td').last().text('0.00');
+			});
+			$('#divVariables').children().remove();
+		}else if( $('#sltTipoInteres').val()==2 ){
+			$.ajax({url: 'php/simularInteresCompuesto.php', type: 'POST', data: {
+				modo: $('#sltTipoPrestamo').val(),
+				periodo: $('#txtPeriodo').val(),
+				monto: $('#txtMontoPrinc').val(),
+				tasaInt: $('#txtInteres').val(),
+				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+				}}).done(function(resp) {// console.log(resp)
+				$('#tableSimulacion').html(resp);
+			//	$('#tbodyResultados td').last().text('0.00');
+			});
+		}
+
+
+
 	} //fin de else
+
 });
 $('#dtpFechaIniciov3').change(function() {
 	$('#dtpFechaPrimerv3').bootstrapMaterialDatePicker( 'setMinDate', moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').add(1, 'days') );

@@ -14,17 +14,9 @@ $estadoMora = null;
 <html lang="es">
 
 <head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
-		<meta name="description" content="">
-		<meta name="author" content="">
-
-		<title>Créditos - Sistema Préstamos</title>
-
-		<!-- Bootstrap Core CSS -->
-		<?php include 'headers.php'; ?>
-		<link rel="stylesheet" href="css/awesome-bootstrap-checkbox.css?version=1.0.1">
+	<?php include 'headers.php'; ?>
+	<title>Créditos - Sistema Préstamos</title>
+	<link rel="stylesheet" href="css/awesome-bootstrap-checkbox.css?version=1.0.1">
 </head>
 
 <body>
@@ -74,7 +66,7 @@ $estadoMora = null;
 	case presFechaDesembolso when '0000-00-00' then 'Desembolso pendiente' else presFechaDesembolso end as `presFechaDesembolso`,
 	case presAprobado when 0 then 'Sin aprobar' when 2 then 'Rechazado' else 'Aprobado' end as `presAprobado`, 
 	case when ua.usuNombres is Null then '-' else ua.usuNombres end  as `usuarioAprobador`, pre.idTipoPrestamo,
-	`preMoraFija`, `preMoraFecha`
+	`preMoraFija`, `preMoraFecha`, `intSimple`
 	FROM `prestamo` pre
 	inner join usuario u on u.idUsuario = pre.idUsuario
 	left join usuario ua on ua.idUsuario = pre.idUsuarioAprobador
@@ -141,7 +133,7 @@ $estadoMora = null;
 						<option value="4">Quincenal</option>
 					</select>
 				</div>
-				<div class="col-sm-2"><label for="">Interés</label><p id="pinteresGlobal" data-int="<?= $base58->encode($rowCr['preInteresPers']."%");?>"><?= $rowCr['preInteresPers']."%"; ?></p></div>
+				<div class="col-sm-2"><label for="">Interés</label><p id="pinteresGlobal" data-int="<?= $base58->encode($rowCr['preInteresPers']."%");?>"><?= $rowCr['preInteresPers']."%"; ?> <span>(Int. <?= $rowCr['intSimple']==0 ? 'Normal' : 'Francés'; ?>)</span></p></div>
 				<div class="col-sm-2"><label for="">Analista</label><p><?= $rowCr['usuNombres']; ?></p></div>
 			</div>
 
@@ -225,126 +217,13 @@ $estadoMora = null;
 
 			<p><strong>Cuotas planificadas:</strong></p>
 			<div class="table-responsive">
-				<table class="table table-hover" id="tableSubIds">
-					<thead>
-					<tr>
-						<th>N°</th>
-						<th>Sub-ID</th>
-						<th>Fecha programada</th>
-	
-						<th>Capital</th>
-						<th>Interés</th>
-						<th>Com. y Serv.</th>
-						<th>Cuota</th>
-						<th>Cancelación</th>
-						<th>Pago</th>
-						<th class="hidden">Saldo</th>
-						<th>@</th>
-					</tr>
-					</thead>
-					<tbody>
-				<?php 
-				$sqlPrim = "SELECT `presMontoDesembolso`, `presPeriodo`,`preInteresPers`, `idTipoPrestamo`
-				from prestamo where `idPrestamo` = {$codCredito}";
-			
-				$resultadoPrim=$esclavo->query($sqlPrim);
-				$rowPrim=$resultadoPrim->fetch_assoc();
-					
-				$monto = $rowPrim['presMontoDesembolso'];
-				
-				$tasa = $rowPrim['preInteresPers']/100;
-				$meses =  $rowPrim['presPeriodo'];
-	
-				switch ($rowPrim['idTipoPrestamo']){
-					case "1": //DIARIO
-						$plazo = $rowPrim['presPeriodo']*30;
-						break;
-					case "2": //SEMANAL
-						$plazo = $rowPrim['presPeriodo']*4;
-						break;
-					case "4": //QUINCENAL
-						$plazo = $rowPrim['presPeriodo']*2;
-						break;
-					case "3": //MENSUAL
-						$plazo = $rowPrim['presPeriodo']*1	;
-						break;
-					default: break;
-				}
-				$interes = $monto * $tasa * $meses;
-				$pagoTotal  = $monto+ $interes;
-	
-				$capitalPartido = round($monto/$plazo,1, PHP_ROUND_HALF_UP);
-				$cuota = round( $pagoTotal/$plazo ,1, PHP_ROUND_HALF_UP);
-				$intGanado = round( $interes/ $plazo ,1, PHP_ROUND_HALF_UP);
-	
-	
-				$sqlCuot= "SELECT prc.*, pre.preInteresPers, pre.presMontoDesembolso, pre.presPeriodo FROM prestamo_cuotas prc
-				inner join prestamo pre on pre.idPrestamo = prc.idPrestamo
-				where prc.idPrestamo = {$codCredito}
-				order by cuotFechaPago asc";
-	
-	
-				if($respCuot = $cadena->query($sqlCuot)){ $k=0;
-					$sumCapital = 0; $sumInteres =0; $sumCuota =0;  $sumSeguros = 0;
-					while($rowCuot = $respCuot->fetch_assoc()){
-						if($k>=1){
-							$sumCapital+=$capitalPartido;
-							$sumInteres+=$intGanado;
-							$sumCuota+=$cuota;
-							$sumSeguros+= $rowCuot['cuotSeg'];
-						}
-						?>
-					<tr>
-						<td><?= $k; ?></td>
-						<td>SP-<?= $rowCuot['idCuota']; ?></td>
-						<td><?php $fechaCu= new DateTime($rowCuot['cuotFechaPago']); echo $fechaCu->format('d/m/Y'); ?></td>
-						<td><? if($k>=1) {echo number_format($capitalPartido,2);} ?></td>
-						<td><? if($k>=1) {echo number_format($intGanado,2);} ?></td>
-						<td><? if($k>=1) {echo number_format($rowCuot['cuotSeg'],2);} ?></td>
-						<td><? if($k>=1) {echo number_format($cuota + $rowCuot['cuotSeg'],2);} ?></td>
-						<td><?php if($rowCuot['cuotCuota']=='0.00' && $rowCuot['cuotPago']=='0.00'): echo "Desembolso"; elseif($rowCuot['cuotFechaCancelacion']=='0000-00-00'): echo 'Pendiente'; else: echo $rowCuot['cuotFechaCancelacion']; endif;  ?></td>
-						<td class="tdPagoCli" data-pago="<?= number_format($rowCuot['cuotPago'],2); ?>"><? if($k>=1) {echo number_format($rowCuot['cuotPago'],2);} ?></td>
-						<td class="hidden"><?= number_format($rowCuot['cuotSaldo'],2); ?></td>
-						<td><?php if( in_array($_COOKIE['ckPower'], $soloAdmis) &&  $rowCuot['idTipoPrestamo']=='79' && $rowCr['presFechaDesembolso']<>'Desembolso pendiente' && $k>=1):
-						$diasDebe2=$fechaHoy ->diff($fechaCu);
-						if( $rowCr['presAprobado']== "Rechazado" ){ ?>
-							<p class="red-text text-darken-1">Rechazado</p>
-						<?php } else{
-							if( floatval($diasDebe2->format('%R%a')) < 0 ){
-							?> <p class="red-text text-darken-1">Cuota fuera de fecha (<?= $diasDebe2->format('%a').' días';?>)</p>
-							<!-- <button class="btn btn-primary btn-outline btn-sm btnPagarCuota"><i class="icofont-money"></i> Pagar</button> --> <?php
-							}else{
-								?> <p class="blue-text text-accent-2">Cuota en buena fecha</p><?php
-							}
-							}
-							endif;
-							if($rowCuot['cuotPago']<>'0.00' && $rowCr['presFechaDesembolso']<>'Desembolso pendiente'): 
-								if( $rowCuot['idTipoPrestamo'] ==33 ){ ?>
-									<span class="mitoolTip spanIcono" data-toggle="tooltip" title="Pago parcial"><i class="icofont-warning-alt"></i></span>
-									<span class="amber-text text-darken-2 mitoolTip spanIcono spanPrint" data-print="parcial" data-toggle="tooltip" title="Imprimir"><i class="icofont-print"></i></span>
-								<? }
-								if($rowCuot['idTipoPrestamo'] ==80){ ?>
-									<span class="mitoolTip spanIcono" data-toggle="tooltip" title="Pago completo"><i class="icofont-verification-check"></i></span>
-									<span class="amber-text text-darken-2 mitoolTip spanIcono spanPrint" data-print="completo" data-toggle="tooltip" title="Imprimir"><i class="icofont-print"></i></span>
-								<?php }
-							endif;?>
-						</td>
-					</tr>
-				<?php $k++; }
-				} ?>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th></th> <th></th> <th></th>
-							<th>S/ <?= number_format($sumCapital,2); ?></th>
-							<th>S/ <?= number_format($sumInteres,2); ?></th>
-							<th>S/ <?= number_format($sumSeguros,2); ?></th>
-							<th>S/ <?= number_format($sumCuota + $sumSeguros,2); ?></th>
-							<th></th> <th></th><th> </th>
-							
-						</tr>
-					</tfoot>
-				</table>
+			<?php
+				if($rowCr['intSimple']==0):
+						include 'php/listaCuotaNormal.php';
+				else:
+					include 'php/listaCuotaFrances.php';
+				endif;
+			?>
 			</div>
 
 			<?php $_POST['credito']=$_GET['credito']; include 'php/listarOtrospagos.php'; ?>
@@ -460,6 +339,15 @@ $estadoMora = null;
 						<div class="col-xs-6 col-sm-3">
 							<label for="">Fecha Desembolso</label>
 							<input type="text" id="dtpFechaIniciov3" class="form-control text-center" placeholder="Fecha para controlar citas" autocomplete="off">
+						</div>
+						<div class="col-xs-6 col-sm-3" id="divTipoInteres">
+							<label for="">Tipo de interés</label>
+							<div class="form-group">
+								<select id="sltTipoInteres" class="form-control" name="">
+									<option value="1">Simple (Clásico)</option>
+									<option value="2">Francés (Acumulado)</option>
+								</select>
+							</div>
 						</div>
 						<div class="col-xs-6 col-sm-3 hidden" id="divPrimerPago">
 							<label for="">Fecha primer pago</label>
@@ -846,69 +734,32 @@ $('#btnSimularPagos').click(function() {
 		$('#labelFaltaCombos').removeClass('hidden');
 	}else{
 		$('#labelFaltaCombos').addClass('hidden');
-	$.ajax({url: 'php/simularPrestamoOnline.php', type: 'POST', data: {
-		modo: $('#sltTipoPrestamo').val(),
-		periodo: $('#txtPeriodo').val(),
-		monto: $('#txtMontoPrinc').val(),
-		tasaInt: $('#txtInteres').val(),
-		fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
-		primerPago: moment($('#dtpFechaPrimerv3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD')
-		}}).done(function(resp) { //console.log(resp)
-		$('#tableSimulacion').html(resp);
-	//	$('#tbodyResultados td').last().text('0.00');
-	});
-	$('#divVariables').children().remove();
-	/* switch ($('#sltTipoPrestamo').val()) {
-		
-		case "1":
-			// $('#divVariables').append(`<p><strong>TED:</strong> <span>0.66%</span></p>`);
-			$('#theadResultados').html(`	<th>#</th>
-					<th>Fecha</th>
-					<th>Capital</th>
-					<th>Interés</th>
-					<th class="hidden">Amortización</th>
-					<th>Cuota</th>
-					<th class="hidden">Saldo Real</th>`);
-			break;
-		case "2":
-			// $('#divVariables').append(`<p><strong>TES:</strong> <span>1.52%</span></p>`);
-			$('#theadResultados').html(`	<th>#</th>
-					<th>Fecha</th>
-					<th>Capital</th>
-					<th>Interés</th>
-					<th class="hidden">Amortización</th>
-					<th>Cuota</th>
-					<th class="hidden">Saldo Real</th>`);
-			break;
-		case "4":
-		case "3":
-			// $('#divVariables').append(`<p><strong>TEQ:</strong> <span>2.95%</span></p>`);
-			$('#theadResultados').html(`	<th>#</th>
-					<th>Fecha</th>
-					<th>Capital</th>
-					<th>Interés</th>
-					<th class="hidden">Amortización</th>
-					<th>Cuota</th>
-					<th class="hidden">Saldo Real</th>`);
-			break;
-		case "99":
-			$('#theadResultados').html(`	<th>#</th>
-					<th>Fecha pago</th>
-					<th class="hidden">Días</th>
-					<th class="hidden">Días Acum.</th>
-					<th class="hidden">FRC</th>
-					<th>Saldo de Capital</th>
-					<th>Amortización</th>
-					<th>Interés</th>
-					<th class="hidden">Seg 1</th>
-					<th class="hidden">Seg Def</th>
-					<th>Cuota sin ITF</th>
-					<th>ITF</th>
-					<th>Total Cuota</th>`);
-			break;
-		default:
-			break;
-	} */
+		if( $('#sltTipoInteres').val()==1 ){
+			$.ajax({url: 'php/simularPrestamoOnline.php', type: 'POST', data: {
+				modo: $('#sltTipoPrestamo').val(),
+				periodo: $('#txtPeriodo').val(),
+				monto: $('#txtMontoPrinc').val(),
+				tasaInt: $('#txtInteres').val(),
+				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+				primerPago: moment($('#dtpFechaPrimerv3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD')
+				}}).done(function(resp) { //console.log(resp)
+				$('#tableSimulacion').html(resp);
+			//	$('#tbodyResultados td').last().text('0.00');
+			});
+			$('#divVariables').children().remove();
+		}else if( $('#sltTipoInteres').val()==2 ){
+			$.ajax({url: 'php/simularInteresCompuesto.php', type: 'POST', data: {
+				modo: $('#sltTipoPrestamo').val(),
+				periodo: $('#txtPeriodo').val(),
+				monto: $('#txtMontoPrinc').val(),
+				tasaInt: $('#txtInteres').val(),
+				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+			 }}).done(function(resp) {
+				//console.log(resp)
+				$('#tableSimulacion').html(resp);
+			});
+		}
+
 	} //fin de else
 });
 $('#txtSoloBuscaCreditos').keypress(function (e) { 
@@ -975,29 +826,55 @@ $('#btnGuardarCred').click(function() {
 			clientArr.push( { 'id': $(objeto).attr('data-cli'), 'grado':  $(objeto).find('select').val()}  )
 		});
 
-		$.ajax({url: 'php/insertarPrestamoOnline.php', type: 'POST', data: {
-			clientes: clientArr,
-			modo: $('#sltTipoPrestamo').val(),
-			periodo: $('#txtPeriodo').val(),
-			monto: $('#txtMontoPrinc').val(),
-			tasaInt: $('#txtInteres').val(),
-			fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
-			primerPago: moment($('#dtpFechaPrimerv3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
-			prendaSimple: $('#txtPrendaSimple').val()
-		}}).done(function(resp) {
-			console.log(resp)
-			if( parseInt(resp)>0 ){
+		if( $('#sltTipoInteres').val()==1 ){
+			$.ajax({url: 'php/insertarPrestamoOnline.php', type: 'POST', data: {
+				clientes: clientArr,
+				modo: $('#sltTipoPrestamo').val(),
+				periodo: $('#txtPeriodo').val(),
+				monto: $('#txtMontoPrinc').val(),
+				tasaInt: $('#txtInteres').val(),
+				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+				primerPago: moment($('#dtpFechaPrimerv3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+				prendaSimple: $('#txtPrendaSimple').val()
+			}}).done(function(resp) {
+				console.log(resp)
+				if( parseInt(resp)>0 ){
 
-				$.post("php/58decode.php", {texto: resp}, function(data){ console.log(data);
-					$('#spanBien').text('Código de préstamo:')
-					$('#h1Bien').html(`<a href="creditos.php?credito=`+resp+`">CR-`+data+`</a> <br> <button class="btn btn-default " id="btnImpresionPrevia" data-pre="`+resp+`"><i class="icofont-print"></i> Imprimir Impresora</button>`);
-					$('#modalGuardadoCorrecto').modal('show');
-					$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () {
-						window.location.href = `creditos.php?credito=`+resp;
+					$.post("php/58decode.php", {texto: resp}, function(data){ console.log(data);
+						$('#spanBien').text('Código de préstamo:')
+						$('#h1Bien').html(`<a href="creditos.php?credito=`+resp+`">CR-`+data+`</a> <br> <button class="btn btn-default " id="btnImpresionPrevia" data-pre="`+resp+`"><i class="icofont-print"></i> Imprimir Impresora</button>`);
+						$('#modalGuardadoCorrecto').modal('show');
+						$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () {
+							window.location.href = `creditos.php?credito=`+resp;
+						});
 					});
-				});
-			}
-		});
+				}
+			});
+		}else if( $('#sltTipoInteres').val()==2 ){ 
+			
+			$.ajax({url: 'php/insertarPrestamoFrances.php', type: 'POST', data: {
+				clientes: clientArr,
+				modo: $('#sltTipoPrestamo').val(),
+				periodo: $('#txtPeriodo').val(),
+				monto: $('#txtMontoPrinc').val(),
+				tasaInt: $('#txtInteres').val(),
+				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+				
+			}}).done(function(resp) {
+				console.log(resp)
+				if( parseInt(resp)>0 ){
+
+					$.post("php/58decode.php", {texto: resp}, function(data){ console.log(data);
+						$('#spanBien').text('Código de préstamo:')
+						$('#h1Bien').html(`<a href="creditos.php?credito=`+resp+`">CR-`+data+`</a> <br> <button class="btn btn-default " id="btnImpresionPrevia" data-pre="`+resp+`"><i class="icofont-print"></i> Imprimir Impresora</button>`);
+						$('#modalGuardadoCorrecto').modal('show');
+						$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () {
+							window.location.href = `creditos.php?credito=`+resp;
+						});
+					});
+				}
+			});
+		}
 	}
 });
 $('#h1Bien').on('click', '#btnImpresionPrevia', function(){
@@ -1250,7 +1127,7 @@ $('#btnRealizarDeposito').click(function() {
 	else{
 		var linea ='';
 		$.ajax({url: 'php/pagarCreditoCombo.php', type: 'POST', data: {credito: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>', dinero: $('#txtPagaClienteVariable').val(), exonerar: $('#chkExonerar').prop('checked'), cliMora: $.laMora, moneda: $('#sltMonedaUpd').val() }}).done(function(resp) { console.log( resp ); 
-			var data = JSON.parse(resp); //console.log(data)
+			var data = JSON.parse(resp); console.log(data)
 			var sumAcumulado=0, sumaMoras=0;
 			if( data.length >0 ){
 				if(data[0].diasMora>0){ console.log( 'con mora' );
@@ -1270,7 +1147,7 @@ $('#btnRealizarDeposito').click(function() {
 				linea = linea + "Total: S/ " + parseFloat(sumAcumulado + sumaMoras ).toFixed(2);
 				
 				if(data[0].faltan>0){
-					linea = linea + "Tiene " + data[0].faltan + " cuotas más a crédito.\n";
+					linea = linea + "\nTiene " + data[0].faltan + " cuotas pendientes.\n";
 				}else if(data[0].faltan==0){
 					linea = linea + "\nUd. Acaba de finalizar todas sus cuotas.\n";
 				}
