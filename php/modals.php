@@ -343,6 +343,8 @@ if( in_array($_COOKIE['ckPower'], $soloAdmis) ){ ?>
 		</div>
 	</div>
 </div>
+<?php } //fin de soloAdmins ?>
+
 
 <!-- Modal para: agregar un nuevo socio -->
 <div class='modal fade' id='modalLlamarDNISocio' tabindex='-1' role='dialog' aria-hidden='true'>
@@ -383,4 +385,3 @@ if( in_array($_COOKIE['ckPower'], $soloAdmis) ){ ?>
 		</div>
 	</div>
 </div>
-<?php } ?>

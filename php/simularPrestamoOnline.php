@@ -10,7 +10,7 @@
 <tr>
 
 <?php
-header('Content-Type: text/html; charset=utf8');
+/* header('Content-Type: text/html; charset=utf8'); */
 date_default_timezone_set('America/Lima');
 include 'conkarl.php';
 
@@ -83,9 +83,9 @@ switch ($_POST['modo']){
 $interes = $saldo * $tasa * $meses;
 $totalpago = $monto+ $interes;
 
-$capitalPartido = round($saldo/$plazo,1, PHP_ROUND_HALF_UP);
-$cuota = round( $totalpago/$plazo ,1, PHP_ROUND_HALF_UP);
-$intGanado = round( $interes/ $plazo ,1, PHP_ROUND_HALF_UP);
+$capitalPartido = round($saldo/$plazo, 2); //1, PHP_ROUND_HALF_UP
+$cuota = round( $totalpago/$plazo, 2, PHP_ROUND_HALF_UP) ; // 
+$intGanado = round( $interes/ $plazo, 2); //1, PHP_ROUND_HALF_UP
 
 /* ?> 
 <tr><td class='grey-text text-darken-2'><strong>0</strong></td> <td><?= $fecha->format('d/m/Y'); ?></td> <td>-</td><td>-</td> <td>-</td> <td><?= number_format($saldo,2);?></td></tr><?php */
@@ -206,7 +206,8 @@ for ($j=0; $j <  count($jsonSimple) ; $j++) { ?><tr><?php
 		}
 		$sumaCapital +=$capitalPartido;
 		$sumaInt +=$intGanado;
-		$sumaCuot +=$jsonSimple[$j]['cuota'];
+		$cuotaJunta= round($jsonSimple[$j]['cuota'] + $seguro, 1);
+		$sumaCuot += $cuotaJunta;
 
 		?><td class='grey-text text-darken-2'><strong><?= $jsonSimple[$j]['numDia']; ?></strong></td>
 		<td class='grey-text text-darken-2'><?= $nueva->format('d/m/Y'); ?></td>
@@ -215,7 +216,7 @@ for ($j=0; $j <  count($jsonSimple) ; $j++) { ?><tr><?php
 		<td class='grey-text text-darken-2 hidden'><?= number_format($jsonSimple[$j]['amortizacion'],2); ?></td> 
 		<td class='grey-text text-darken-2 hidden'><?= number_format($jsonSimple[$j]['saldo'], 2);?></td> 
 		<td><?= number_format($seguro, 2);?></td>
-		<td class="cuota"><?= "S/ ".number_format($jsonSimple[$j]['cuota'] + $seguro, 2);?></td> <?php
+		<td class="cuota"><?= "S/ ".number_format( $cuotaJunta , 2);?></td> <?php
 	}
 ?></tr>
 <?php
@@ -237,10 +238,10 @@ function esFeriado($feriados, $dia){
 <tr>
 	<td></td>
 	<td><strong>Total:</strong></td>
-	<td><strong>S/ <?= number_format($sumaCapital,2);?></strong></td>
+	<td><strong>S/ <?= number_format(round($sumaCapital, 1, PHP_ROUND_HALF_UP),2);?></strong></td>
 	<td><strong>S/ <?=  number_format(round($sumaInt,1, PHP_ROUND_HALF_UP),2); ?></strong></td>
 	<td><strong>S/ <?= number_format($sumSeguro, 2); ?> </strong></td>
-	<td><strong>S/ <?= number_format( $sumaCuot + $sumSeguro,2);?></strong></td>
+	<td><strong>S/ <?= number_format( round($sumaCuot , 1, PHP_ROUND_HALF_UP ),2);?></strong></td>
 </tr>
 </tfoot>
 </table>

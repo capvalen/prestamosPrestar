@@ -894,7 +894,7 @@ $('.btnPrintCajaEsp').click(function () {
 				titulo: queTitulo,
 				fecha: queFecha.replace('a las ', ''),
 				monto: queMonto,
-				observacion: padre.find('.tdObservacion').text(),
+				/* observacion: padre.find('.tdObservacion').text(), */
 				usuario: queUser
 			}}).done(function (resp) { 	}); break;
 		case '87':

@@ -140,9 +140,9 @@ $estadoMora = null;
 			<hr>
 			
 			<p><strong>Clientes asociados a éste préstamo:</strong>
-				<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )):?>
+				<?php /* if(in_array($_COOKIE['ckPower'], $soloAdmis )): */?>
 			 <button onclick="$('#btnAsociarDNI').removeClass('hidden'); $('#btnSiAsociarDNI').addClass('hidden'); $('#siSocioAdd').parent().addClass('hidden'); $('#noSocioAdd').parent().addClass('hidden'); $('#modalLlamarDNISocio').modal('show')" class="btn btn-sm btn-success btn-outline"><div class="icofont icofont-plus"></div></button>
-				<?php endif; ?>
+				<?php /* endif; */ ?>
 		</p>
 
 			<div class="row">
@@ -155,7 +155,11 @@ $estadoMora = null;
 				if( $respuestaInv=$conection->query($sqlInv) ){
 					while( $rowInv=$respuestaInv->fetch_assoc() ){  ?>
 						<li class="mayuscula" style="padding: 20px 0;">
-							<a href="clientes.php?idCliente=<?= $base58->encode(substr('000000'.$rowInv['idCliente'], -7));?>"><span id="<? if($k==0){echo 'spanTitular';} ?>" ><?= $rowInv['datosCliente']; ?></span><?= " [".$rowInv['tipcDescripcion']."]"?></a> <?php if($k>0){ ?><span><button class="btn btn-danger btn-outline btn-xs" onclick="$.idBorrarSocio = <?=$rowInv['idCliente'];?>; $('#modalBorrarSocioClick').modal('show'); "><i class="icofont icofont-close"></i></button></span><?php }?>
+							<a href="clientes.php?idCliente=<?= $base58->encode(substr('000000'.$rowInv['idCliente'], -7));?>"><span id="<? if($k==0){echo 'spanTitular';} ?>" ><?= $rowInv['datosCliente']; ?></span><?= " [".$rowInv['tipcDescripcion']."]"?></a> <?php if($k>0){ ?><span>
+								<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )){ ?>
+								<button class="btn btn-danger btn-outline btn-xs" onclick="$.idBorrarSocio = <?=$rowInv['idCliente'];?>; $('#modalBorrarSocioClick').modal('show'); "><i class="icofont icofont-close"></i></button>
+								<?php } ?>
+							</span><?php }?>
 						</li>
 			<?php $k++; }
 				}
@@ -611,30 +615,6 @@ $('#tableSubIds tr').last().find('td').eq(5).text('0.00');
   }
 }); */
 
-<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )){ ?>
-$('#sltNuevoAsesr').change(function() { console.log( 'cambio' );
-	$.ajax({url: 'php/cambiarAsesorCredito.php', type: 'POST', data: { codPrest: '<?= $codCredito;?>', idAsesor: $('#sltNuevoAsesr').val() }}).done(function(resp) {
-		console.log(resp)
-		if(resp==1){
-			location.reload();
-		}
-	});
-});
-$('#txtMoraFijaAsignar').keypress(function (e) { 
-	if(e.keyCode == 13){ 
-		$.ajax({url: 'php/guardarMoraFijo.php', type: 'POST', data: { mora:$('#txtMoraFijaAsignar').val(), idPrestamo: '<?= $codCredito;?>'  }}).done(function(resp) {
-			//console.log(resp)
-			if(resp=='ok'){
-				$('#spanBien').text('Mora fija, guardado correctamente')
-				$('#h1Bien').html(``);
-				$('#modalGuardadoCorrecto').modal('show');
-				$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () { 
-					location.reload();
-				});
-			}
-		});
-	}
-});
 $('#txtDniSocioAdd').change(function() {
 	$('#btnAsociarDNI').removeClass('hidden');
 	$('#btnSiAsociarDNI').addClass('hidden');
@@ -675,6 +655,32 @@ $('#btnSiAsociarDNI').click(function() {
 		});
 	}
 });
+
+<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )){ ?>
+$('#sltNuevoAsesr').change(function() { console.log( 'cambio' );
+	$.ajax({url: 'php/cambiarAsesorCredito.php', type: 'POST', data: { codPrest: '<?= $codCredito;?>', idAsesor: $('#sltNuevoAsesr').val() }}).done(function(resp) {
+		console.log(resp)
+		if(resp==1){
+			location.reload();
+		}
+	});
+});
+$('#txtMoraFijaAsignar').keypress(function (e) { 
+	if(e.keyCode == 13){ 
+		$.ajax({url: 'php/guardarMoraFijo.php', type: 'POST', data: { mora:$('#txtMoraFijaAsignar').val(), idPrestamo: '<?= $codCredito;?>'  }}).done(function(resp) {
+			//console.log(resp)
+			if(resp=='ok'){
+				$('#spanBien').text('Mora fija, guardado correctamente')
+				$('#h1Bien').html(``);
+				$('#modalGuardadoCorrecto').modal('show');
+				$('#modalGuardadoCorrecto').on('hidden.bs.modal', function () { 
+					location.reload();
+				});
+			}
+		});
+	}
+});
+
 $('#btnBorrarDefSocio').click(function() {
 	$.ajax({url: 'php/borrarrSocioDePrestamo.php', type: 'POST', data: {prestamo: '<?= $codCredito;?>', socio: $.idBorrarSocio }}).done(function(resp) {
 			console.log(resp)
