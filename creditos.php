@@ -101,7 +101,11 @@ $estadoMora = null;
 		<div class="container-fluid" id="contenedorCreditosFluid">
 			<p><strong>Datos de crédito</strong></p>
 			<div class="row">
-				<div class="col-sm-2"><label for="">Verificación</label><p><?= $rowCr['presAprobado']; ?></p></div>
+				<div class="col-sm-2"><label for="">Verificación</label><p><?= $rowCr['presAprobado']; ?> 
+				<?php if( $rowCr['presAprobado']=='Rechazado' && in_array($_COOKIE['ckPower'], $soloAdmis)):?>
+					<span><button class="btn btn-xs mitoolTip" id="btnReactivarPrestamo" data-toggle="tooltip" data-placement="bottom" title="Reactivar préstamo"><i class="icofont icofont-refresh"></i></button></span> </p> 
+				<?php endif; ?>
+				</div>
 				<div class="col-sm-2"><label for="">Verificador</label><p><?= $rowCr['usuarioAprobador']; ?></p></div>
 				<?php if(in_array($_COOKIE['ckPower'], $soloAdmis )){ ?>
 				<div class="col-sm-2"><label for="">Nuevo Asesor:</label> <br>
@@ -183,7 +187,8 @@ $estadoMora = null;
 					</ul>
 				<?php endif;//de desembolso pendiente ?>
 				</div>
-				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && in_array($_COOKIE['ckPower'], $soloAdmis)): ?>
+				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && 105
+				): ?>
 					<button class="btn btn-success btn-outline " id="btnShowVerificarCredito"><i class="icofont-check-circled"></i> Aprobar crédito</button>
 					<button class="btn btn-danger btn-outline " id="btnDenyVerificarCredito"><i class="icofont-thumbs-down"></i> Denegar crédito</button>
 				<?php else: 
@@ -1049,6 +1054,14 @@ $('#btnReprogramarFechas').click(function() {
 });
 $('#btnCalibrarFechas').click(function() {
 	$.post('http://infocatsoluciones.com/app/prestamosPrestar/php/reprogramacionFechas.php', {nuevaFecha: $('#fechaReprogramacion').val(), idPrestamo: '<?= $codCredito; ?>' }, function(resp){ console.log(resp); location.reload(); });
+});
+$('#btnReactivarPrestamo').click(function() {
+	$.ajax({url: 'php/reactivarCredito.php', type: 'POST', data: { idPrestamo: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>' }}).done(function(resp) {
+		console.log(resp)
+		if(resp =='ok'){
+			location.reload();
+		}
+	});
 });
 <?php }
 if( in_array($_COOKIE['ckPower'], $soloCajas) ){ ?>
