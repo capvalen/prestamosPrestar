@@ -94,9 +94,11 @@ if($llamado= $conection->query($sql)){
 			</div>
 		</div>
 		<div class="row">
+			<?php if($respuesta['intSimple']==0): ?>
 			<table class="table">
 
 					<?php 
+
 					 switch ($respuesta['idTipoPrestamo']) {
 						case '1':
 						case '2':
@@ -181,6 +183,10 @@ if($llamado= $conection->query($sql)){
 						</tr>
 					</tfoot>
 			</table>
+			<?php else: 
+				$codCredito = $idPresPost;
+				include 'listaCuotaFrances.php';
+			endif; ?>
 		</div>
 	</div>
 
