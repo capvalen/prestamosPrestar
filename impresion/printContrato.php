@@ -11,6 +11,7 @@ $fecha2 = new DateTime($_GET['fecha2']);
 $interes =$base58->decode($_GET['interes']);
 $fechaPri = new DateTime($_GET['fechaPri']);
 
+$nombresFiadores ='';
 
 $dias = array("Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado");
 $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
@@ -121,12 +122,7 @@ p{ text-indent: 5em }
 			if( $dato['idTipoCliente']=='2'){
 				echo " Y SU CONYUGUE: ".$dato['cliNombres']." CON DNI N° ".$dato['cliDni']." CON DOMICILIO EN EL ". $dato['cliDireccion'];
 			}
-		}?>
-		, ASI MISMO EN LOS TÉRMINOS Y CONDICIONES SIGUIENTES:</p>
-		<p class="text-justify">PRIMERO: <strong>EL DEUDOR</strong> DECLARA ADEUDAR LA SUMA DE <strong><span id="dineroLetras"><?= $montoLetras; ?></span> SOLES (S/ <span id="dineroMoneda"><?= number_format($monto,2);?></span>)</strong> POR UN PRESTAMO RECIBIDO CON FECHA <strong id="fechaLetras"><?= $fecha1->format('d');?> DE <?= strtoupper($meses[$fecha1->format('n')-1]);?> DEL AÑO <?= $fecha1->format('Y')?>.</strong></p>
-		<p class="text-justify">SEGUNDO: POR MÚTUO ACUERDO DE DEUDA SE CANCELARÁ EN <span id="cuotasLetras"><?= $_GET['cantCuota']; ?> CUOTAS DE PAGOS <?= $_GET['tPago']; ?></span>, EN EL CUAL LA PRIMERA LETRA DE PAGO SERA EL <strong id="primerPagoLetra"><?= $fechaPri->format('d');?> DE <?= strtoupper($meses[$fechaPri->format('n')-1]);?> DEL AÑO <?= $fechaPri->format('Y')?></strong> Y LA ULTIMA LETRA DE PAGO SERA CANCELADA EL <strong id="ultimoPagoLetra"><?= $fecha2->format('d');?> DE <?= strtoupper($meses[$fecha2->format('n')-1]);?> DEL AÑO <?= $fecha2->format('Y')?>.</strong></p>
-		<p class="text-justify">TERCERO: LA DEUDA GENERA UN INTERES MENSUAL DEL <strong id="porcentaje"><?= $interes;?></strong> QUE SERA CANCELADO EN EL TERMINO PACTADO POR AMBOS Y DE UN INTERES MORATORIO DIARIO DE UN SOL.</p>
-		<?php 
+		} 
 		if($totalInvolucrados >1 ){
 			$nombresFiadores ='';
 			
@@ -134,14 +130,24 @@ p{ text-indent: 5em }
 			
 			while ($rowInvolucrados = $resultadoInvolucrados->fetch_assoc()) {
 				if( $rowInvolucrados['idTipoCliente']!='1' && $rowInvolucrados['idTipoCliente']!='2' ){
-				$nombresFiadores = $nombresFiadores. $rowInvolucrados['cliNombres'] . " COMO ". $rowInvolucrados['tipcDescripcion']. ' CON D.N.I. '. $rowInvolucrados['cliDni'] . " CON DOMICILIO EN EL ". $rowInvolucrados['cliDireccion']. '. ' ;}
+				$nombresFiadores = $nombresFiadores. ". SR(A) ". $rowInvolucrados['cliNombres'] . " COMO ". $rowInvolucrados['tipcDescripcion']. ' CON D.N.I. '. $rowInvolucrados['cliDni'] . " CON DOMICILIO EN EL ". $rowInvolucrados['cliDireccion']. ' A QUIEN EN ADELANTE SE LE CONSIDERARÁ COMO FIADOR. ' ;}
 			
 			}
 			if( $nombresFiadores!='' ){
-				echo '<p class="text-justify"> CUARTO: '.$nombresFiadores. '</p>';
+				echo $nombresFiadores;
 			}
-			
-		} ?>
+		}
+		?>
+		, ASI MISMO EN LOS TÉRMINOS Y CONDICIONES SIGUIENTES:</p>
+		<p class="text-justify">PRIMERO: <strong>EL DEUDOR</strong> DECLARA ADEUDAR LA SUMA DE <strong><span id="dineroLetras"><?= $montoLetras; ?></span> SOLES (S/ <span id="dineroMoneda"><?= number_format($monto,2);?></span>)</strong> POR UN PRESTAMO RECIBIDO CON FECHA <strong id="fechaLetras"><?= $fecha1->format('d');?> DE <?= strtoupper($meses[$fecha1->format('n')-1]);?> DEL AÑO <?= $fecha1->format('Y')?>.</strong></p>
+		<p class="text-justify">SEGUNDO: POR MÚTUO ACUERDO DE DEUDA SE CANCELARÁ EN <span id="cuotasLetras"><?= $_GET['cantCuota']; ?> CUOTAS DE PAGOS <?= $_GET['tPago']; ?></span>, EN EL CUAL LA PRIMERA LETRA DE PAGO SERA EL <strong id="primerPagoLetra"><?= $fechaPri->format('d');?> DE <?= strtoupper($meses[$fechaPri->format('n')-1]);?> DEL AÑO <?= $fechaPri->format('Y')?></strong> Y LA ULTIMA LETRA DE PAGO SERA CANCELADA EL <strong id="ultimoPagoLetra"><?= $fecha2->format('d');?> DE <?= strtoupper($meses[$fecha2->format('n')-1]);?> DEL AÑO <?= $fecha2->format('Y')?>.</strong></p>
+		<p class="text-justify">TERCERO: LA DEUDA GENERA UN INTERES MENSUAL DEL <strong id="porcentaje"><?= $interes;?></strong> QUE SERA CANCELADO EN EL TERMINO PACTADO POR AMBOS Y DE UN INTERES MORATORIO DIARIO DE UN SOL.</p>
+	
+		<?php 
+		if( $nombresFiadores!='' ){
+			echo '<p class="text-justify"> CUARTO: '.$nombresFiadores. '</p>';
+		}
+		?>
 		<p class="text-justify"> <?php if($totalInvolucrados >1){ echo 'QUINTO'; }else{echo 'CUARTO'; }?>: EN CASO DE INCUMPLIMIENTO CON UN MINIMO DE UNA LETRA IMPAGA POR EL DEUDOR; EL ACREEDOR SE RESERVA EL DERECHO DE PROCEDER CONFORME A LEY, DEBIENDO RECONOCER EL DEUDOR O EL GARANTE LOS GASTOS JUDICIALES, EXTRAJUDICIALES, COSTAS Y COSTOS QUE PUEDAN ORIGINARSE POR INCUMPLIMIENTO EN LA CANCELACION DE LA DEUDA, DEJANDO EN GARANTIA UNA LETRA DE CAMBIO FIRMADA, SE SUSCRIBE LA PRESENTE  EN LA CIUDAD DE HUANCAYO <?= $diasLetras[intval($fecha1->format('d'))-1]; ?> DEL MES DE <?= strtoupper($meses[$fecha1->format('m')-1]); ?> DEL <?= $fecha1->format('Y'); ?> Y EN SEÑAL DE CONFORMIDAD FIRMAN AL PIE DEL DOCUMENTO DENOMINADO CONTRATO DE DEUDA Y COMPROMISO DE PAGO E IMPRIME SU HUELLA DEL INDICE DERECHO.</p>
 	</div>
 	<div class="container-fluid" id="contFirmas">

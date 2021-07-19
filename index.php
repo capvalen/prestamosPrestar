@@ -56,7 +56,7 @@ a:hover{color:#462782;}
 	<div class="container-fluid">
 		<div class="col-md-12">
 			<div class="wello login-box " style="color: #673ab7"  >
-				<div class="row">
+				<div class="row" id="app">
 				<h3 class="text-center" style="margin-top: 10px;margin-bottom: 0px;">Prestar Huancayo</h3>
 					<div class="col-xs-4"><img src="images/VirtualCorto.png" class="img-responsive" alt=""></div>
 					<div class="col-xs-8">

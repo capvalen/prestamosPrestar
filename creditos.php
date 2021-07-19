@@ -42,7 +42,7 @@ $estadoMora = null;
 <div id="page-content-wrapper">
 	<div class="container-fluid ">
 		<div class="row noselect">
-			<div class="col-lg-12 contenedorDeslizable ">
+			<div class="col-lg-12 contenedorDeslizable " id="app">
 			<!-- Empieza a meter contenido principal -->
 			<div class="panel panel-default hidden">
 			<div class="panel-body">

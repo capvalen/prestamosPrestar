@@ -31,7 +31,7 @@
 <div id="page-content-wrapper">
 	<div class="container-fluid ">
 		<div class="row noselect">
-			<div class="col-lg-12 contenedorDeslizable ">
+			<div class="col-lg-12 contenedorDeslizable " id="app">
 			<!-- Empieza a meter contenido principal -->
 			<div class="container">
 				<h2 class="purple-text text-lighten-1">Bienvenido al sistema <small><?php print $_COOKIE["ckAtiende"]; ?></small></h2><hr>

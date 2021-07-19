@@ -44,7 +44,7 @@ if (isset($_GET['año']) && isset($_GET['mes']) ){
 		<meta name="description" content="">
 		<meta name="author" content="">
 
-		<title>Principal - Sistema Préstamos</title>
+		<title>Balance - Sistema Préstamos</title>
 
 		<!-- Bootstrap Core CSS -->
 		<?php include 'headers.php'; ?>
@@ -58,11 +58,17 @@ if (isset($_GET['año']) && isset($_GET['mes']) ){
 #ambosBalances .row{
 	padding-top: 10px;padding-bottom: 10px;
 }
+.titulo, .encabezado{
+	background-color: #244ad6;
+	color: white;
+	border: none;
+}
+.encabezado label{color:white;}
 #ambosBalances label{font-weight: 500;}
 #ambosBalances .titulo,
 #ambosBalances .encabezado
 { border:1px solid #ddd;}
-#ambosBalances strong{color:#000!important;}
+#ambosBalances strong{color:#244ad6!important;}
 #ambosBalances input{margin-bottom: 0px;}
 #ambosBalances .input-sm{height: 30px!important; font-size: 12px!important; }
 .close{ color: #fd0303;}
@@ -108,7 +114,8 @@ if (isset($_GET['año']) && isset($_GET['mes']) ){
 							</select>
 							</div>
 							<div class="form-group">
-							<button class="btn btn-success btn-outline" onclick="verificarMeses()"><i class="icofont icofont-search"></i> Buscar</button>
+							<button class="btn btn-warning btn-outline" onclick="verificarMeses()"><i class="icofont icofont-search"></i> Buscar</button>
+							<button class="btn btn-success btn-outline" @click="crearExcel()"><i class="icofont icofont-file-excel"></i> Crear Excel</button>
 							</div>
 					</div>
 					
@@ -376,154 +383,154 @@ if (isset($_GET['año']) && isset($_GET['mes']) ){
 
 <!-- Modal -->
 <div class="modal fade" id="modalMaquinarias" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Insertar maquinarias</h4>
-      </div>
-      <div class="modal-body">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Insertar maquinarias</h4>
+			</div>
+			<div class="modal-body">
 				<label for="">Cantidad</label>
 				<input type="number" class="form-control" v-model="maqCantidad">
 				<label for="">Descripción</label>
 				<input type="text" class="form-control" v-model="maqDescripcion">
 				<label for="">Precio Unitario</label>
 				<input type="number" class="form-control esMoneda" v-model="maqPrecio">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="insertarMaquinaria()">Insertar</button>
-      </div>
-    </div>
-  </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="insertarMaquinaria()">Insertar</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Modal para prestamos menores-->
 <div class="modal fade" id="modalPrestamoMenor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Insertar préstamos menor a 12 meses</h4>
-      </div>
-      <div class="modal-body">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Insertar préstamos menor a 12 meses</h4>
+			</div>
+			<div class="modal-body">
 				<label for="">Cuotas</label>
 				<input type="number" class="form-control" v-model="maqCantidad">
 				<label for="">Institución</label>
 				<input type="text" class="form-control" v-model="maqDescripcion">
 				<label for="">Monto de cuota</label>
 				<input type="number" class="form-control esMoneda" v-model="maqPrecio">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="insertarPrestamoMenor()">Insertar</button>
-      </div>
-    </div>
-  </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="insertarPrestamoMenor()">Insertar</button>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- Modal para prestamos mayores-->
 <div class="modal fade" id="modalPrestamo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Insertar préstamos mayor a 12 meses</h4>
-      </div>
-      <div class="modal-body">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Insertar préstamos mayor a 12 meses</h4>
+			</div>
+			<div class="modal-body">
 				<label for="">Cuotas</label>
 				<input type="number" class="form-control" v-model="maqCantidad">
 				<label for="">Institución</label>
 				<input type="text" class="form-control" v-model="maqDescripcion">
 				<label for="">Monto de cuota</label>
 				<input type="number" class="form-control esMoneda" v-model="maqPrecio">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="insertarPrestamo()">Insertar</button>
-      </div>
-    </div>
-  </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="insertarPrestamo()">Insertar</button>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- Modal para personal-->
 <div class="modal fade" id="modalPersonal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Insertar personal</h4>
-      </div>
-      <div class="modal-body">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Insertar personal</h4>
+			</div>
+			<div class="modal-body">
 				<label for="">Cantidad</label>
 				<input type="number" class="form-control" v-model="maqCantidad">
 				<label for="">Cargo</label>
 				<input type="text" class="form-control" v-model="maqDescripcion">
 				<label for="">Sueldo</label>
 				<input type="number" class="form-control esMoneda" v-model="maqPrecio">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="insertarPersonal()">Insertar</button>
-      </div>
-    </div>
-  </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="insertarPersonal()">Insertar</button>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- Modal para servicios-->
 <div class="modal fade" id="modalServicio" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Insertar servicio</h4>
-      </div>
-      <div class="modal-body">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Insertar servicio</h4>
+			</div>
+			<div class="modal-body">
 				<label for="">Servicio</label>
 				<input type="text" class="form-control" v-model="maqDescripcion">
 				<label for="">Importe</label>
 				<input type="number" class="form-control esMoneda" v-model="maqPrecio">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="insertarServicio()">Insertar</button>
-      </div>
-    </div>
-  </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="insertarServicio()">Insertar</button>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- Modal para otros ingresos-->
 <div class="modal fade" id="modalOtros" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Insertar otros ingresos</h4>
-      </div>
-      <div class="modal-body">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Insertar otros ingresos</h4>
+			</div>
+			<div class="modal-body">
 				<label for="">Descripción</label>
 				<input type="text" class="form-control" v-model="maqDescripcion">
 				<label for="">Monto</label>
 				<input type="number" class="form-control esMoneda" v-model="maqPrecio">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="insertarOtrosIngresos()">Insertar</button>
-      </div>
-    </div>
-  </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="insertarOtrosIngresos()">Insertar</button>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- Modal para otros ingresos-->
 <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Editar</h4>
-      </div>
-      <div class="modal-body">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Editar</h4>
+			</div>
+			<div class="modal-body">
 				<label for="">Cantidad</label>
 				<input type="text" class="form-control" v-model="maqCantidad">
 				<label for="">Descripción</label>
 				<input type="text" class="form-control" v-model="maqDescripcion">
 				<label for="">Monto</label>
 				<input type="number" class="form-control esMoneda" v-model="maqPrecio">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-warning" @click="actualizarDato()">Actualizar</button>
-      </div>
-    </div>
-  </div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-warning" @click="actualizarDato()">Actualizar</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 
@@ -539,6 +546,9 @@ if (isset($_GET['año']) && isset($_GET['mes']) ){
 
 <?php if ( isset($_COOKIE['ckidUsuario']) ){?>
 
+<script src="js/xlsx.full.min.js"></script>
+<script src="js/FileSaver.min.js"></script>
+
 <script>
 datosUsuario();
 
@@ -549,12 +559,12 @@ $(document).ready(function(){
 <?php if(isset($_GET['año']) && isset($_GET['mes']) && $resultadoVariables->num_rows>0 ): ?>
 
 var app = new Vue({
-  el: '#wrapper',
-  data: {
+	el: '#wrapper',
+	data: {
 		maqCantidad: 1, maqDescripcion:'', maqPrecio: 0, queActualizo: '', elInidice:0,
 		A121Inmueble:<?= $A121Inmueble;?>, A1211Terrenos:<?= $A1211Terrenos;?>, A111Disponible:<?= $A111Disponible;?>, A1111Caja:<?= $A1111Caja;?>, A112Bancos:<?= $A112Bancos;?>, A112CuentasPorCobrar:<?= $A112CuentasPorCobrar;?>, A113OtrasCuentas:<?= $A113OtrasCuentas;?>, A114Adelantos:<?= $A114Adelantos;?>, A115Mercaderia:<?= $A115Mercaderia;?>, A1213Unidad:<?= $A1213Unidad;?>, A211Proveedores: <?= $A211Proveedores;?>, A212OrasCuentas: <?= $A212OrasCuentas;?>, A31Patrimonio: <?= $A31Patrimonio;?>,
 		capitalConInteres: <?= $sumaTodoCapitales; ?>, soloCapital: <?= $sumaCapital; ?>,
-    listaMaquinarias: <?= $listaMaquinarias; ?>, listaPrestamosMenor: <?= $listaPrestamosMenor; ?>, listaPrestamos: <?= $listaPrestamos; ?>, listaPersonal:<?= $planilla; ?>, listaServicios:<?= $servicios; ?>, listaOtrosIngresos: [{descripcion: 'Mora', monto: <?= $sumaMora?>}]
+		listaMaquinarias: <?= $listaMaquinarias; ?>, listaPrestamosMenor: <?= $listaPrestamosMenor; ?>, listaPrestamos: <?= $listaPrestamos; ?>, listaPersonal:<?= $planilla; ?>, listaServicios:<?= $servicios; ?>, listaOtrosIngresos: [{descripcion: 'Mora', monto: <?= $sumaMora?>}]
 	},
 	methods:{
 		borrarLista(index, tipo){
@@ -620,6 +630,114 @@ var app = new Vue({
 			}
 			$('#modalEditar').modal('hide');
 		},
+		crearExcel(){
+			var wb = XLSX.utils.book_new();
+			wb.Props={
+				Title: 'Balance General',
+				Author: 'Infocat Soluciones',
+				CreateDate: new Date( Date.now() )
+			}
+			wb.SheetNames.push('Balance');
+			var ws_data = [['Balance General', '', '','', 'Estado de Resultados'],
+				['A1 Activo ', this.sumaActivo,'','', 'Capital + Interés + Com. y Serv.', this.capitalConInteres],
+				['A11 Activo Corriente', this.sumaActivosCorriente,'','', 'Capital', this.soloCapital],
+				['A111 Disponible', this.A111Disponible,'','', 'Utilidad bruta-margen bruto', this.sumaUtilidadBruta],
+				['A1111 Caja', this.A1111Caja,'','', 'Gastos operativos del negocio', this.sumaGastosOperativos],
+				['A1112 Bancos', this.A112Bancos,'','', 'Gastos de personal', this.sumaGastoPersonal],
+				['A112 Cuentas por cobrar', this.A112CuentasPorCobrar, ],
+				['A113 Otras cuentas por cobrar', this.A113OtrasCuentas ],
+				['A114 Adelantos a proveedores', this.A114Adelantos ],
+				['A115 Mercadería', this.A115Mercaderia ],
+				['A12 Activo no corriente', this.sumaNoCorriente0 ],
+				['A121 Inmueble, maquinaria y equipo', this.A121Inmueble ],
+				['A1211 Terrenos, edificios y otras construcciones', this.A1211Terrenos ],
+				['A1212 Maquinaria y equipo y otros (muebles y enseres)', this.sumaMaquinas ],
+			];
+		
+			if(this.listaMaquinarias.length>0){
+				ws_data.push(['Cant.', 'Descripción', 'P. Unit.', 'SubTotal']);
+				this.listaMaquinarias.forEach(maquina =>{
+					ws_data.push([ maquina.cantidad, maquina.descripcion, maquina.precio, maquina.cantidad*maquina.precio ]);
+				});
+			}
+			ws_data.push(['A1213 Unidad de transporte', 0],
+				['A2 Pasivo', 0],
+				['A2 Pasivo corriente', 0],
+				['A211 Proveedores', 0],
+				['A212 Otras cuentas por pagar', 0],
+				['A212 Otras cuentas por pagar', 0],
+				['A213 Préstamos a CP menor a 12 meses', 0],
+			);
+
+			if(this.listaPrestamosMenor.length>0){
+				ws_data.push(['Cuotas', 'Institución', 'Monto de Cuota', 'Saldo']);
+				this.listaPrestamosMenor.forEach(maquina =>{
+					ws_data.push([ maquina.cuotas, maquina.institucion, maquina.monto, maquina.cuotas*maquina.monto ]);
+				});
+			}
+			ws_data.push(['A22 Pasivo no corriente', 0],
+				['A221 Préstamos a LP mayor a 12 meses', 0],
+			);
+
+			if(this.listaPrestamos.length>0){
+				ws_data.push(['Cuotas', 'Institución', 'Monto de Cuota', 'Saldo']);
+				this.listaPrestamos.forEach(maquina =>{
+					ws_data.push([ maquina.cuotas, maquina.institucion, maquina.monto, maquina.cuotas*maquina.monto ]);
+				});
+			}
+			
+			ws_data.push(['A3 Patrimonio', 0],
+				['A31 Patrimonio', 0],
+				['A4 Pasivo + Patrimonio', 0],
+			);
+			
+			var ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+			var celda = 7
+			var tempo =[];
+
+			if(this.listaPersonal.length>0){
+				XLSX.utils.sheet_add_aoa(ws, [['Cargo', 'Sueldo', 'Total']], {origin: 'E'+celda}); celda++;
+				this.listaPersonal.forEach(maquina =>{
+					tempo.push([ maquina.cargo, maquina.sueldo, maquina.cantidad ]);
+				});
+				XLSX.utils.sheet_add_aoa(ws, tempo, {origin: 'E'+celda}); celda+=tempo.length;
+			}
+			tempo=[];
+			XLSX.utils.sheet_add_aoa(ws, [['Gastos de servicios', 0]], {origin: 'E'+celda}); celda++;
+			if(this.listaServicios.length>0){
+				XLSX.utils.sheet_add_aoa(ws, [['Servicio', 'Importe']], {origin: 'E'+celda}); celda++;
+				this.listaServicios.forEach(maquina =>{
+					tempo.push([ maquina.servicio, maquina.monto ]);
+				});
+				XLSX.utils.sheet_add_aoa(ws, tempo, {origin: 'E'+celda}); celda+=tempo.length;
+			}
+			XLSX.utils.sheet_add_aoa(ws, [['Utilidad operativa', 0],
+				['Otros ingresos', 0],
+				['Mora', 0],
+				['Obligaciones del negocio', 0],
+				['Utilidad neta del negocio', 0],
+			], {origin: 'E'+celda}); celda++;
+			
+			//ws_data.push(['Data', 'mnumero', 5])
+			//XLSX.utils.sheet_add_aoa(ws, [['NEW VALUE from NODE']], {origin: 'F1'});
+
+			ws['!merges'] = [ XLSX.utils.decode_range("A1:B1"), XLSX.utils.decode_range("C1:D1") ];
+
+			//ws.D1 = { t: "s", v: 'SS' };
+
+			wb.Sheets['Balance'] = ws;
+
+			var wbout = XLSX.write(wb, { booktype: 'xlsx', type: 'binary'})
+			function s2ab(s) { 
+				var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+				var view = new Uint8Array(buf);  //create uint8array as viewer
+				for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+				return buf;    
+			}
+      saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'test.xlsx');
+
+		}
 		
 	},
 	computed:{
@@ -742,7 +860,7 @@ function limpiarGlobales(){
 	app.maqPrecio=0;
 }
 $("body").on('focus', 'input',function(){
-  this.select();
+	this.select();
 });
 function guardarBalance(){
 	let maquinarias, menor, mayor;
