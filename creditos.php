@@ -228,7 +228,7 @@ $estadoMora = null;
 			<div class="table-responsive">
 			<?php
 				if($rowCr['intSimple']==0):
-						include 'php/listaCuotaNormal.php';
+					include 'php/listaCuotaNormal.php';
 				else:
 					include 'php/listaCuotaFrances.php';
 				endif;

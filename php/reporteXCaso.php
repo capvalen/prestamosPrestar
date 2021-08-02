@@ -449,7 +449,7 @@ switch ($_POST['caso']) {
 			FROM cliente c
 			inner join involucrados i on i.idCliente = c.idCliente
 			inner join prestamo pre on pre.idPrestamo = i.idPrestamo
-			WHERE pre.presAprobado<>2 and pre.presFechaDesembolso <> '0000-00-00' and date_format(presFechaDesembolso,'%Y-%m') = '{$_POST['fMes']}' ; "; //pre.presActivo=1 and
+			WHERE pre.presAprobado<>2 and pre.presFechaDesembolso <> '0000-00-00' and date_format(presFechaDesembolso,'%Y-%m') = '{$_POST['fMes']}'  and idTipoCliente =1 ; "; //pre.presActivo=1 and
 		echo $sql;
 		$resultado=$cadena->query($sql);
 		$i=1;
