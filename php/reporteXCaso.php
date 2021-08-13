@@ -390,7 +390,7 @@ switch ($_POST['caso']) {
 		FROM cliente c
 		inner join involucrados i on i.idCliente = c.idCliente
 		inner join prestamo pre on pre.idPrestamo = i.idPrestamo
-		where presAprobado=1; ";
+		where presAprobado=1 and idTipoCliente =1; ";
 		$resultado=$cadena->query($sql);
 		$sumMontos=0;  $sumCuotas=0; $sumSemana=0; $sumQuincena=0; $sumMensual=0;$sumDiario=0; $sumPagados=0; $sumPendientes=0; $numPagado=0; $numPendiente=0; $sumCobroTotal=0;
 		$i=1;

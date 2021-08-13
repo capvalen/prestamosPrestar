@@ -187,8 +187,7 @@ $estadoMora = null;
 					</ul>
 				<?php endif;//de desembolso pendiente ?>
 				</div>
-				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && 105
-				): ?>
+				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && in_array($_COOKIE['ckPower'], $soloAdmis)): ?>
 					<button class="btn btn-success btn-outline " id="btnShowVerificarCredito"><i class="icofont-check-circled"></i> Aprobar crédito</button>
 					<button class="btn btn-danger btn-outline " id="btnDenyVerificarCredito"><i class="icofont-thumbs-down"></i> Denegar crédito</button>
 				<?php else: 
