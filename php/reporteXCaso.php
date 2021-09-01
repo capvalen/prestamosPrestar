@@ -195,12 +195,11 @@ switch ($_POST['caso']) {
 		break;
 
 
-		case 'R4':
+		case 'R4': //reporte de moras
 		
-		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, `cajaFecha`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso, cliApellidoPaterno, cliApellidoMaterno, cliNombres
-		FROM `caja` c inner join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso
-		inner join involucrados i on i.idPrestamo = c.idPrestamo inner join cliente cl on i.idCliente = cl.idCliente
-		where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (81, 86, 89) and cajaActivo = 1
+		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, `cajaFecha`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso, retornarDuenoPrestamo(c.idPrestamo) as nombreCli
+		FROM `caja` c inner join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso	
+		where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (81, 86, 89) and cajaActivo = 1 
 		order by idPrestamo;";
 		$resultado=$cadena->query($sql);
 		?> 
@@ -219,7 +218,7 @@ switch ($_POST['caso']) {
 		$sumaTodo = $sumaTodo + $row['cajaValor']; ?>
 			<tr>
 				<td class="tableexport-string"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
-				<td class='mayuscula'><?= $row['cliApellidoPaterno'].' '.$row['cliApellidoMaterno'].', '.$row['cliNombres'];?></td>
+				<td class='mayuscula'><?= $row['nombreCli'];?></td>
 				<td><?= $row['tipoDescripcion']?></td>
 				<td>S/ <?= number_format($row['cajaValor'],2);?></td>
 				<td><? $fechaCaj= new DateTime($row['cajaFecha']); echo $fechaCaj->format('d/m/Y h:m a');?></td>
@@ -239,10 +238,9 @@ switch ($_POST['caso']) {
 
 		case 'R5':
 		
-		$sql="SELECT pre.`idPrestamo`, `fechaFinPrestamo`, presMontoDesembolso, preInteresPers, presPeriodo,
-		cliApellidoPaterno, cliApellidoMaterno, cliNombres, 'Fin de préstamo' as `tipoDescripcion`
+		$sql="SELECT pre.`idPrestamo`, `fechaFinPrestamo`, presMontoDesembolso, preInteresPers, presPeriodo, retornarDuenoPrestamo(c.idPrestamo) as nombreCli 'Fin de préstamo' as `tipoDescripcion`
 				FROM `prestamo` pre 
-				inner join involucrados i on i.idPrestamo = pre.idPrestamo inner join cliente cl on i.idCliente = cl.idCliente
+				
 				where `fechaFinPrestamo` between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59'
 				order by idPrestamo";
 		$resultado=$cadena->query($sql);
@@ -262,7 +260,7 @@ switch ($_POST['caso']) {
 		$sumaTodo = $sumaTodo + $row['presMontoDesembolso']; ?>
 			<tr>
 				<td class="tableexport-string"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
-				<td class='mayuscula'><?= $row['cliApellidoPaterno'].' '.$row['cliApellidoMaterno'].', '.$row['cliNombres'];?></td>
+				<td class='mayuscula'><?= $row['nombreCli'];?></td>
 				<td><?= $row['tipoDescripcion']?></td>
 				<td>S/ <?= number_format($row['presMontoDesembolso'],2);?></td>
 				<td><? $fechaCaj= new DateTime($row['fechaFinPrestamo']); echo $fechaCaj->format('d/m/Y h:m a');?></td>
@@ -279,13 +277,12 @@ switch ($_POST['caso']) {
 		<?
 		break;
 		case "R6":
-			$sql="SELECT `cliDni`, lower( concat(trim(`cliApellidoPaterno`),' ', trim(`cliApellidoMaterno`), ' ', trim(`cliNombres`))) as 'cliNombre',
+			$sql="SELECT `cliDni`, retornarDuenoPrestamo(c.idPrestamo) as nombreCli
 			pre.idPrestamo, preInteresPers, date_format(presFechaDesembolso, '%d/%m/%Y') as fechaDesembolso, presMontoDesembolso,
 			idTipoPrestamo, presPeriodo, round(`retornarMontoCuota`(pre.idPrestamo),1) as montCuota, `retornarNumCuotasPagadas`(pre.idPrestamo) as pagados, retornarNumCuotasNoPagadas(pre.idPrestamo) as noPagados,
-			round(retornarSumCuotasPagadas(pre.idPrestamo),1) as sumPagados, round(retornarSumCuotasNoPagadas(pre.idPrestamo),1) as sumNoPagados
+			round(retornarSumCuotasPagadas(pre.idPrestamo),1) as sumPagados, round(retornarSumCuotasNoPagadas(pre.idPrestamo),1) as sumNoPagados, 
 			
 			FROM cliente c
-			inner join involucrados i on i.idCliente = c.idCliente
 			inner join prestamo pre on pre.idPrestamo = i.idPrestamo
 			WHERE pre.presActivo=1 and pre.presAprobado<>2  and pre.presFechaDesembolso <> '0000-00-00' and idTipoCliente =1; /* date_format(presFechaDesembolso,'%Y-%m-%d') between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' */; ";
 			$resultado=$cadena->query($sql);
@@ -321,7 +318,7 @@ switch ($_POST['caso']) {
 			<tr>
 				<td><?= $row['idPrestamo']; ?></td>
 				<td class="tableexport-string"><?= $row['cliDni']; ?></td>
-				<td class="text-capitalize"><?= $row['cliNombre']; ?></td>
+				<td class="text-capitalize"><?= $row['nombreCli']; ?></td>
 				<td><?= $row['preInteresPers']."%"; ?></td>
 				<td class="tableexport-string"><?= $row['fechaDesembolso']; ?></td>
 				<td class="tableexport-string">S/ <?= $row['presMontoDesembolso']; ?></td>
@@ -806,7 +803,7 @@ switch ($_POST['caso']) {
 				</tfoot>
 			<?
 			break;
-		case "R11":
+		case "R11": //reporte de comisiones
 				$sql="SELECT ca.*, tp.tipoDescripcion, date_format(cajaFecha, '%d/%m/%Y' ) as fecha, pc.cuotCuota, pc.cuotSeg
 				FROM `caja` ca
 				inner join tipoproceso tp on tp.idtipoproceso = ca.idtipoproceso
@@ -831,17 +828,19 @@ switch ($_POST['caso']) {
 				<tbody>
 				<?php
 				while($row=$resultado->fetch_assoc()){
+					$porcentaje=$row['cajaValor']/($row['cuotCuota']+$row['cuotSeg']);
 				?>
 				<tr>
 					<td><?= $k+1; ?></td>
 					<td><i>SP-<?= $row['idCaja']; ?></i></td>
 					<td class="tableexport-string"><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo']; ?></a></td>
-					<td>Com. y Seg de: <?= $row['tipoDescripcion']; ?></td>
+					<td>Com. y Seg de: <?= $row['tipoDescripcion'] . " - ". $row['idTipoProceso']; ?></td>
 					<td><?= $row['cajaValor']; ?></td>
 					<td class="tableexport-string"><?= $row['fecha']; ?></td>
 					<td class="tableexport-string">S/ <?php
-						if($row['idTipoProceso']==80){$seguroV3 = $row['cuotSeg']; }
-						if($row['idTipoProceso']==33){$porcentaje=$row['cajaValor']/($row['cuotCuota']+$row['cuotSeg']); $seguroV3 = round($row['cuotSeg']*$porcentaje, 1);}
+						$seguroV3 = round($row['cuotSeg']*$porcentaje, 1);
+						/* if($row['idTipoProceso']==80){$seguroV3 = $row['cuotSeg']; }
+						if($row['idTipoProceso']==33){$seguroV3 = round($row['cuotSeg']*$porcentaje, 1);} */
 						echo number_format($seguroV3,2);
 					 ?></td>
 					<td class="tableexport-string"><?= $row['cajaObservacion']; ?></td>
