@@ -8,6 +8,29 @@ include "php/variablesGlobales.php";
 $hayCaja= require_once("php/comprobarCajaHoy.php");
 $fechaHoy = new DateTime();
 $estadoMora = null;
+
+$codCredito='';
+if( isset($_GET['credito']) ){
+	$codCredito=$base58->decode($_GET['credito']);
+}
+
+if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
+	//echo 'evaluar';
+	if($_COOKIE['ckPower']=='2'){ //vista asesor
+		$sqlVista="SELECT * FROM `vistas` WHERE idUsuario ={$_COOKIE['ckidUsuario']} and idPrestamo = {$codCredito} and ver=1 and activo=1;";
+		$resultVista = $preferido->query($sqlVista);
+		if($resultVista->num_rows==0){ header('Location: sinPermiso.php'); die(); }
+	}
+
+	if($_COOKIE['ckPower']=='4'){ //vista asesor
+		$sqlVista="SELECT * FROM `vistas` WHERE idUsuario ={$_COOKIE['ckidUsuario']} and idPrestamo = {$codCredito} and ver=0 and activo=1;";
+		$resultVista = $preferido->query($sqlVista);
+		if($resultVista->num_rows==1){ header('Location: sinPermiso.php'); die(); }
+	}
+	
+	
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -53,9 +76,8 @@ $estadoMora = null;
 			</div>
 		</div>
 	<?php
-	$codCredito='';
 	if( isset($_GET['credito']) ):
-		$codCredito=$base58->decode($_GET['credito']);?>
+		?>
 
 		<h3 class="purple-text text-lighten-1" id="h3Codigo" data-id="<?= $codCredito; ?>">Crédito CR-<?= $codCredito; ?></h3>
 
@@ -85,11 +107,7 @@ $estadoMora = null;
 			$rowCr = $respuesta->fetch_assoc();
 			$estadoMora =false;
 
-			if( !in_array($_COOKIE['ckPower'], $soloCajas ) ){
-				if( $rowCr['idUsuario']<> $_COOKIE['ckidUsuario'] ){
-					?> <script> window.location.href = 'sinPermiso.php'; </script> <?php
-				}
-			}
+			
 			
 			if($contadorF!=0):
 			$_POST['plazos'] = $rowCr['presPeriodo'];

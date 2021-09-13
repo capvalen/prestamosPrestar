@@ -21,6 +21,9 @@ $nomArchivo = basename($_SERVER['PHP_SELF']); ?>
 		<li <?php if($nomArchivo =='verificacion.php') echo 'class="active"'; ?>>
 				<a href="verificacion.php"><i class="icofont-checked"></i> Verificación</a>
 		</li>
+		<li <?php if($nomArchivo =='restricciones.php') echo 'class="active"'; ?>>
+				<a href="restricciones.php"><i class="icofont-focus"></i> Restricciones</a>
+		</li>
 		<li <?php if($nomArchivo =='reportes.php') echo 'class="active"'; ?>>
 				<a href="reportes.php"><i class="icofont-ui-copy"></i> Reportes</a>
 		</li>

@@ -277,21 +277,20 @@ switch ($_POST['caso']) {
 		<?
 		break;
 		case "R6":
-			$sql="SELECT `cliDni`, retornarDuenoPrestamo(c.idPrestamo) as nombreCli
+			$sql="SELECT retornarDuenoPrestamo(pre.idPrestamo) as nombreCli,
 			pre.idPrestamo, preInteresPers, date_format(presFechaDesembolso, '%d/%m/%Y') as fechaDesembolso, presMontoDesembolso,
 			idTipoPrestamo, presPeriodo, round(`retornarMontoCuota`(pre.idPrestamo),1) as montCuota, `retornarNumCuotasPagadas`(pre.idPrestamo) as pagados, retornarNumCuotasNoPagadas(pre.idPrestamo) as noPagados,
-			round(retornarSumCuotasPagadas(pre.idPrestamo),1) as sumPagados, round(retornarSumCuotasNoPagadas(pre.idPrestamo),1) as sumNoPagados, 
+			round(retornarSumCuotasPagadas(pre.idPrestamo),1) as sumPagados, round(retornarSumCuotasNoPagadas(pre.idPrestamo),1) as sumNoPagados
 			
-			FROM cliente c
-			inner join prestamo pre on pre.idPrestamo = i.idPrestamo
-			WHERE pre.presActivo=1 and pre.presAprobado<>2  and pre.presFechaDesembolso <> '0000-00-00' and idTipoCliente =1; /* date_format(presFechaDesembolso,'%Y-%m-%d') between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' */; ";
+			FROM prestamo pre
+			WHERE pre.presActivo=1 and pre.presAprobado<>2  and pre.presFechaDesembolso <> '0000-00-00'; /* date_format(presFechaDesembolso,'%Y-%m-%d') between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' */; ";
 			$resultado=$cadena->query($sql);
 			$sumMontos=0;  $sumCuotas=0; $sumSemana=0; $sumQuincena=0; $sumMensual=0;$sumDiario=0; $sumPagados=0; $sumPendientes=0; $numPagado=0; $numPendiente=0; $sumCobroTotal=0;
 			?>
 			<thead>
 				<tr>
 					<th>Préstamo</th>
-					<th>D.N.I.</th>
+					
 					<th>Apellidos y Nombres</th>
 					<th>Tasa</th>
 					<th>Fecha de desembolso</th>
@@ -317,7 +316,7 @@ switch ($_POST['caso']) {
 			?>
 			<tr>
 				<td><?= $row['idPrestamo']; ?></td>
-				<td class="tableexport-string"><?= $row['cliDni']; ?></td>
+				
 				<td class="text-capitalize"><?= $row['nombreCli']; ?></td>
 				<td><?= $row['preInteresPers']."%"; ?></td>
 				<td class="tableexport-string"><?= $row['fechaDesembolso']; ?></td>
@@ -347,7 +346,7 @@ switch ($_POST['caso']) {
 			</tbody>
 			<tfoot>
 				<td></td>
-				<td></td>
+				
 				<td></td>
 				<td></td>
 				<td></td>
@@ -699,7 +698,8 @@ switch ($_POST['caso']) {
 			$casoCuotas=[33, 80];
 			$casoEspec = [87, 88];
 			$casoMoras = [81, 89];
-			$sql="SELECT c.*, ifnull(pc.cuotCuota,0) as cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres, cuotSeg, cuotPago, pc.cuotCapital, pc.cuotInteres FROM `caja` c
+			$sql="SELECT c.*, ifnull(pc.cuotCuota,0) as cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres, cuotSeg, cuotPago, pc.cuotCapital, pc.cuotSaldo, pc.cuotInteres, p.intSimple
+			FROM `caja` c
 			left join prestamo p on c.idPrestamo = p.idPrestamo
 			inner join involucrados i on p.idPrestamo = i.idPrestamo
 			inner join cliente cl on cl.idCliente = i.idCliente
@@ -716,7 +716,13 @@ switch ($_POST['caso']) {
 				<tr data-id="<?= $row['idCaja'];?>" data-cliente="<?= $row['idCliente']; ?>" data-proceso="<?= $row['idTipoProceso']; ?>">
 					<td class="tdApellidos"><?= ucwords($row['cliApellidoPaterno']." ".$row['cliApellidoMaterno']." ".$row['cliNombres']); ?></td>
 					<td class="tdCapital">
-						<?php if($porcPago==0){ echo 0; $tdCapital =0; }else{ $tdCapital = round($row['cuotCapital'] * $porcPago, 2); $sumCapital += $tdCapital; echo $tdCapital;} ?>
+						<?php if($porcPago==0){ echo 0; $tdCapital =0; }else{
+							if( $row['intSimple']=='1'){
+								$tdCapital = round($row['cuotSaldo'] * $porcPago, 2);
+							}else{
+								$tdCapital = round($row['cuotCapital'] * $porcPago, 2);
+							}
+							$sumCapital += $tdCapital; echo $tdCapital;} ?>
 					</td>
 					<td class="tdInteres">
 						<?php if($porcPago==0){ echo 0; $tdInteres =0; }else{ $tdInteres = round($row['cuotInteres'] * $porcPago, 2); $sumInteres += $tdInteres; echo $tdInteres;} ?>
