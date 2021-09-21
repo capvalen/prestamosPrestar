@@ -1,9 +1,13 @@
 <?
-if( !in_array($_COOKIE['ckPower'], $soloCajas )){
+if($_COOKIE['ckPower']=='2'){
+	$permiso= 'and pre.idPrestamo in (select idPrestamo from vistas v where activo=1 and ver=1 and v.idUsuario= '. $_COOKIE['ckidUsuario'] .')';
+}
+else if( !in_array($_COOKIE['ckPower'], $soloCajas )){
 	$permiso = ' and pre.idUsuario = ' . $_COOKIE['ckidUsuario'];
 }else{
 	$permiso ='';
 }
+
 $sql="SELECT presMontoDesembolso, presPeriodo, tpr.tpreDescipcion,
 u.usuNombres, preInteresPers, i.idCliente, pre.idPrestamo,
 case presFechaDesembolso when '0000-00-00 00:00:00' then 'Desembolso pendiente' else presFechaDesembolso end as `presFechaDesembolso`,
@@ -16,7 +20,7 @@ inner join usuario u on u.idUsuario = pre.idUsuario
 inner join tipoprestamo tpr on tpr.idTipoPrestamo = pre.idTipoPrestamo
 	where presActivo =1 and presFechaDesembolso <> '0000-00-00 00:00:00' and presAprobado =1 and i.idTipoCliente=1 {$permiso}
 	order by pre.idPrestamo asc;";
-	//echo $sql;
+//	echo $sql;
 $resultado=$cadena->query($sql);
 if($resultado->num_rows>0){
 

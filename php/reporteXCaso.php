@@ -698,7 +698,7 @@ switch ($_POST['caso']) {
 			$casoCuotas=[33, 80];
 			$casoEspec = [87, 88];
 			$casoMoras = [81, 89];
-			$sql="SELECT c.*, ifnull(pc.cuotCuota,0) as cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres, cuotSeg, cuotPago, pc.cuotCapital, pc.cuotSaldo, pc.cuotInteres, p.intSimple
+			$sql="SELECT c.*, ifnull(pc.cuotCuota,0) as cuotCuota, retornarInteresDeCuota(p.idPrestamo) as cuotInteres , cl.idCliente, cl.cliApellidoPaterno, cl.cliApellidoMaterno, cl.cliNombres, cuotSeg, cuotPago, pc.cuotCapital, pc.cuotSaldo, pc.cuotInteres as cuotInteres2, p.intSimple
 			FROM `caja` c
 			left join prestamo p on c.idPrestamo = p.idPrestamo
 			inner join involucrados i on p.idPrestamo = i.idPrestamo
@@ -710,28 +710,40 @@ switch ($_POST['caso']) {
 			//echo $sql;
 			$resultado=$cadena->query($sql);
 			while ($row = $resultado->fetch_assoc() ) {
-				if($row['cuotCuota']==0){ $porcPago=0; }else{ $porcPago = round($row['cajaValor'] / ($row['cuotCuota'] + $row['cuotSeg'] ), 5); }
+				if($row['cuotCuota']==0){ $porcPago=0; }else{
+					$porcPago = round($row['cajaValor'] / ($row['cuotCuota'] + $row['cuotSeg'] ), 8);
+				}
 				
 				?>
 				<tr data-id="<?= $row['idCaja'];?>" data-cliente="<?= $row['idCliente']; ?>" data-proceso="<?= $row['idTipoProceso']; ?>">
 					<td class="tdApellidos"><?= ucwords($row['cliApellidoPaterno']." ".$row['cliApellidoMaterno']." ".$row['cliNombres']); ?></td>
 					<td class="tdCapital">
-						<?php if($porcPago==0){ echo 0; $tdCapital =0; }else{
+						<?php if($porcPago==0){ echo 0; $tdCapital = 0; }else{
 							if( $row['intSimple']=='1'){
-								$tdCapital = round($row['cuotSaldo'] * $porcPago, 2);
+								$tdCapital = abs(round(($row['cuotCuota']-$row['cuotInteres2']) * $porcPago, 2));
 							}else{
-								$tdCapital = round($row['cuotCapital'] * $porcPago, 2);
+								$tdCapital = abs(round($row['cuotCapital'] * $porcPago, 2));
 							}
-							$sumCapital += $tdCapital; echo $tdCapital;} ?>
+							$sumCapital += $tdCapital; echo $tdCapital; } ?>
 					</td>
 					<td class="tdInteres">
-						<?php if($porcPago==0){ echo 0; $tdInteres =0; }else{ $tdInteres = round($row['cuotInteres'] * $porcPago, 2); $sumInteres += $tdInteres; echo $tdInteres;} ?>
+						<?php if($porcPago==0){ echo 0; $tdInteres = 0; }else{
+							if( $row['intSimple']=='1'){
+								$tdInteres = round(($row['cuotInteres2']) * $porcPago, 2);
+							}else{
+								$tdInteres = round($row['cuotInteres'] * $porcPago, 2);
+							}
+							 $sumInteres += $tdInteres; echo $tdInteres;
+							} ?>
 					</td>
 					<td class="tdComision">
 						<?php if($porcPago==0){ echo 0; $tdComision =0; }else{ $tdComision = round($row['cuotSeg'] * $porcPago, 2); $sumComision += $tdComision; echo $tdComision;} ?>
 					</td>
 					<td class="tdCuota">
-						<?php if($porcPago==0){ echo 0; $tdCuota =0; }else{ $tdCuota = round(($row['cuotCuota'] + $row['cuotSeg']) * $porcPago, 2); $sumCuota += $tdCuota; echo $tdCuota;} ?>
+						<?php if($porcPago==0){ echo 0; $tdCuota = 0; }else{
+							$tdCuota = round(($row['cuotCuota'] + $row['cuotSeg']) * $porcPago, 2);
+							$sumCuota += $tdCuota; echo $tdCuota;}
+							?>
 					</td>
 					<td class="tdMora"><?php if(in_array($row['idTipoProceso'], $casoMoras) ){ $sumMora+=floatval($row['cajaValor']); echo floatval($row['cajaValor']); }else{ echo 0;} ?></td>
 					<td class="tdTotal"><?php /* $sumTotal+= floatval($row['cajaValor']); echo $row['cajaValor']; */
@@ -751,17 +763,17 @@ switch ($_POST['caso']) {
 				</tr>
 							
 			<?php }
-			$i=1;
+			$i=1; $sumParce = $sumCapital + $sumInteres + $sumComision;
 			 ?> </tbody>
 			 <tfoot>
 				 <tr>
 					 <th></th>
-					 <th>S/ <?= number_format(round($sumCapital,1), 2); ?></th>
-					 <th>S/ <?= number_format(round($sumInteres,1), 2); ?></th>
-					 <th>S/ <?= number_format(round($sumComision,1), 2); ?></th>
-					 <th>S/ <?= number_format(round($sumCuota,1), 2); ?></th>
+					 <th>S/ <?= number_format($sumCapital, 2); ?></th>
+					 <th>S/ <?= number_format($sumInteres, 2); ?></th>
+					 <th>S/ <?= number_format($sumComision, 2); ?></th>
+					 <th>S/ <?= number_format(round($sumParce,1), 2); ?></th>
 					 <th>S/ <?= number_format(round($sumMora,1), 2); ?></th>
-					 <th>S/ <?= number_format(round($sumTotal,1), 2); ?></th>
+					 <th>S/ <?= number_format(round($sumParce + $sumMora,1), 2); ?></th>
 				 </tr>
 			 </tfoot>
 				</table>
