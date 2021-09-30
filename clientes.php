@@ -303,6 +303,20 @@ $(document).ready(function(){
 			$('#slpDistritos').html(resp).selectpicker('refresh');
 		});
 	});
+	$('#slpDepartamentosUpd').change(function() { console.log( 'depa' );
+		var depa = $('.optDepartamento:contains("'+$('#slpDepartamentosUpd').val()+'")').attr('data-tokens');  //$('#divDepartamentos').find('.selected a').attr('data-tokens');
+		$.ajax({url: 'php/OPTProvincia.php', type: 'POST', data: { depa: depa }}).done(function(resp) {
+			$('#slpProvinciasUpd').html(resp).selectpicker('refresh');
+			$('#slpDistritosUpd').html('').selectpicker('refresh');
+		});
+	});
+	$('#slpProvinciasUpd').change(function() {
+		var distri = $('.optProvincia:contains("'+$('#slpProvinciasUpd').val()+'")').attr('data-tokens');  //$('#divDepartamentos').find('.selected a').attr('data-tokens');
+		
+		$.ajax({url: 'php/OPTDistrito.php', type: 'POST', data: { distri: distri }}).done(function(resp) {
+			$('#slpDistritosUpd').html(resp).selectpicker('refresh');
+		});
+	});
 	$('#slpDepartamentosNegoc').change(function() {
 		var depa = $('.optDepartamento:contains("'+$('#slpDepartamentosNegoc').val()+'")').attr('data-tokens');  //$('#divDepartamentos').find('.selected a').attr('data-tokens');
 		$.ajax({url: 'php/OPTProvincia.php', type: 'POST', data: { depa: depa }}).done(function(resp) {

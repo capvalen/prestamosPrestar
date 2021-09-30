@@ -13,6 +13,19 @@ $sql= "UPDATE `cliente` SET
 WHERE `idCliente`= '{$idCli}';";
 //echo $sql;
 
+$sqlDireccion = "UPDATE `address` set
+idCalle =  '{$_POST['jcCliente']['calleCasa']}',
+idDepartamento =  '{$_POST['jcCliente']['departamentoCasa']}',
+idProvincia =  '{$_POST['jcCliente']['provinciaCasa']}',
+idDistrito =  '{$_POST['jcCliente']['distritoCasa']}',
+idZona =  '{$_POST['jcCliente']['calleCasa']}',
+addrNumero =  '{$_POST['jcCliente']['numeroCasa']}',
+addrDireccion =  '{$_POST['jcCliente']['direccionCasa']}',
+addrReferencia = '{$_POST['jcCliente']['referenciaCasa']}'
+where idAddress = (select c.cliDireccionCasa from cliente c where idCliente = '{$idCli}' ); ";
+//echo $sqlDireccion;
+$cadena->query($sqlDireccion);
+
 if ($conection->query($sql)) { 
 	echo true;
 }else{echo false;}
