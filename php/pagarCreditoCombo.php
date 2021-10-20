@@ -12,8 +12,9 @@ $k=0;
 $diasMora=0; $moraTotal=0;
 $dinero= floatval($_POST['dinero']);
 $idPrestamo = $base58->decode($_POST['credito']);
-$sql= "SELECT * FROM prestamo_cuotas
-where  idPrestamo = {$idPrestamo} and idTipoPrestamo in (33, 79) and idTipoPrestamo <>43
+$sql= "SELECT pc.*, intSimple FROM prestamo_cuotas pc
+inner join prestamo p on p.idPrestamo = pc.idPrestamo
+where pc.idPrestamo = {$idPrestamo} and pc.idTipoPrestamo in (33, 79) and pc.idTipoPrestamo <>43
 order by cuotFechaPago asc;"; //cuotFechaPago <=curdate() and
 $resultado=$esclavo->query($sql);
 $fechaHoy = new DateTime();
@@ -50,14 +51,18 @@ if($diasMora>0): // -> Se paga la mora $diasMora-=1;
 		/* HACER INSERT a CAJA por MORA por X días*/
 		if ( $_POST['cliMora']< $moraTotal ){ $extra=" de un total de S/ ".$moraTotal; }else{$extra='';}
 		$sqlMora="INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-		VALUES (null,{$idPrestamo},0,81,now(),{$_POST['cliMora']},'Mora por el periodo {$primFecha} y {$ultFecha}{$extra}', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
+		VALUES (null,{$idPrestamo},0,81, CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) ,{$_POST['cliMora']},'Mora por el periodo {$primFecha} y {$ultFecha}{$extra}', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
 	//echo "mora pagada ".$moraTotal."\n";
 	$resultadoMora=$esclavo->query($sqlMora);
 endif;
 
 $filas[] = array('sumaMora' => $_POST['cliMora'], 'diasMora' => $diasMora, 'queEs'=> 'Pago mora', 'montoCuota' => $_POST['cliMora']  );
 
+
+
 $sentenciaLarga ='';
+$dinero -=floatval($_POST['cliMora']);
+
 
 while($row2=$resultado->fetch_assoc()){
 	if( $row2['idTipoPrestamo']==33 ){ //Ya no cobramos seguro
@@ -116,8 +121,7 @@ while($row2=$resultado->fetch_assoc()){
 	$dinero = floatval(round($dinero - $debePendiente, 2)); 
 }
 
-
-
+ 
 
 
 //------------------
@@ -154,6 +158,6 @@ if( $prisionero->multi_query($sentenciaLarga) ){ //$prisionero-> next_result()
 	echo json_encode($filas);
 }else{
 	echo "error en pagar cuentas";
-}
+} 
 
 ?>
