@@ -238,7 +238,7 @@ switch ($_POST['caso']) {
 
 		case 'R5':
 		
-		$sql="SELECT pre.`idPrestamo`, `fechaFinPrestamo`, presMontoDesembolso, preInteresPers, presPeriodo, retornarDuenoPrestamo(c.idPrestamo) as nombreCli 'Fin de préstamo' as `tipoDescripcion`
+		$sql="SELECT pre.`idPrestamo`, `fechaFinPrestamo`, presMontoDesembolso, preInteresPers, presPeriodo, retornarDuenoPrestamo(pre.idPrestamo) as nombreCli, 'Fin de préstamo' as `tipoDescripcion`
 				FROM `prestamo` pre 
 				
 				where `fechaFinPrestamo` between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59'
