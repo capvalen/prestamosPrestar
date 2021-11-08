@@ -17,6 +17,7 @@
 	</thead>
 	<tbody>
 <?php 
+	$fechaHoy= new DateTime();
 		$sqlPrim = "SELECT `presMontoDesembolso`, `presPeriodo`,`preInteresPers`, `idTipoPrestamo`
 		from prestamo where `idPrestamo` = {$codCredito}";
 	

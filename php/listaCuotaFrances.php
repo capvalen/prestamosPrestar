@@ -17,6 +17,7 @@
 	<tbody>
 
 <?php 
+	$fechaHoy = new DateTime();
 		$sqlPrim = "SELECT `presMontoDesembolso`, `presPeriodo`,`preInteresPers`, `idTipoPrestamo`
 		from prestamo where `idPrestamo` = {$codCredito}";
 
@@ -90,7 +91,7 @@
 				<td class="hidden-print"><?php if($rowCuot['cuotCuota']=='0.00' && $rowCuot['cuotPago']=='0.00'): echo "Desembolso"; elseif($rowCuot['cuotFechaCancelacion']=='0000-00-00'): echo 'Pendiente'; else: echo $rowCuot['cuotFechaCancelacion']; endif;  ?></td>
 				<td class="tdPagoCli hidden-print" data-pago="<?= number_format($rowCuot['cuotPago'],2); ?>"><? if($k>=1) {echo number_format($rowCuot['cuotPago'],2);} ?></td>
 				<td class="hidden"><?= number_format($rowCuot['cuotSaldo'],2); ?></td>
-				<td><?php if(   $rowCuot['idTipoPrestamo']=='79' && $rowCr['presFechaDesembolso']<>'Desembolso pendiente' && $k>=1):
+				<td class="hidden-print"><?php if(   $rowCuot['idTipoPrestamo']=='79' && $rowCr['presFechaDesembolso']<>'Desembolso pendiente' && $k>=1):
 				$diasDebe2=$fechaHoy ->diff($fechaCu);
 
 				if( $rowCr['presAprobado']== "Rechazado" ){ ?>

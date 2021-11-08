@@ -90,7 +90,7 @@ if($llamado= $conection->query($sql)){
 				<p><strong>Asesor:</strong> <span class='mayuscula'><?= $_COOKIE['ckAtiende'] ?></span></p>
 				<p><strong>Periodo:</strong> <span><?= $respuesta['tpreDescipcion'];?></span></p>
 			<?php } ?>
-				<p><strong>F. Desembolso:</strong> <span><? $fecha1= new DateTime( $respuesta['presFechaDesembolso']); echo $fecha1->format('d/m/Y h:m a');?></span></p>
+				<p> <strong>F. Desembolso:</strong> <span><? $fecha1= new DateTime( $respuesta['presFechaDesembolso']); echo $fecha1->format('d/m/Y h:m a');?></span></p>
 			</div>
 		</div>
 		<div class="row">
@@ -185,7 +185,7 @@ if($llamado= $conection->query($sql)){
 			</table>
 			<?php else: 
 				$codCredito = $idPresPost;
-				include 'listaCuotaFrances.php';
+				include './listaCuotaFrances.php';
 			endif; ?>
 		</div>
 	</div>
