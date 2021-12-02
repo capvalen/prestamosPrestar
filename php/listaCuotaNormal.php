@@ -98,8 +98,9 @@
 							<span class="amber-text text-darken-2 mitoolTip spanIcono spanPrint" data-print="parcial" data-toggle="tooltip" title="Imprimir"><i class="icofont-print"></i></span>
 						<? }
 						if($rowCuot['idTipoPrestamo'] ==80){ ?>
-							<span class="mitoolTip spanIcono" data-toggle="tooltip" title="Pago completo"><i class="icofont-verification-check"></i></span>
+							<p><span class="mitoolTip spanIcono" data-toggle="tooltip" title="Pago completo"><i class="icofont-verification-check"></i> </span>
 							<span class="amber-text text-darken-2 mitoolTip spanIcono spanPrint" data-print="completo" data-toggle="tooltip" title="Imprimir"><i class="icofont-print"></i></span>
+							Cancelado</p>
 						<?php }
 					endif;?>
 				</td>

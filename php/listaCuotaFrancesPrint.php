@@ -2,16 +2,13 @@
 	<thead>
 	<tr>
 		<th>N°</th>
-		<th class="hidden-print">Sub-ID</th>
+		
 		<th>Fecha programada</th>
 		<th>Capital</th>
 		<th>Interés</th>
 		<th>Com. y Serv.</th>
 		<th>Cuota</th>
-		<th class="hidden-print">Cancelación</th>
-		<th class="hidden-print">Pago</th>
-		<th class="hidden">Saldo</th>
-		<th class="hidden-print">@</th>
+		
 	</tr>
 	</thead>
 	<tbody>
@@ -82,43 +79,13 @@
 
 			<tr>
 				<td><?= $k; ?></td>
-				<td>SP-<?= $rowCuot['idCuota']; ?></td>
+				
 				<td><?php $fechaCu= new DateTime($rowCuot['cuotFechaPago']); echo $fechaCu->format('d/m/Y'); ?></td>
 				<td><?php if( $k>=1 ){ echo number_format($amortizacion ,2); } ?></td>
 				<td><?php if( $k>=1 ){ echo number_format($interesAmort, 2); } ?></td>
 				<td><?php if( $k>=1 ){ echo number_format($rowCuot['cuotSeg'],2); } ?></td>
 				<td><?php if( $k>=1 ){ echo number_format($cuota + $rowCuot['cuotSeg'],2); } ?></td>
-				<td class="hidden-print"><?php if($rowCuot['cuotCuota']=='0.00' && $rowCuot['cuotPago']=='0.00'): echo "Desembolso"; elseif($rowCuot['cuotFechaCancelacion']=='0000-00-00'): echo 'Pendiente'; else: echo $rowCuot['cuotFechaCancelacion']; endif;  ?></td>
-				<td class="tdPagoCli hidden-print" data-pago="<?= number_format($rowCuot['cuotPago'],2); ?>"><? if($k>=1) {echo number_format($rowCuot['cuotPago'],2);} ?></td>
-				<td class="hidden"><?= number_format($rowCuot['cuotSaldo'],2); ?></td>
-				<td class="hidden-print"><?php if(   $rowCuot['idTipoPrestamo']=='79' && $rowCr['presFechaDesembolso']<>'Desembolso pendiente' && $k>=1):
-				$diasDebe2=$fechaHoy ->diff($fechaCu);
-
-				if( $rowCr['presAprobado']== "Rechazado" ){ ?>
-					<p class="red-text text-darken-1">Rechazado</p>
-				<?php } else{
-					if( floatval($diasDebe2->format('%R%a')) < 0 ){
-					?> <p class="red-text text-darken-1">Cuota fuera de fecha (<?= $diasDebe2->format('%a').' días';?>)</p>
-					<!-- <button class="btn btn-primary btn-outline btn-sm btnPagarCuota"><i class="icofont-money"></i> Pagar</button> --> <?php
-					}else{
-						?> <p class="blue-text text-accent-2">Cuota en buena fecha</p><?php
-					}
-					}
-					endif;
-
-					if($rowCuot['cuotPago']<>'0.00' && $rowCr['presFechaDesembolso']<>'Desembolso pendiente'): 
-						if( $rowCuot['idTipoPrestamo'] ==33 ){ ?>
-							<span class="mitoolTip spanIcono" data-toggle="tooltip" title="Pago parcial"><i class="icofont-warning-alt"></i></span>
-							<span class="amber-text text-darken-2 mitoolTip spanIcono spanPrint" data-print="parcial" data-toggle="tooltip" title="Imprimir"><i class="icofont-print"></i></span>
-						<? }
-
-						if($rowCuot['idTipoPrestamo'] ==80){ ?>
-							<p><span class="mitoolTip spanIcono" data-toggle="tooltip" title="Pago completo"><i class="icofont-verification-check"></i> </span>
-							<span class="amber-text text-darken-2 mitoolTip spanIcono spanPrint" data-print="completo" data-toggle="tooltip" title="Imprimir"><i class="icofont-print"></i></span>
-							Cancelado</p>
-						<?php }
-					endif;?>
-				</td>
+				
 			</tr>
 		<?php $k++; }
 		} ?>
@@ -126,12 +93,19 @@
 	</tbody>
 	<tfoot>
 		<tr>
-			<th></th> <th></th> <th></th>
+			<th></th> <th></th>
 			<th>S/ <?= number_format( round($sumAmortizacion, 1), 2); ?></th>
 			<th>S/ <?= number_format( round($sumInteres, 1), 2); ?></th>
 			<th>S/ <?= number_format( round($sumComisiones, 1), 2); ?></th>
 			<th>S/ <?= number_format( round($sumCuotas + $sumComisiones, 1), 2); ?></th>
-			<th></th> <th></th><th> </th>
+			<th></th> 
 		</tr>
 	</tfoot>
 </table>
+
+<?php 
+$sql = "SELECT a.idArticulo, a.idCategoria, c.Nombre as catNombre, 
+a.Codigo, a.Stock, a.Descripcion, a.Imagen, a.Condicion 
+From Articulo a 
+inner join Categoria c on a.idCategoria = c.idArticulo ";
+?>

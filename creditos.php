@@ -38,8 +38,10 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 
 <head>
 	<?php include 'headers.php'; ?>
-	<title>Créditos - Sistema Préstamos</title>
+	<title>Créditos Prestar Huancayo - CR-<?= $codCredito;?> </title>
 	<link rel="stylesheet" href="css/awesome-bootstrap-checkbox.css?version=1.0.1">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.css"/>
+
 </head>
 
 <body>
@@ -55,6 +57,9 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
     color: #1388ec;
 }.text-success {
     color: #00b303;
+}
+.dataTables_filter, .dataTables_info, .dataTables_paginate {
+display: none;
 }
 </style>
 <div id="wrapper">
@@ -288,8 +293,8 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 									<th>Monto desembolsado</th>
 									<th>Cuota</th>
 									<th>Saldo</th>
-									<th>Fecha de desembolso</th>
-									<th>Fecha de cancelación</th>
+									<th>F. Desembolso</th>
+									<th>Estado</th>
 									<th>Forma de pago</th>
 									<?php 
 									for ($i=0; $i < 15 ; $i++) { 
@@ -531,10 +536,13 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 
 <?php endif; ?>
 
+<?php include 'php/modals.php'; ?>
 <?php include 'footer.php'; ?>
 <script src="js/bootstrap-material-datetimepicker.js?version=2.0.1"></script>
-<?php include 'php/modals.php'; ?>
 <?php include 'php/existeCookie.php'; ?>
+
+ 
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.11.3/b-2.0.1/b-html5-2.0.1/datatables.min.js"></script>
 
 <?php if ( isset($_COOKIE['ckidUsuario']) ){ ?>
 <script>
@@ -554,6 +562,13 @@ agregarClienteCanasta('<?= $_GET['titular']; ?>', 1);
 <?php
 }
 ?>
+
+/* $('#tableSubIds').DataTable( {
+	dom: 'Bfrtip',
+	buttons: [
+		{ extend: 'excel', text: '<i class="icofont-file-excel"></i> Exportar Excel', className: 'btn btn-outline btn-success' }
+	]
+}); */
 
 $('#dtpFechaIniciov3').val('<?php
 	$date = new DateTime();

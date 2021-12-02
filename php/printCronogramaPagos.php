@@ -105,7 +105,7 @@ if($llamado= $conection->query($sql)){
 						case '3':
 						case '4':
 						?>
-						<thead><tr><th>N° Cuota</th> <th>F. Programada</th> <th>Capital</th> <th>Interés</th> <th>Com. Serv.</th> <th>Cuota</th> </tr></thead>
+						<thead><tr><th>N°</th> <th>F. Programada</th> <th>Capital</th> <th>Interés</th> <th>Com. Serv.</th> <th>Cuota</th> </tr></thead>
 						<tbody> <?php
 						$i=0; 
 						$sql2 = "SELECT * FROM `prestamo_cuotas` WHERE `idPrestamo` = {$idPresPost}";
@@ -185,7 +185,7 @@ if($llamado= $conection->query($sql)){
 			</table>
 			<?php else: 
 				$codCredito = $idPresPost;
-				include './listaCuotaFrances.php';
+				include './listaCuotaFrancesPrint.php';
 			endif; ?>
 		</div>
 	</div>
