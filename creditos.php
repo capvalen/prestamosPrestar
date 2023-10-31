@@ -1020,8 +1020,9 @@ $('#chkExonerar').change(function(){
 	}
 });
 $('.spanPrint').click(function() {
-	var padre = $(this).parent().parent();
+	var padre = $(this).parent().parent().parent();
 	var queEs= $(this).attr('data-print');
+	
 	switch(queEs){
 		case 'parcial':
 			$.post("http://localhost/prestamosPrestar/impresion/ticketCuotaParcial.php", {
@@ -1038,6 +1039,7 @@ $('.spanPrint').click(function() {
 			}, function(resp){ console.log(resp)});
 		break;
 		case 'completo':
+		    
 			$.post("http://localhost/prestamosPrestar/impresion/ticketCuotaParcial.php", {
 				cknombreEmpresa: '<?= $_COOKIE['cknombreEmpresa'];?>',
 				ckLemaEmpresa: '<?= $_COOKIE['ckLemaEmpresa'];?>',
@@ -1045,7 +1047,7 @@ $('.spanPrint').click(function() {
 				hora: moment().format('DD/MM/YYYY h:mm a'),
 				cliente: $('#spanTitular').text(),
 				codPrest: $('#h3Codigo').attr('data-id'),
-				monto: padre.parent().find('.tdPagoCli').attr('data-pago'),
+				monto: padre.find('.tdPagoCli').attr('data-pago'),
 				usuario: '<?= $_COOKIE["ckAtiende"];?>',
 				ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa'];?>',
 				cktelefonoEmpresa: '<?= $_COOKIE['cktelefonoEmpresa'];?>'
