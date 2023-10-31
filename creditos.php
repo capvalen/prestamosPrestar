@@ -1045,7 +1045,7 @@ $('.spanPrint').click(function() {
 				hora: moment().format('DD/MM/YYYY h:mm a'),
 				cliente: $('#spanTitular').text(),
 				codPrest: $('#h3Codigo').attr('data-id'),
-				monto: padre.find('.tdPagoCli').attr('data-pago'),
+				monto: padre.parent().find('.tdPagoCli').attr('data-pago'),
 				usuario: '<?= $_COOKIE["ckAtiende"];?>',
 				ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa'];?>',
 				cktelefonoEmpresa: '<?= $_COOKIE['cktelefonoEmpresa'];?>'
