@@ -492,8 +492,8 @@ display: none;
 				<p>Pago total: <strong>S/ <span id="spaCTotal"></span></strong></p>
 			</div>
 			<div class="">
-				<label for="">Mora</label>
-				<input type="number" class="form-control input-lg text-center inputGrande esMoneda" id="txtPagaClienteMora" style="margin: 0;" readonly>
+				<label class="hidden" for="">Mora</label>
+				<input type="number" class="form-control input-lg text-center inputGrande esMoneda hidden" id="txtPagaClienteMora" style="margin: 0;" readonly>
 				<div class="checkbox checkbox-infocat checkbox-circle">
 					<input id="chkExonerar" class="styled" type="checkbox" >
 					<label for="chkExonerar"> Exonerar mora </label>
@@ -1016,10 +1016,12 @@ $('#chkExonerar').change(function(){
 		$('#spaCPrecioMora').attr('data-mora', $('#spaCPrecioMora').text());
 		$('#spaCTotal').text((total-mora).toFixed(2));
 		$('#spaCPrecioMora').text('0.00');
+		$('#txtPagaClienteMora').val('0.00');
 	}else{
 		$('#spaCPrecioMora').text( $('#spaCPrecioMora').attr('data-mora'));
 		var mora= parseFloat($('#spaCPrecioMora').text());
 		$('#spaCTotal').text((total+mora).toFixed(2));
+		$('#txtPagaClienteMora').val((mora).toFixed(2));
 	}
 });
 $('.spanPrint').click(function() {
