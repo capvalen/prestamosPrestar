@@ -494,7 +494,10 @@ display: none;
 			<div class="">
 				<label for="">Mora</label>
 				<input type="number" class="form-control input-lg text-center inputGrande esMoneda" id="txtPagaClienteMora" style="margin: 0;" readonly>
-
+				<div class="checkbox checkbox-infocat checkbox-circle">
+					<input id="chkExonerar" class="styled" type="checkbox" >
+					<label for="chkExonerar"> Exonerar mora </label>
+				</div>
 				<label for="">¿Cuánto dinero dispone el cliente?</label>
 				<input type="number" class="form-control input-lg text-center inputGrande esMoneda" id="txtPagaClienteVariable" style="margin: 0;">
 				<label for="">Tipo de pago</label>
