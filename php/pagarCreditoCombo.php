@@ -39,29 +39,29 @@ while($row=$resultado->fetch_assoc()){
 $resultado->data_seek(0);
 //echo $_POST['exonerar']=='true';
 
-/* if( $_POST['exonerar']=='true' && $diasMora>0 ): // -> Se exonera de mora
+if( $_POST['exonerar']=='true'): // -> Se exonera de mora
   // HACER INSERT a CAJA por MORA por sólo lo que el cliente diga
 	$sqlMora="INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
 	VALUES (null,{$idPrestamo},0,86,now(),0,'Se condonó {$diasMora} días por el periodo {$primFecha} y {$ultFecha}',1,1,{$_COOKIE['ckidUsuario']});";
 	//echo $sqlMora;
 	
-	$resultadoMora=$esclavo->query($sqlMora); */
-if($diasMora>0): // -> Se paga la mora $diasMora-=1;
+	$resultadoMora=$esclavo->query($sqlMora);
+elseif($diasMora>0): // -> Se paga la mora $diasMora-=1;
 		$moraTotal = $diasMora*$mora;
 		/* HACER INSERT a CAJA por MORA por X días*/
 		if ( $_POST['cliMora']< $moraTotal ){ $extra=" de un total de S/ ".$moraTotal; }else{$extra='';}
 		$sqlMora="INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
 		VALUES (null,{$idPrestamo},0,81, CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) ,{$_POST['cliMora']},'Mora por el periodo {$primFecha} y {$ultFecha}{$extra}', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
+		$dinero -=floatval($_POST['cliMora']);
+
 	//echo "mora pagada ".$moraTotal."\n";
-	$resultadoMora=$esclavo->query($sqlMora);
 endif;
+$resultadoMora=$esclavo->query($sqlMora);
 
 $filas[] = array('sumaMora' => $_POST['cliMora'], 'diasMora' => $diasMora, 'queEs'=> 'Pago mora', 'montoCuota' => $_POST['cliMora']  );
 
 
-
 $sentenciaLarga ='';
-$dinero -=floatval($_POST['cliMora']);
 
 
 while($row2=$resultado->fetch_assoc()){
@@ -118,15 +118,13 @@ while($row2=$resultado->fetch_assoc()){
 
 		} 
 	}
-	$dinero = floatval(round($dinero - $debePendiente, 2)); 
+	$dinero = floatval(round($dinero - $debePendiente, 2));
 }
 
  
 
-
 //------------------
 
-//echo $sentenciaLarga;
 
 if( $prisionero->multi_query($sentenciaLarga) ){ //$prisionero-> next_result()
 	//echo true;

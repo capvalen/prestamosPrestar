@@ -152,7 +152,7 @@ display: none;
 				<div class="col-sm-2"><label for="">Fecha desemboslo</label><p><?php if($rowCr['presFechaDesembolso']=='Desembolso pendiente'){echo $rowCr['presFechaDesembolso'];}else{$fechaDes= new DateTime($rowCr['presFechaDesembolso']); echo $fechaDes->format('j/m/Y h:m a');} ?></p></div>
 				<div class="col-sm-2"><label for="">Desembolso</label><p>S/ <?= number_format($rowCr['presMontoDesembolso'],2); ?></p> <span class="hidden" id="spanMontoDado" data-monto=<?= $base58->encode($rowCr['presMontoDesembolso']);?>><?= $rowCr['presMontoDesembolso']; ?></span></div>
 				<div class="col-sm-2"><label for="">Meses</label>
-					
+					<p class="hidden" id="spanTipoDescpago"><?= $rowCr['tpreDescipcion']; ?></p>
 					<select name="" id="cmbPeriodos" class="form-control input-sm" style="margin-botom:0px;">
 						<option value="1">Diario</option>
 						<option value="2">Semanal</option>
@@ -204,9 +204,9 @@ display: none;
 					</button>
 					<ul class="dropdown-menu">
 						<li id="btnImpresionPrevia" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Cronograma</a></li>
-						<li id="btnImpresionPreviaPDF" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Cronograma PDF</a></li>
+						<li class="hidden" id="btnImpresionPreviaPDF" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Cronograma PDF</a></li>
 						<li id="btnImpresionContrato" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Contrato</a></li>
-						<li id="btnImpresionContratoPDF" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Contrato PDF</a></li>
+						<li class="hidden" id="btnImpresionContratoPDF" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Contrato PDF</a></li>
 					</ul>
 				<?php endif;//de desembolso pendiente ?>
 				</div>
@@ -929,9 +929,9 @@ $('#h1Bien').on('click', '#btnImpresionPrevia', function(){
 });
 $('#contenedorCreditosFluid').on('click', '#btnImpresionPreviaPDF', function(){
 	//console.log( 'aca' );
-	var dataUrl="http://infocatsoluciones.com/app/prestamosPrestar/php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre')+"&pdf=true";
+	var dataUrl="http://infocatsoluciones.com/app/prestamosHuancayo/php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre')+"&pdf=true";
 	console.log( dataUrl );
-	window.open("http://api.pdflayer.com/api/convert?access_key=c8d5869563f6ffbefdc884ca83dfe5e2&document_url="+encodeURIComponent(dataUrl), '_blank' );
+	window.open("http://api.pdflayer.com/api/convert?access_key=a6cde55f1e5fc702ab0c70874cb60846&document_url="+encodeURIComponent(dataUrl), '_blank' );
 });
 $('body').on('click', '#btnImpresionContrato', function(){
 	var monto = $('#spanMontoDado').attr('data-monto');
@@ -946,8 +946,8 @@ $('body').on('click', '#btnImpresionContrato', function(){
 		case "Diario": tipoPago='DIARIOS'; break;
 		case "Quincenal": tipoPago='QUINCENALES'; break;
 		case "Semana": tipoPago='SEMANALES'; break;
-		default:
-			break;
+		case "Semanal": tipoPago='SEMANALES'; break;
+		default: break;
 	}
 	
 	var dataUrl="impresion/printContrato.php?credito="+$(this).attr('data-pre')+"&monto="+monto+"&fecha1="+fecha1+"&fecha2="+fecha2+"&fechaPri="+fechaPri+"&interes="+interes+"&cantCuota="+cantCuotas+"&tPago="+tipoPago;
@@ -966,13 +966,13 @@ $('body').on('click', '#btnImpresionContratoPDF', function(){
 		case "Diario": tipoPago='DIARIOS'; break;
 		case "Quincenal": tipoPago='QUINCENALES'; break;
 		case "Semana": tipoPago='SEMANALES'; break;
-		default:
-			break;
+		case "Semanal": tipoPago='SEMANALES'; break;
+		default:break;
 	}
 	
-	var dataUrl="http://infocatsoluciones.com/app/prestamosPrestar/impresion/printContrato.php?credito="+$(this).attr('data-pre')+"&monto="+monto+"&fecha1="+fecha1+"&fecha2="+fecha2+"&fechaPri="+fechaPri+"&interes="+interes+"&cantCuota="+cantCuotas+"&tPago="+tipoPago+"&pdf=true";
+	var dataUrl="http://infocatsoluciones.com/app/prestamosHuancayo/impresion/printContrato.php?credito="+$(this).attr('data-pre')+"&monto="+monto+"&fecha1="+fecha1+"&fecha2="+fecha2+"&fechaPri="+fechaPri+"&interes="+interes+"&cantCuota="+cantCuotas+"&tPago="+tipoPago+"&pdf=true"+'&document_name=Contrato-CR-<?= $codCredito;?>';
 	console.log( dataUrl );
-	window.open("http://api.pdflayer.com/api/convert?access_key=c8d5869563f6ffbefdc884ca83dfe5e2&document_url="+encodeURIComponent(dataUrl), '_blank' );
+	window.open("http://api.pdflayer.com/api/convert?access_key=a6cde55f1e5fc702ab0c70874cb60846&document_url="+encodeURIComponent(dataUrl), '_blank' );
 });
 $('#rowBotonesMaestros').on('click', '#btnImpresionPrevia', function(){
 	var dataUrl="php/printCronogramaPagos.php?prestamo="+$(this).attr('data-pre');

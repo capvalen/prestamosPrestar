@@ -70,6 +70,7 @@ if($llamado= $conection->query($sql)){
 	.table>tbody>tr>td{padding: 4px 8px;}
 </style> 
 	<div class="container-fluid">
+		<div class="row d-print-none hidden-print "><button class="btn btn-primary " id="btnPrint">Imprimir Documento</button></div>
 		<div class="row">
 			<div class="col-xs-3"><img src="./../images/empresa.png" class="img-responsive"> </div>
 			<div class="col-xs-8 text-center">
@@ -187,6 +188,26 @@ if($llamado= $conection->query($sql)){
 				$codCredito = $idPresPost;
 				include './listaCuotaFrancesPrint.php';
 			endif; ?>
+
+			<p><strong>Mora por día</strong> (en caso de pasarse la fecha acordada) <span>
+				<?php 
+					/* if (floatval($respuesta['presMontoDesembolso'])<=299.99) : echo 'S/ 0.00';
+					elseif (floatval($respuesta['presMontoDesembolso'])<=1000) : echo 'S/ 1.00';
+					elseif(floatval($respuesta['presMontoDesembolso'])<=2000) : echo 'S/ 1.50';
+					elseif(floatval($respuesta['presMontoDesembolso'])<=3000) : echo 'S/ 2.00';
+					elseif(floatval($respuesta['presMontoDesembolso'])>3000) : echo 'S/ 3.00';
+					endif; */
+					switch(true):
+						case (floatval($respuesta['presMontoDesembolso'])<=299.99): echo 'S/ 0.00'; break;
+						case (floatval($respuesta['presMontoDesembolso'])<=1000) : echo 'S/ +1.00'; break;
+						case (floatval($respuesta['presMontoDesembolso'])<=2000) : echo 'S/ +1.50'; break;
+						case (floatval($respuesta['presMontoDesembolso'])<=3000) : echo 'S/ +2.00'; break;
+						case (floatval($respuesta['presMontoDesembolso'])>3000) : echo 'S/ +3.00'; break;
+					endswitch;
+			?>
+			</span></p>
+			<p>Su cuota la puede depositar en cualquier agente BCP, a nombre de <strong>Verila campos</strong></p>
+			<p>N° de cuenta: 355 91451054038</p>
 		</div>
 	</div>
 
@@ -195,11 +216,11 @@ if($llamado= $conection->query($sql)){
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 <script>
 $(document).ready(function () {
-window.print();	//Activa la impresion apenas cargo todo
+//window.print();	//Activa la impresion apenas cargo todo
 });
 /*Determina si se imprimio o se cancelo, para cerrar la pesataña activa*/
 (function () {
-	var afterPrint = function () {
+	/* var afterPrint = function () {
 	window.top.close();
 	};
 	if (window.matchMedia) {
@@ -210,8 +231,9 @@ window.print();	//Activa la impresion apenas cargo todo
 				} else { afterPrint(); }
 		});
 	}
-	window.onafterprint = afterPrint;
+	window.onafterprint = afterPrint; */
 }());
+$('#btnPrint').click(()=>{ window.print(); })
 </script>
 </body>
 </html>
