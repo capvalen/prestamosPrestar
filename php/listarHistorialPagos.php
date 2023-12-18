@@ -9,8 +9,8 @@
 <?php
 require("conkarl.php");
 date_default_timezone_set('America/Lima');
-
-$sql="SELECT pre.idPrestamo, presMontoDesembolso, pc.cuotCuota + + pc.cuotSeg as cuotCuota, presFechaDesembolso, fechaFinPrestamo,  tpe.tpreDescipcion, presPeriodo, u.usuNick, retornarCuantoFaltaPagar(pre.idPrestamo, pre.intSimple) as faltaSaldo
+//RecotrantCuantoFaltaPagar(___, pre.intSimple)
+$sql="SELECT pre.idPrestamo, presMontoDesembolso, pc.cuotCuota + + pc.cuotSeg as cuotCuota, presFechaDesembolso, fechaFinPrestamo,  tpe.tpreDescipcion, presPeriodo, u.usuNick, retornarCuantoFaltaPagar(pre.idPrestamo) as faltaSaldo
 FROM `prestamo` pre
 inner join prestamo_cuotas pc on pc.idPrestamo = pre.idPrestamo
 inner join tipoprestamo tpe on tpe.idTipoPrestamo = pre.idTipoPrestamo
