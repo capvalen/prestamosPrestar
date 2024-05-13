@@ -137,10 +137,11 @@ display: none;
 					</select>
 				</div>
 				<div class="col-sm-2"><label for="">Mora fija: <i class="icofont icofont-info-circle mitoolTip" data-toggle="tooltip" data-placement="top" title="Ponga el valor y luego presione enter"></i></label> <br>
-					<input type="number" id="txtMoraFijaAsignar" class="form-control input-sm" min="0" step="0.5" style="margin-bottom: 0px; height: 30px!important;" value="<?php if ( strlen($rowCr['preMoraFecha'])>0 ){
+					<input type="text"  id="txtMoraFijaAsignar" class="form-control input-sm" min="0" step="0.5" style="margin-bottom: 0px; height: 30px!important;" value="<?php if ( strlen($rowCr['preMoraFecha'])>0 ){
 						if( $rowCr['preMoraFecha'] == date('Y-m-d')){ $estadoMora=true; echo $rowCr['preMoraFija']; } else{ echo ""; $estadoMora=false; }
 					}else{ echo ''; $estadoMora=false; }
 					?>">
+					<button class="btn btn-negro btn-outline" id="btnMoraFijaAsignar"><i class="icofont-exchange"></i></button>
 				</div>
 				<?php } ?>
 				<?php if(in_array($_COOKIE['ckPower'], $soloCaja )){ if ( strlen($rowCr['preMoraFecha'])>0 ){ 
@@ -487,7 +488,8 @@ display: none;
 				<!-- <p>Com. y Serv.: <strong><span id="spaCSeguro"></span></strong></p> -->
 				<!-- <p>Cuota: <strong>S/ <span id="spaCPrecioCuota"></span></strong></p> -->
 				<p class="hidden">Días de mora: <strong><span id="spaCMora"></span></strong></p>
-				<p>Mora: <strong>S/ <span id="spaCPrecioMora"></span></strong></p>
+				<p>Mora diaria: <strong>S/ <span id="spaCPrecioMoraDiaria"></span></strong></p>
+				<p>Mora a pagar: <strong>S/ <span id="spaCPrecioMora"></span></strong></p>
 				<hr style="margin-top: 10px; margin-bottom: 10px; border-top: 1px solid #c1c1c1;margin-right: 50px;">
 				<p>Pago total: <strong>S/ <span id="spaCTotal"></span></strong></p>
 			</div>
@@ -564,6 +566,10 @@ if(isset($_GET['titular'])){
 agregarClienteCanasta('<?= $_GET['titular']; ?>', 1);
 <?php
 }
+$hoy = new DateTime();
+$saltoDia = new DateInterval('P1D');
+$mañana = new DateTime();
+$mañana->add($saltoDia);
 ?>
 
 /* $('#tableSubIds').DataTable( {
@@ -573,10 +579,7 @@ agregarClienteCanasta('<?= $_GET['titular']; ?>', 1);
 	]
 }); */
 
-$('#dtpFechaIniciov3').val('<?php
-	$date = new DateTime();
-	echo  $date->format('d/m/Y');
-?>'); 
+$('#dtpFechaIniciov3').val('<?=  $hoy->format('d/m/Y');?>'); 
 $('#dtpFechaIniciov3').bootstrapMaterialDatePicker({ /* shortTime : true, */
 	format: 'DD/MM/YYYY',
 	lang: 'es',
@@ -590,12 +593,7 @@ $('#dtpFechaIniciov3').bootstrapMaterialDatePicker({ /* shortTime : true, */
 	nowText: '<i class="icofont-bubble-down"></i> Hoy',
 	cancelText : '<i class="icofont-close"></i> Cerrar'
 });
-$('#dtpFechaPrimerv3').val('<?php
-	$date = new DateTime();
-	$saltoDia = new DateInterval('P1D');
-	$date->add($saltoDia);
-	echo  $date->format('d/m/Y');
-?>');
+$('#dtpFechaPrimerv3').val('<?= $mañana->format('d/m/Y'); ?>');
 $('#dtpFechaPrimerv3').bootstrapMaterialDatePicker({
 	format: 'DD/MM/YYYY',
 	lang: 'es',
@@ -695,7 +693,6 @@ $('#btnSiAsociarDNI').click(function() {
 		});
 	}
 });
-
 <?php if(in_array($_COOKIE['ckPower'], $soloAdmis )){ ?>
 $('#sltNuevoAsesr').change(function() { console.log( 'cambio' );
 	$.ajax({url: 'php/cambiarAsesorCredito.php', type: 'POST', data: { codPrest: '<?= $codCredito;?>', idAsesor: $('#sltNuevoAsesr').val() }}).done(function(resp) {
@@ -705,9 +702,16 @@ $('#sltNuevoAsesr').change(function() { console.log( 'cambio' );
 		}
 	});
 });
+$('#btnMoraFijaAsignar').click(function (){
+	cambiarDatosMora();
+})
 $('#txtMoraFijaAsignar').keypress(function (e) { 
 	if(e.keyCode == 13){ 
-		$.ajax({url: 'php/guardarMoraFijo.php', type: 'POST', data: { mora:$('#txtMoraFijaAsignar').val(), idPrestamo: '<?= $codCredito;?>'  }}).done(function(resp) {
+		cambiarDatosMora()
+	}
+});
+function cambiarDatosMora(){
+	$.ajax({url: 'php/guardarMoraFijo.php', type: 'POST', data: { mora:$('#txtMoraFijaAsignar').val(), idPrestamo: '<?= $codCredito;?>'  }}).done(function(resp) {
 			//console.log(resp)
 			if(resp=='ok'){
 				$('#spanBien').text('Mora fija, guardado correctamente')
@@ -718,8 +722,7 @@ $('#txtMoraFijaAsignar').keypress(function (e) {
 				});
 			}
 		});
-	}
-});
+}
 
 $('#btnBorrarDefSocio').click(function() {
 	$.ajax({url: 'php/borrarrSocioDePrestamo.php', type: 'POST', data: {prestamo: '<?= $codCredito;?>', socio: $.idBorrarSocio }}).done(function(resp) {
@@ -1102,6 +1105,16 @@ $('#btnReactivarPrestamo').click(function() {
 		}
 	});
 });
+async function limpiarPago(idCuota, indice){
+	if(confirm('¿Desea limpiar el registro de pago?')){
+		$.ajax({
+			url: 'php/limpiarPago.php', type: 'POST', data:{ idCuota }
+		}).done( resp => {
+			if(resp=='ok')
+			 location.reload();
+		})
+	}
+}
 <?php }
 if( in_array($_COOKIE['ckPower'], $soloCajas) ){ ?>
 
@@ -1148,9 +1161,11 @@ $('#btnsolicitarDeuda').click(function() {
 		if(data.diasMora==0){
 			//$('#spaCMora').parent().parent().addClass("hidden");
 			$('#spaCPrecioMora').parent().parent().addClass("hidden");
+			$('#spaCPrecioMoraDiaria').parent().parent().addClass("hidden");
 		}else{
 			//$('#spaCMora').parent().parent().removeClass("hidden");
 			$('#spaCPrecioMora').parent().parent().removeClass("hidden");
+			$('#spaCPrecioMoraDiaria').parent().parent().removeClass("hidden");
 		}
 		$('#spaCPendientes').text(data.tantasCuotas);
 		$('#spaCCosto').text(data.precioCuotas.toFixed(2));
@@ -1164,6 +1179,7 @@ $('#btnsolicitarDeuda').click(function() {
 			$.laMora = parseFloat(<?= $rowCr['preMoraFija'];?>);
 		<?php else: ?>
 			$('#spaCPrecioMora').text(data.precioMora.toFixed(2));
+			$('#spaCPrecioMoraDiaria').text(data.mora_neta.toFixed(2));
 			$('#spaCTotal').text(data.paraFinalizar.toFixed(2));
 			$.laMora=data.precioMora;
 		<?php endif; ?>

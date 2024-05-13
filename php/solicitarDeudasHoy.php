@@ -4,7 +4,6 @@ include 'conkarl.php';
 require_once('../vendor/autoload.php');
 $base58 = new StephenHill\Base58();
 
-// $mora -> 2.00
 $fechaHoy = new DateTime();
 $deudaAHoy =0;
 $filas=array();
@@ -13,14 +12,19 @@ $sumaSa=0;
 $diasMora =0;
 $precioCuota=0;
 $seguro=0;
+$onlyCapital =0;
+$mora = 0;
 
-$sql="SELECT idCuota, cuotFechaPago, cuotCuota, cuotPago, cuotSeg FROM `prestamo_cuotas`
-where cuotFechaPago <=curdate() and cuotCuota<>0 and idTipoPrestamo in (33, 79)
-and idPrestamo={$base58->decode($_POST['credito'])}
+$sql="SELECT idCuota, cuotFechaPago, cuotCuota, cuotPago, cuotSeg, presMontoDesembolso
+FROM `prestamo_cuotas` pc 
+inner join prestamo p on p.idPrestamo = pc.idPrestamo
+where cuotFechaPago <=curdate() and cuotCuota<>0 and pc.idTipoPrestamo in (33, 79)
+and pc.idPrestamo={$base58->decode($_POST['credito'])}
 order by cuotFechaPago asc;";
 
 $resultado=$cadena->query($sql);
 while($row=$resultado->fetch_assoc()){
+	$onlyCapital = $row['presMontoDesembolso'];
 	$seguro = floatval($row['cuotSeg']);
 	$precioCuota=floatval($row['cuotCuota']-$row['cuotPago']);
 	$fechaCuota = new DateTime($row['cuotFechaPago']);
@@ -57,23 +61,31 @@ while($row=$resultado->fetch_assoc()){
 
 	$k++;
 }
+
+switch(true):
+	case (floatval($onlyCapital)<=299.99): $mora = 0; break;
+	case (floatval($onlyCapital)<=1000) : $mora = 1; break;
+	case (floatval($onlyCapital)<=2000) : $mora = 1.5; break;
+	case (floatval($onlyCapital)<=3000) : $mora = 2; break;
+	case (floatval($onlyCapital)>3000) : $mora = 3; break;
+endswitch;
 // echo "Total de días de mora: ". $diasMora;
 // echo "Suma total: ".$sumaSa;
 // echo "El cliente debe pagar para finalizar:".($sumaSa+ $diasMora*$mora );
 //if($diasMora<>0){$diasMora-=1;}
 $filas = array(
 	'tantasCuotas'=> $k,
-	'precioCuotas'=> $precioCuota + $seguro,
+	'precioCuotas'=> round($precioCuota + $seguro,2),
 	'diasMora' =>$diasMora,
 	'deudaCuotas' => round($sumaSa,2),
 	'precioMora' =>$diasMora*$mora,
 	'seguro' => 0,
 	'seg_nocuenta' => $seguro,
 	'mora_neta' => $mora,
-	'paraFinalizar' => round( ($precioCuota  + $seguro )*$k + $diasMora*$mora ,2) // round($sumaSa+ $diasMora*$mora ,2) //$seguro
+	'paraFinalizar' => round( ($precioCuota  + $seguro )*$k + $diasMora*$mora ,2), // round($sumaSa+ $diasMora*$mora ,2) //$seguro
 	//146.3)*4
+	'capital' => $onlyCapital
 );
 
 echo json_encode($filas);
-
 ?>

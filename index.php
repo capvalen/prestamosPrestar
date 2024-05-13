@@ -79,7 +79,7 @@ a:hover{color:#462782;}
 			</div>
 			<div class="form-group text-center text-danger hidden" id="divError">Error en alguno de los datos, complételos todos cuidadosamente.</div>
 
-			<div class="pull-left" ><small><?php include 'php/version.php' ?> | 2016 - <?php echo date("Y"); ?> <a href="https://infocatsoluciones.com"><br>®  Infocat Soluciones</a></small> <small>Hosted Amazon AWS Cloud</small></div>
+			<div class="pull-left" ><small><?php include 'php/version.php' ?> | 2016 - <?php echo date("Y"); ?> <a href="https://infocatsoluciones.com"><br>®  Infocat Soluciones</a></small> <small>EE.UU Ohio</small></div>
 
 			</div>
 		</div>
