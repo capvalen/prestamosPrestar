@@ -9,10 +9,10 @@ include 'conkarl.php';
 inner join usuario u on u.idUsuario=cu.idUsuario where idCuadre = {$_GET['cuadre']}; ";
 } */
 
-$sql= "select cu.*, u.usuNombres from cuadre cu 
+$sql= "SELECT cu.*, u.usuNombres from cuadre cu 
 inner join usuario u on u.idUsuario=cu.idUsuario where date_format(fechaInicio,'%Y-%m-%d') =date_format('{$_GET['fecha']}','%Y-%m-%d') ";
 
-echo "cuadre ".$_GET['cuadre'];
+echo "cuadre ". $_GET['cuadre'];
 $llamadoSQL = $conection->query($sql);
 while($row = $llamadoSQL->fetch_assoc()): 
   if( $row['fechaFin']=='0000-00-00 00:00:00' ){ $fechaFinal = " - ahora"; }

@@ -59,21 +59,9 @@ include "php/variablesGlobales.php";
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>Mi banco</td>
-								<td>0.00</td>
-							</tr>
-							<tr>
-								<td>Caja Hyo</td>
-								<td>0.00</td>
-							</tr>
-							<tr>
-								<td>BCP</td>
-								<td>0.00</td>
-							</tr>
-							<tr>
-								<td>Otros</td>
-								<td>0.00</td>
+							<tr v-for="deuda in bancos">
+								<td>Bancaria: {{deuda.cajaObservacion}}</td>
+								<td>{{parseFloat(deuda.pagoMonto).toFixed(2)}}</td>
 							</tr>
 						</tbody>
 						<tfoot>
@@ -213,6 +201,46 @@ include "php/variablesGlobales.php";
 		</div>
 	</div>
 	</div>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+	<script>
+	const { createApp, ref, onMounted } = Vue
+
+	createApp({
+		setup() {
+			const entradas = ref([])
+			const salidas = ref([])
+			const fecha = ref({ mes:-1, año:-1 })
+			const bancos = ref([])
+			const mes = ref(-1)
+			const año = ref(-1)
+
+			onMounted(()=>{
+				const urlParams = new URLSearchParams(new URL(window.location.href).search);
+				fecha.value.año = parseInt(urlParams.get('año'));
+				fecha.value.mes = parseInt(urlParams.get('mes'));
+				pedirDatos()
+			})
+
+			function pedirDatos(){
+				axios.post('php/pedirDatosMensuales.php',{ fecha:fecha.value})
+				.then(serv =>{
+					console.log(serv.data)
+					entradas.value = serv.data.entradas
+					salidas.value = serv.data.salidas
+					bancos.value = salidas.value.filter(x=> x.idTipoProceso === 93)
+					console.log('bancos', bancos.value)
+				})
+			}
+
+			return {
+				mes, año,
+				entradas, salidas, bancos
+			}
+		}
+	}).mount('#wrapper')
+</script>
 	
 </body>
 </html>
