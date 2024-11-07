@@ -100,8 +100,8 @@ a:focus, a:hover { color: #62286f; }
 			<div class="row container-fluid ">
 				<div class="pheader">
 					<h4> <i class="icofont icofont-plus-circle"></i> Entradas de dinero </h4>
-					<?php 
-					if(date('Y-m-d')==$_GET['fecha']){ ?>
+					<?php //date('Y-m-d')==$_GET['fecha']
+					if($existeCajaU){ ?>
 						<div class="dropdown pull-right">
 							<button class="btn btn-default btn-sinBorde btn-outline btnBotonCajon"><i class="icofont icofont-key-hole"></i></button>
 							<button class="btn btn-default dropdown-toggle" type="button" id="dropdownEntradas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: -37px; color: #a35bb4;"><i class="icofont icofont-ui-rate-add"></i> <span class="caret"></span></button>
@@ -116,7 +116,8 @@ a:focus, a:hover { color: #62286f; }
 					<div class="panel-body">
 					</div>
 						<div class="table-responsive">
-							<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+							<table class="table table-hover">
+								<thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Monto</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
 							<tbody>
 							<?php
 							if( ! isset($_GET['cuadre']) ):
@@ -133,8 +134,8 @@ a:focus, a:hover { color: #62286f; }
 			<div class="row container-fluid  ">
 				<div class="pheader">
 					<h4><i class="icofont icofont-minus-circle"></i> Salidas de dinero</h4>
-					<?php 
-					if(date('Y-m-d')==$_GET['fecha']){ ?>
+					<?php  //date('Y-m-d')==$_GET['fecha']
+					if($existeCajaU){ ?>
 						<div class="dropdown pull-right">
 							<button class="btn btn-default btn-sinBorde btn-outline btnBotonCajon"><i class="icofont icofont-key-hole"></i></button>
 							<button class="btn btn-default dropdown-toggle  " type="button" id="dropdownEntradas" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="margin-top: -37px; color: #a35bb4;"><i class="icofont icofont-ui-rate-remove"></i> <span class="caret"></span></button>
@@ -148,13 +149,13 @@ a:focus, a:hover { color: #62286f; }
 					<div class="panel-body">
 					</div>
 						<div class="table-responsive">
-							<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Cantidad</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+							<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Monto</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
 							<tbody>
 							<?php
 								if( ! isset($_GET['cuadre']) ):
-									// require_once 'php/reporteEgresoDia.php';+
-									echo "<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>";
-								else:
+									// require_once 'php/reporteEgresoDia.php'; ?>
+									<tr><td>Tiene que seleccionar en el filtro el cuadre que desea ver</td></tr>
+								<?php else:
 									require_once 'php/reporteEgresoDiaxCuadre.php';
 								endif;
 							?>
@@ -420,7 +421,7 @@ $('#dtpFechaIniciov3').val('<?php
 		}
 		?>');
 moment.locale('es');
-<? if(isset($_GET['cuadre'])){ ?>
+<?php if(isset($_GET['cuadre'])){ ?>
 calculoTicketVirtual();
 
 function calculoTicketVirtual() {
@@ -465,7 +466,7 @@ function calculoTicketVirtual() {
 	
 	//$('#spanResultadoFinal').text(parseFloat( parseFloat($('#strSumaEntrada').text().replace(',', '.')) - parseFloat($('#strSumaSalida').text().replace(',', '.')) + parseFloat($('#spanApertura').text().replace(',', '.')) ).toFixed(2));
 }
-<? } ?>
+<?php } ?>
 
 <?php if(isset($_GET['cuadre'])){ ?>
 	$('#sltHistorialCierres').val(<?php echo $_GET['cuadre']; ?>);
@@ -969,7 +970,7 @@ $('#btnCambiarCierre').click(function() {
 $('#btnUpdateApertura').click(function() {
 	pantallaOver(true);
 	if( $('#txtMontoChangeApertura').val()>=0 ){
-		$.ajax({url: 'php/updateAperturaCaja.php', type: 'POST', data: { cuadre: '<? if(isset($_GET["cuadre"])){ echo $_GET["cuadre"]; }else{ echo ""; } ?>', nueVal: $('#txtMontoChangeApertura').val(), nueObs: $('#txtObsChangeApertura').val() }}).done(function(resp) {
+		$.ajax({url: 'php/updateAperturaCaja.php', type: 'POST', data: { cuadre: '<?php if(isset($_GET["cuadre"])){ echo $_GET["cuadre"]; }else{ echo ""; } ?>', nueVal: $('#txtMontoChangeApertura').val(), nueObs: $('#txtObsChangeApertura').val() }}).done(function(resp) {
 			if(resp!='-1'){
 				location.reload();
 				pantallaOver(false);
@@ -980,7 +981,7 @@ $('#btnUpdateApertura').click(function() {
 $('#btnUpdateCierre').click(function() {
 	pantallaOver(true);
 	if( $('#txtMontoChangeCierre').val()>=0 ){
-		$.ajax({url: 'php/updateCierreCaja.php', type: 'POST', data: { cuadre: '<? if(isset($_GET["cuadre"])){ echo $_GET["cuadre"]; }else{ echo ""; } ?>', nueVal: $('#txtMontoChangeCierre').val(), nueObs: $('#txtObsChangeCierre').val() }}).done(function(resp) {
+		$.ajax({url: 'php/updateCierreCaja.php', type: 'POST', data: { cuadre: '<?php if(isset($_GET["cuadre"])){ echo $_GET["cuadre"]; }else{ echo ""; } ?>', nueVal: $('#txtMontoChangeCierre').val(), nueObs: $('#txtObsChangeCierre').val() }}).done(function(resp) {
 			if(resp!='-1'){
 				location.reload();
 				pantallaOver(false);

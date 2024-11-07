@@ -28,7 +28,11 @@ include "php/variablesGlobales.php";
 <body >
 <style type="text/css">
 .form-control:focus{    border-color: #FFEB3B;box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 6px rgba(255, 193, 7, 0.55);}
-body{background: linear-gradient(90deg, #100b19 10%, #291c40 90%);}
+body{
+	min-height: 100vh;
+	background: rgb(93,62,148);
+	background: linear-gradient(121deg, rgba(93,62,148,1) 0%, rgba(38,19,72,1) 39%, rgba(13,1,33,1) 100%);
+}
 main{ margin-top:80px; padding:0 50px}
 .wello{padding:40px 50px; border-radius: 6px;padding-bottom: 58px;}
 .noselect {

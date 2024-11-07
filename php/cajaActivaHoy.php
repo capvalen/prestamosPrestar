@@ -18,7 +18,7 @@ if(isset($_GET['cuadre'])){
 $row = mysqli_fetch_array($sql, MYSQLI_ASSOC);
 
 $fechaHoy = new DateTime();
-$fechaReporte = new DateTime($row['fechaInicio']);
+$fechaReporte = new DateTime($row['fechaInicio'] ?? '');
 
 if($existeCajaU>0  ){ 
 	if( !isset($_GET['cuadre']) ){ //$existeCajaU==$row['idCuadre'] &&  ?>
@@ -85,7 +85,7 @@ if( isset($_GET['cuadre']) ){ ?>
 	<p><strong>Obs.</strong> <span class="mayuscula"><? if($row['cuaObs']==''){echo '-'; }else{echo $row['cuaObs'];} ?></span></p>
 </div>
 <div class="col-xs-12 col-sm-6 text-center purple-text text-lighten-1">
-	<h4>Cierre: <? if($row['fechaFin']<>'0000-00-00 00:00:00'): if( in_array($_COOKIE['ckPower'], $soloDios) ): ?> <button class="btn btn-infocat btn-outline btn-xs" id="btnCambiarCierre"><i class="icofont icofont-cube"></i> Cambiar</button> <? endif; endif;?></h4>
+	<h4>Cierre: <?php if($row['fechaFin']<>'0000-00-00 00:00:00'): if( in_array($_COOKIE['ckPower'], $soloDios) ): ?> <button class="btn btn-infocat btn-outline btn-xs" id="btnCambiarCierre"><i class="icofont icofont-cube"></i> Cambiar</button> <?php endif; endif;?></h4>
 	<h4><strong>S/ <span id="spanCierrev3"><?= str_replace(",", '', number_format($row['cuaCierre'],2)); ?></span></strong></h4>
 	<p><?php if($row['fechaFin']=='0000-00-00 00:00:00'){ echo 'Sin cerrar aún';}else{ $fechaN= new DateTime($row['fechaFin']); echo $fechaN->format('j/n/Y g:i a'); } ?></p>
 	<p><strong>Obs.</strong> <span class="mayuscula"><? if($row['cuaObsCierre']==''){echo '-'; }else{echo $row['cuaObsCierre'];} ?></span></p>

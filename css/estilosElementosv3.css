@@ -391,3 +391,4 @@ input{ cursor: url("../images/curs85617.png") 2 2, text;  } */
 #rowProductoEncontrado li a {
     color: #ab47bc;
 }
+.aCode, .tdBotones{ white-space: nowrap;}
