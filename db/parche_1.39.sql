@@ -1,0 +1,1 @@
+CREATE TABLE `vistacongelada` (`id` INT NOT NULL AUTO_INCREMENT , `campos` JSON NOT NULL , `año` INT NOT NULL , `mes` INT NOT NULL , `activo` INT NULL DEFAULT '1' , PRIMARY KEY (`id`)) ENGINE = InnoDB;

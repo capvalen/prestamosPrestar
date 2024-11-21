@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="css/cssBarraTop.css?version=1.0.10">
 <link rel="stylesheet" href="css/estilosElementosv3.css?version=3.0.71" >
 <link rel="stylesheet" href="css/colorsmaterial.css">
-<link rel="stylesheet" href="css/icofont.css?version=1.1"> <!-- iconos extraidos de: http://icofont.com/-->
+<link rel="stylesheet" href="css/icofont.css?version=1.1"> <!-- iconos extraidos de: http://icofont.com/ -->
 <link rel="stylesheet" href="css/bootstrap-datepicker3.css">
 <link rel="stylesheet" href="css/bootstrap-select.min.css?version=0.3" >
 <link rel="stylesheet" href="css/animate.css" >
