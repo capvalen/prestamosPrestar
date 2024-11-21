@@ -311,20 +311,20 @@ if($cantReporte==1){
 				return parseFloat(valor).toFixed(2)
 			}
 			const sumaIntereses = computed( ()=> {
-				return intereses.value.reduce( (acc, item) => acc + item.suma, 0)
+				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotInteres) * item.porcentaje, 0)
 			})
 			const sumaMoras = computed( ()=> {
 				return moras.value.reduce( (acc, item) => acc + item.suma, 0)
 			})
+			const sumaCuotas = computed( ()=> {
+				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cajaValor) , 0)
+			})
 			const sumaComisiones = computed( ()=> {
-				return cuotas.value.reduce( (acc, item) => acc + item.cuotSeg * item.porcentaje , 0)
+				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotSeg) * item.porcentaje , 0)
 			})
 			const sumaCapital = computed( ()=> {
-				return cuotas.value.reduce( (acc, item) => acc + item.cuotCapital * item.porcentaje , 0)
-			})
-			const sumaCuotas = computed( ()=> {
-				return cuotas.value.reduce( (acc, item) => acc + item.cajaValor , 0)
-			})
+				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotCapital) * item.porcentaje , 0)
+			})			
 			const sumaOtrosIngresos = computed( ()=> {
 				return otrosIngresos.value.reduce( (acc, item) => acc + item.suma, 0)
 			})
