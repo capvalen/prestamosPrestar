@@ -27,25 +27,25 @@ include "php/variablesGlobales.php";
 				<tbody>
 					<tr>
 						<td>Ingreso de intereses</td>
-						<td>S/ 0.00</td>
+						<td>S/ {{moneda(sumaIntereses)}}</td>
 					</tr>
 					<tr>
 						<td>Ingreso de moras</td>
-						<td>S/ 0.00</td>
+						<td>S/ {{moneda(sumaMoras)}}</td>
 					</tr>
 					<tr>
 						<td>Ingreso de comisión y servicios</td>
-						<td>S/ 0.00</td>
+						<td>S/ {{moneda(sumaComisiones)}}</td>
 					</tr>
 					<tr>
 						<td>Otros ingresos</td>
-						<td>S/ 0.00</td>
+						<td>S/ {{moneda(sumaOtrosIngresos)}}</td>
 					</tr>
 				</tbody>
 				<tfoot>
 					<tr>
 						<th>Total ingresos</th>
-						<th>S/ 0.00</th>
+						<th>S/ {{moneda(sumaTotalIngresos)}}</th>
 					</tr>
 				</tfoot>
 			</table>
@@ -59,15 +59,15 @@ include "php/variablesGlobales.php";
 							</tr>
 						</thead>
 						<tbody>
-							<tr v-for="deuda in bancos">
-								<td>Bancaria: {{deuda.cajaObservacion}}</td>
-								<td>{{parseFloat(deuda.pagoMonto).toFixed(2)}}</td>
+							<tr v-for="banco in bancos">
+								<td>Bancaria: {{banco.cajaObservacion}}</td>
+								<td>S/ {{moneda(banco.cajaValor)}}</td>
 							</tr>
 						</tbody>
 						<tfoot>
 							<tr>
 								<th>Total de deudas</th>
-								<th>0.00</th>
+								<th>S/ {{moneda(sumaBancos)}}</th>
 							</tr>
 						</tfoot>
 					</table>
@@ -81,17 +81,17 @@ include "php/variablesGlobales.php";
 						<tbody>
 							<tr>
 								<td>Deudas prestar Hyo</td>
-								<td>0.00</td>
+								<td>S/ {{moneda(sumaBancos)}}</td>
 							</tr>
 							<tr>
 								<td>Gastos prestar Hyo 2</td>
-								<td>0.00</td>
+								<td>S/ {{moneda(sumaTodosGastos)}}</td>
 							</tr>
 						</tbody>
 						<tfoot>
 							<tr>
 								<th>Total de egresos</th>
-								<th>0.00</th>
+								<th>S/ {{moneda(sumaTotalEgresos)}}</th>
 							</tr>
 						</tfoot>
 					</table>
@@ -105,39 +105,41 @@ include "php/variablesGlobales.php";
 						<tbody>
 							<tr>
 								<td>Ingresos de cuotas</td>
-								<td>0.00</td>
+								<td>S/ {{moneda(sumaCuotas)}}</td>
 							</tr>
 							<tr>
 								<td>Capital recuperado</td>
-								<td>0.00</td>
+								<td>S/ {{moneda(sumaCapital)}}</td>
 							</tr>
 							<tr>
-								<td>Saldo Capital</td>
-								<td>0.00</td>
+								<td>Saldo Capital por cobrar</td>
+								<td>S/ {{moneda(sumaPorCobrarCapital)}}</td>
 							</tr>
 							<tr>
 								<td>Intereses por cobrar</td>
-								<td>0.00</td>
+								<td>S/ {{moneda(sumaPorCobrarInteres)}}</td>
 							</tr>
 							<tr>
-								<td>Comisiones</td>
-								<td>0.00</td>
+								<td>Comisión y Serv. por cobrar</td>
+								<td>S/ {{moneda(sumaPorCobrarComision)}}</td>
+							</tr>
+							<tr>
+								<td>Cuotas por cobrar</td>
+								<td>S/ {{moneda(sumaPorCobrarCuota)}}</td>
 							</tr>
 							<tr>
 								<td>Saldo a reinvertir para el mes siguiente</td>
-								<td>0.00</td>
+								<td>
+									<input type="number" class="form-control form-control-sm" id="txtSaldoInvertir">
+								</td>
 							</tr>
 							<tr>
 								<td>Inyección Capital</td>
-								<td>0.00</td>
+								<td>
+									<input type="number" class="form-control form-control-sm" id="txtCapitalInvertir">
+								</td>
 							</tr>
 						</tbody>
-						<tfoot>
-							<tr>
-								<th>Total de egresos</th>
-								<th>0.00</th>
-							</tr>
-						</tfoot>
 					</table>
 				</div>
 				<div class="col-12 col-md-6">
@@ -148,27 +150,19 @@ include "php/variablesGlobales.php";
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>Sueldo 1</td>
-								<td>0.00</td>
-							</tr>
-							<tr>
-								<td>Sueldo 2</td>
-								<td>0.00</td>
-							</tr>
-							<tr>
-								<td>Luz</td>
-								<td>0.00</td>
-							</tr>
-							<tr>
-								<td>Agua</td>
-								<td>0.00</td>
+							<tr v-for="sueldo in sueldos">
+								<td class="text-capitalize">{{sueldo.cajaObservacion}}</td>
+								<td>S/ {{moneda(sueldo.cajaValor)}}</td>
+							</tr>							
+							<tr v-for="servicio in servicios">
+								<td class="text-capitalize">{{servicio.cajaObservacion}}</td>
+								<td>S/ {{moneda(servicio.cajaValor)}}</td>
 							</tr>
 						</tbody>
 						<tfoot>
 							<tr>
 								<th>Total de deudas</th>
-								<th>0.00</th>
+								<th>S/ {{moneda(sumaTodosGastos)}}</th>
 							</tr>
 						</tfoot>
 					</table>
@@ -182,17 +176,17 @@ include "php/variablesGlobales.php";
 						<tbody>
 							<tr>
 								<td>Total ingresos</td>
-								<td>0.00</td>
+								<td>S/ {{moneda(sumaTotalIngresos)}}</td>
 							</tr>
 							<tr>
 								<td>Total egresos</td>
-								<td>0.00</td>
+								<td>S/ {{moneda(sumaTotalEgresos)}}</td>
 							</tr>
 						</tbody>
 						<tfoot>
 							<tr>
 								<th>Resultado final</th>
-								<th>0.00</th>
+								<th>S/ {{moneda(sumaTotalIngresos - sumaTotalEgresos)}}</th>
 							</tr>
 						</tfoot>
 					</table>
@@ -205,14 +199,22 @@ include "php/variablesGlobales.php";
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 	<script>
-	const { createApp, ref, onMounted } = Vue
+	const { createApp, ref, onMounted, computed } = Vue
 
 	createApp({
 		setup() {
 			const entradas = ref([])
 			const salidas = ref([])
 			const fecha = ref({ mes:-1, año:-1 })
+			const intereses = ref([])
+			const moras = ref([])
+			const cuotas = ref([])
+			const otrosIngresos = ref([])
 			const bancos = ref([])
+			const servicios = ref([])
+			const sueldos = ref([])
+			const otrosGastos = ref([])
+			const falta = ref([])
 			const mes = ref(-1)
 			const año = ref(-1)
 
@@ -224,23 +226,98 @@ include "php/variablesGlobales.php";
 			})
 
 			function pedirDatos(){
-				axios.post('php/pedirDatosMensuales.php',{ fecha:fecha.value})
+				/*axios.post('php/pedirDatosMensuales.php', { fecha:fecha.value})
 				.then(serv =>{
 					console.log(serv.data)
 					entradas.value = serv.data.entradas
 					salidas.value = serv.data.salidas
 					bancos.value = salidas.value.filter(x=> x.idTipoProceso === 93)
 					console.log('bancos', bancos.value)
+				})*/
+
+				axios.post('php/pedirReporteGlobal.php', { fecha:fecha.value})
+				.then(serv=>{
+					intereses.value = serv.data.intereses
+					moras.value = serv.data.moras
+					cuotas.value = serv.data.cuotas
+					otrosIngresos.value = serv.data.otrosIngresos
+					bancos.value = serv.data.bancos
+					servicios.value = serv.data.servicios
+					sueldos.value = serv.data.sueldos
+					otrosGastos.value = serv.data.otrosGastos
+					falta.value = serv.data.falta
 				})
 			}
+			function moneda(valor){
+				return parseFloat(valor).toFixed(2)
+			}
+			const sumaIntereses = computed( ()=> {
+				return intereses.value.reduce( (acc, item) => acc + item.suma, 0)
+			})
+			const sumaMoras = computed( ()=> {
+				return moras.value.reduce( (acc, item) => acc + item.suma, 0)
+			})
+			const sumaComisiones = computed( ()=> {
+				return cuotas.value.reduce( (acc, item) => acc + item.cuotSeg * item.porcentaje , 0)
+			})
+			const sumaCapital = computed( ()=> {
+				return cuotas.value.reduce( (acc, item) => acc + item.cuotCapital * item.porcentaje , 0)
+			})
+			const sumaCuotas = computed( ()=> {
+				return cuotas.value.reduce( (acc, item) => acc + item.cajaValor , 0)
+			})
+			const sumaOtrosIngresos = computed( ()=> {
+				return otrosIngresos.value.reduce( (acc, item) => acc + item.suma, 0)
+			})
+			const sumaTotalIngresos = computed(()=>{
+				return sumaIntereses.value + sumaMoras.value + sumaComisiones.value + sumaOtrosIngresos.value
+			})
+			const sumaBancos = computed( ()=> {
+				return bancos.value.reduce( (acc, item) => acc + item.cajaValor, 0)
+			})
+			const sumaSueldos = computed( ()=> {
+				return sueldos.value.reduce( (acc, item) => acc + item.cajaValor, 0)
+			})
+			const sumaServicios = computed( ()=> {
+				return servicios.value.reduce( (acc, item) => acc + item.cajaValor, 0)
+			})
+			const sumaTodosGastos = computed(()=>{
+				return sumaSueldos.value + sumaServicios.value
+			})			
+			const sumaTotalEgresos = computed(()=>{
+				return sumaBancos.value + sumaTodosGastos.value
+			})
+			const sumaPorCobrarCapital = computed( ()=> {
+				return falta.value.reduce( (acc, item) => acc + item.cuotCapital * item.porcentaje , 0)
+			})
+			const sumaPorCobrarInteres = computed( ()=> {
+				return falta.value.reduce( (acc, item) => acc + item.cuotInteres * item.porcentaje , 0)
+			})
+			const sumaPorCobrarComision = computed( ()=> {
+				return falta.value.reduce( (acc, item) => acc + item.cuotSeg * item.porcentaje , 0)
+			})
+			const sumaPorCobrarCuota = computed( ()=> {
+				return sumaPorCobrarCapital.value + sumaPorCobrarInteres.value + sumaPorCobrarComision.value
+			})
 
 			return {
 				mes, año,
-				entradas, salidas, bancos
+				entradas, salidas,
+				intereses, moras, cuotas, otrosIngresos, bancos, servicios, sueldos, otrosGastos, falta,
+				moneda,
+				sumaIntereses, sumaMoras, sumaComisiones, sumaOtrosIngresos, sumaTotalIngresos,
+				sumaBancos, sumaSueldos, sumaServicios, sumaTodosGastos,
+				sumaCuotas, sumaCapital,
+				sumaTotalEgresos, sumaPorCobrarCapital, sumaPorCobrarInteres, sumaPorCobrarComision, sumaPorCobrarCuota
 			}
 		}
 	}).mount('#wrapper')
 </script>
 	
 </body>
+<style>
+	#txtSaldoInvertir, #txtCapitalInvertir{
+		margin-bottom:0px!important;
+	}
+</style>
 </html>

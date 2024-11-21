@@ -18,7 +18,7 @@ FROM `prestamo` pre
 	inner join cliente c on c.idCliente = i.idCliente
 inner join usuario u on u.idUsuario = pre.idUsuario
 inner join tipoprestamo tpr on tpr.idTipoPrestamo = pre.idTipoPrestamo
-	where presActivo =1 and presFechaDesembolso <> '0000-00-00 00:00:00' and presAprobado =1 and i.idTipoCliente=1 {$permiso}
+	where presActivo =1 and cast(presFechaDesembolso as char) <> '0000-00-00 00:00:00' and presAprobado =1 and i.idTipoCliente=1 {$permiso}
 	order by pre.idPrestamo asc;";
 //	echo $sql;
 $resultado=$cadena->query($sql);

@@ -12,7 +12,7 @@ $idPrestamo = $base58->decode($_POST['credito']);
 $sqlDesembolso= "UPDATE `prestamo` SET `presFechaDesembolso`=presFechaAutom WHERE `idPrestamo`={$idPrestamo};
 
 INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`, `idAprueba`) 
-select null,{$idPrestamo},0,43, CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) ,`presMontoDesembolso`,'<a href=creditos.php?credito={$_POST['credito']}>CR-{$idPrestamo}</a>',1,1,{$_COOKIE['ckidUsuario']},0
+select null,{$idPrestamo},0,43, NOW(),`presMontoDesembolso`,'<a href=creditos.php?credito={$_POST['credito']}>CR-{$idPrestamo}</a>',1,1,{$_COOKIE['ckidUsuario']},0
 from prestamo 
 where `idPrestamo`={$idPrestamo};
 ";

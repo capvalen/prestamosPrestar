@@ -51,8 +51,9 @@ elseif($diasMora>0): // -> Se paga la mora $diasMora-=1;
 		/* HACER INSERT a CAJA por MORA por X días*/
 		if ( $_POST['cliMora']< $moraTotal ){ $extra=" de un total de S/ ".$moraTotal; }else{$extra='';}
 		$sqlMora="INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-		VALUES (null,{$idPrestamo},0,81, CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) ,{$_POST['cliMora']},'Mora por el periodo {$primFecha} y {$ultFecha}{$extra}', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
+		VALUES (null,{$idPrestamo},0,81, NOW(),{$_POST['cliMora']},'Mora por el periodo {$primFecha} y {$ultFecha}{$extra}', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
 		$dinero -=floatval($_POST['cliMora']);
+		// CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) 
 
 	//echo "mora pagada ".$moraTotal."\n";
 endif;
@@ -75,30 +76,29 @@ while($row2=$resultado->fetch_assoc()){
 	
 	if( floatval(round($dinero,1)) >= floatval(round($debePendiente,1)) ){
 		//echo 'Pago completo delinterés;
+		//CONVERT_TZ( NOW(),'US/Eastern','America/Lima' )
 		if( $row2['idTipoPrestamo']==33 ){
 			$soloCuota = floatval($row2['cuotCuota'] + $row2['cuotSeg'] - $row2['cuotPago']);
 			
 			$sentenciaLarga = $sentenciaLarga. "UPDATE `prestamo_cuotas` SET 
-			`cuotFechaCancelacion`= CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ),
+			`cuotFechaCancelacion`= NOW(),
 			`cuotPago` = `cuotPago`+ {$debePendiente},
 			`idTipoPrestamo` = 80
 			WHERE `idCuota` = {$row2['idCuota']};
 			INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-				VALUES (null,{$idPrestamo},{$row2['idCuota']},80, CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) ,{$soloCuota},'', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
-
+				VALUES (null,{$idPrestamo},{$row2['idCuota']},80, NOW() ,{$soloCuota},'', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
 		}else{
 			$soloCuota = floatval($row2['cuotCuota'] + $row2['cuotSeg'] - $row2['cuotPago']);
 			
 			$sentenciaLarga = $sentenciaLarga. "UPDATE `prestamo_cuotas` SET 
-			`cuotFechaCancelacion`= CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ),
+			`cuotFechaCancelacion`= NOW(),
 			`cuotPago` = `cuotPago`+ {$debePendiente},
 			`idTipoPrestamo` = 80
 			WHERE `idCuota` = {$row2['idCuota']};
 			INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-				VALUES (null,{$idPrestamo},{$row2['idCuota']},80, CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) ,{$soloCuota},'', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
+				VALUES (null,{$idPrestamo},{$row2['idCuota']},80, NOW(),{$soloCuota},'', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
 		}
-		
-			$filas[] = array('cuota' => $row2['idCuota'], 'montoCuota' => $debePendiente, 'queEs'=> 'Cuota cancelada' );
+		$filas[] = array('cuota' => $row2['idCuota'], 'montoCuota' => $debePendiente, 'queEs'=> 'Cuota cancelada' );
 	}else{  //
 		if( $dinero <= 0){
 			break;
@@ -107,12 +107,12 @@ while($row2=$resultado->fetch_assoc()){
 			//$dinero-=$row2['cuotSeg'];
 
 			$sentenciaLarga = $sentenciaLarga. "UPDATE `prestamo_cuotas` SET 
-			`cuotFechaCancelacion`= CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ),
+			`cuotFechaCancelacion`= NOW(),
 			`cuotPago` = `cuotPago`+ {$dinero},
 			`idTipoPrestamo` = 33
 			WHERE `idCuota` = {$row2['idCuota']};
 			INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`)
-			VALUES (null,{$idPrestamo},{$row2['idCuota']},33, CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) ,{$dinero},'', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
+			VALUES (null,{$idPrestamo},{$row2['idCuota']},33, NOW(),{$dinero},'', {$_POST['moneda']},1,{$_COOKIE['ckidUsuario']});";
 
 			$filas[] = array('cuota' => $row2['idCuota'], 'montoCuota' => $dinero, 'queEs'=> 'Adelanto cuota' );
 
@@ -124,7 +124,6 @@ while($row2=$resultado->fetch_assoc()){
  
 
 //------------------
-
 
 if( $prisionero->multi_query($sentenciaLarga) ){ //$prisionero-> next_result()
 	//echo true;
@@ -148,7 +147,7 @@ if( $prisionero->multi_query($sentenciaLarga) ){ //$prisionero-> next_result()
 
 	if($numLineas==0){
 		$sqlUpdFin="UPDATE `prestamo` SET 
-		`presActivo`=2, `fechaFinPrestamo`= CONVERT_TZ( NOW(),'US/Eastern','America/Lima' )
+		`presActivo`=2, `fechaFinPrestamo`= NOW()
 		where `idPrestamo`={$idPrestamo};";
 		$cadena->query($sqlUpdFin);
 	}

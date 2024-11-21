@@ -44,5 +44,5 @@ while($rowEntradas = $sqlEntradas->fetch(PDO::FETCH_ASSOC))
 
 echo json_encode(
 	array('salidas' => $salidas, 'entradas' => $entradas)
-)
+);
 ?>

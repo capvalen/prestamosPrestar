@@ -27,8 +27,6 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 		$resultVista = $preferido->query($sqlVista);
 		if($resultVista->num_rows==1){ header('Location: sinPermiso.php'); die(); }
 	}
-	
-	
 }
 
 ?>
@@ -137,14 +135,14 @@ display: none;
 					</select>
 				</div>
 				<div class="col-sm-2"><label for="">Mora fija: <i class="icofont icofont-info-circle mitoolTip" data-toggle="tooltip" data-placement="top" title="Ponga el valor y luego presione enter"></i></label> <br>
-					<input type="text"  id="txtMoraFijaAsignar" class="form-control input-sm" min="0" step="0.5" style="margin-bottom: 0px; height: 30px!important;" value="<?php if ( strlen($rowCr['preMoraFecha'])>0 ){
+					<input type="text"  id="txtMoraFijaAsignar" class="form-control input-sm" min="0" step="0.5" style="margin-bottom: 0px; height: 30px!important;" value="<?php if ( $rowCr['preMoraFecha']>0 ){
 						if( $rowCr['preMoraFecha'] == date('Y-m-d')){ $estadoMora=true; echo $rowCr['preMoraFija']; } else{ echo ""; $estadoMora=false; }
 					}else{ echo ''; $estadoMora=false; }
 					?>">
 					<button class="btn btn-negro btn-outline" id="btnMoraFijaAsignar"><i class="icofont-exchange"></i></button>
 				</div>
 				<?php } ?>
-				<?php if(in_array($_COOKIE['ckPower'], $soloCaja )){ if ( strlen($rowCr['preMoraFecha'])>0 ){ 
+				<?php if(in_array($_COOKIE['ckPower'], $soloCaja )){ if ( $rowCr['preMoraFecha']>0 ){ 
 						if( $rowCr['preMoraFecha'] == date('Y-m-d')){ $estadoMora=true; echo "Mora fija: ". number_format($rowCr['preMoraFija'],2); } else{ echo "Mora normal"; $estadoMora=false; }
 					}else{ echo ''; $estadoMora=false; }} ?>
 			</div>

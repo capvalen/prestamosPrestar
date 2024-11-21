@@ -60,8 +60,9 @@ END$$
 DROP PROCEDURE IF EXISTS `cajaCierreHoy`$$
 CREATE  PROCEDURE `cajaCierreHoy` (IN `idUser` INT, IN `monto` FLOAT, IN `obs` TEXT)  NO SQL BEGIN
 
+--CONVERT_TZ( NOW(),'US/Eastern','America/Lima' )
 UPDATE `cuadre` SET
-`fechaFin`=CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ),
+`fechaFin`= NOW(),
 `cuaCierre` = monto,
 `cuaObsCierre`= obs,
 `cuaVigente`=0
@@ -143,7 +144,7 @@ UPDATE `prestamo_cuotas` SET `cuotFechaCancelacion`=now(),
 WHERE `idCuota`=idCuo;
 
 INSERT INTO `caja`(`idCaja`, `idPrestamo`, `idCuota`, `idTipoProceso`, `cajaFecha`, `cajaValor`, `cajaObservacion`, `cajaMoneda`, `cajaActivo`, `idUsuario`, `idAprueba`)
-select null, idPrestamo, idCuota, 80, CONVERT_TZ(NOW(), 'US/Eastern', 'America/Lima' ), cuotPago, '', 1, 1, idUser, 0
+select null, idPrestamo, idCuota, 80, NOW(), cuotPago, '', 1, 1, idUser, 0
 from `prestamo_cuotas`
 WHERE `idCuota`=idCuo;
 
