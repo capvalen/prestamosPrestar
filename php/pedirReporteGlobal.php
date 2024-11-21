@@ -3,6 +3,8 @@ error_reporting(E_ALL); ini_set("display_errors", 1);
 include 'conkarl.php';
 $_POST = json_decode(file_get_contents('php://input'), true);
 
+$intereses =[]; $moras =[]; $cuotas =[]; $otrosIngresos =[]; $bancos =[]; $servicios =[]; $sueldos =[]; $otrosGastos =[]; $falta =[];
+
 //---------- ENTRADAS ----------
 
 $sqlIntereses=$db->prepare("SELECT sum(`cajaValor`) as suma FROM `caja` WHERE 

@@ -212,7 +212,7 @@ if($cantReporte==1){
 						<tfoot>
 							<tr>
 								<th>Resultado final</th>
-								<th>S/ {{moneda(sumaTotalIngresos - sumaTotalEgresos)}}</th>
+								<th>S/ {{moneda(resultadoFinal)}}</th>
 							</tr>
 						</tfoot>
 					</table>
@@ -358,6 +358,9 @@ if($cantReporte==1){
 			const sumaPorCobrarCuota = computed( ()=> {
 				return sumaPorCobrarCapital.value + sumaPorCobrarInteres.value + sumaPorCobrarComision.value
 			})
+			const resultadoFinal = computed(()=>{
+				return parseFloat(sumaTotalIngresos.value) - parseFloat(sumaTotalEgresos.value)
+			})
 
 			return {
 				mes, año,
@@ -368,6 +371,7 @@ if($cantReporte==1){
 				sumaBancos, sumaSueldos, sumaServicios, sumaTodosGastos,
 				sumaCuotas, sumaCapital,
 				sumaTotalEgresos, sumaPorCobrarCapital, sumaPorCobrarInteres, sumaPorCobrarComision, sumaPorCobrarCuota,
+				resultadoFinal,
 				congelar, saldo, inyeccion
 			}
 		}
