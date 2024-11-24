@@ -311,7 +311,7 @@ if($cantReporte==1){
 				return parseFloat(valor).toFixed(2)
 			}
 			const sumaIntereses = computed( ()=> {
-				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotInteres) * item.porcentaje, 0)
+				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotInteres ?? 0), 0) // * item.porcentaje
 			})
 			const sumaMoras = computed( ()=> {
 				return moras.value.reduce( (acc, item) => acc + item.suma, 0)
@@ -320,10 +320,10 @@ if($cantReporte==1){
 				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cajaValor) , 0)
 			})
 			const sumaComisiones = computed( ()=> {
-				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotSeg) * item.porcentaje , 0)
+				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotSeg ?? 0)  , 0)
 			})
 			const sumaCapital = computed( ()=> {
-				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotCapital) * item.porcentaje , 0)
+				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotCapital ?? 0) , 0)
 			})			
 			const sumaOtrosIngresos = computed( ()=> {
 				return otrosIngresos.value.reduce( (acc, item) => acc + item.suma, 0)
@@ -347,13 +347,13 @@ if($cantReporte==1){
 				return sumaBancos.value + sumaTodosGastos.value
 			})
 			const sumaPorCobrarCapital = computed( ()=> {
-				return falta.value.reduce( (acc, item) => acc + item.cuotCapital * item.porcentaje , 0)
+				return falta.value.reduce( (acc, item) => acc + parseFloat(item.cuotCapital ?? 0) , 0)
 			})
 			const sumaPorCobrarInteres = computed( ()=> {
-				return falta.value.reduce( (acc, item) => acc + item.cuotInteres * item.porcentaje , 0)
+				return falta.value.reduce( (acc, item) => acc + parseFloat(item.cuotInteres ?? 0) , 0)
 			})
 			const sumaPorCobrarComision = computed( ()=> {
-				return falta.value.reduce( (acc, item) => acc + item.cuotSeg * item.porcentaje , 0)
+				return falta.value.reduce( (acc, item) => acc + parseFloat(item.cuotSeg ?? 0) , 0)
 			})
 			const sumaPorCobrarCuota = computed( ()=> {
 				return sumaPorCobrarCapital.value + sumaPorCobrarInteres.value + sumaPorCobrarComision.value
