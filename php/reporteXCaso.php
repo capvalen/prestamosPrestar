@@ -748,7 +748,7 @@ switch ($_POST['caso']) {
 							if( $row['intSimple']=='1'){
 								$tdCuota = round(($row['cuotCuota'] + $row['cuotSeg'] ) * $porcPago, 2);
 							}else{
-								$tdCuota = round(($row['cuotCuota'] + $row['cuotSeg']) * $porcPago, 2);
+								$tdCuota = round(($row['cuotCuota'] + $row['cuotSeg'] ) * $porcPago, 2);
 							}
 							$sumCuota += $tdCuota; echo $tdCuota;}
 							?>

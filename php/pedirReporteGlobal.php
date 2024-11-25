@@ -21,7 +21,7 @@ inner join prestamo_cuotas pc on pc.idCuota = c.idCuota
 WHERE c.`idTipoProceso` in (33, 80)
 and year(`cajaFecha`) = ? and month(`cajaFecha`) = ?*/
 $sqlCuotas = $db->prepare("SELECT ifnull(pc.cuotCuota,0) as cuotCuota ,cuotSeg, cuotPago, pc.cuotCapital, pc.cuotSaldo,
-
+round(c.cajaValor / (cuotCuota + cuotSeg), 5) as porcentaje, c.cajaValor,
 round( case p.intSimple when 1 then pc.cuotInteres else devolverInteresIDCuota(pc.idCuota) end, 2) as cuotInteres
 			FROM `caja` c
 			left join prestamo p on c.idPrestamo = p.idPrestamo
@@ -32,6 +32,11 @@ round( case p.intSimple when 1 then pc.cuotInteres else devolverInteresIDCuota(p
 			and year(`cajaFecha`) = ? and month(`cajaFecha`) = ? and idTipoProceso not in (43, 86) and not (idTipoProceso = 88 and cajaValor=0) and i.idTipoCliente=1;");
 //Calcular, cuando sea ==1: la cuota se toma por defecto.
 // sino debe sacar el porcentaje a partir del capital
+
+$sqlRecuperar = $db->prepare("SELECT round(sum(cuotCapital - cuotInteres - cuotSeg), 2) as sumaCapital, round(sum(cuotInteres), 2) as sumaIntereses, round(sum(cuotSeg), 2) as sumaSeguro FROM
+prestamo p 
+inner join `prestamo_cuotas` pc on pc.idPrestamo = p.idPrestamo
+where pc.idTipoPrestamo in (33, 79) and presAprobado = 1;");
 
 //Otros ingresos
 $sqlOtrosIngresos=$db->prepare("SELECT sum(`cajaValor`) as suma FROM `caja` WHERE 
@@ -78,6 +83,7 @@ $sqlServicios ->execute([ $_POST['fecha']['año'], $_POST['fecha']['mes'] ]);
 $sqlSueldos ->execute([ $_POST['fecha']['año'], $_POST['fecha']['mes'] ]);
 $sqlOtrosGastos ->execute([ $_POST['fecha']['año'], $_POST['fecha']['mes'] ]);
 $sqlFalta ->execute([ $_POST['fecha']['año'], $_POST['fecha']['mes'] ]);
+$sqlRecuperar ->execute();
 
 while($rowIntereses = $sqlIntereses->fetch(PDO::FETCH_ASSOC))
 	$intereses [] = $rowIntereses;
@@ -97,8 +103,10 @@ while($rowOtrosGastos = $sqlOtrosGastos->fetch(PDO::FETCH_ASSOC))
 	$otrosGastos [] = $rowOtrosGastos;
 while($rowFalta = $sqlFalta->fetch(PDO::FETCH_ASSOC))
 	$falta [] = $rowFalta;
+while($rowRecuperar = $sqlRecuperar->fetch(PDO::FETCH_ASSOC))
+	$recuperar [] = $rowRecuperar;
 
 echo json_encode(
-	array('intereses' => $intereses, 'moras' => $moras, 	'cuotas' => $cuotas, 	'otrosIngresos' => $otrosIngresos, 	'bancos' => $bancos, 	'servicios' => $servicios, 	'sueldos' => $sueldos, 	'otrosGastos' => $otrosGastos, 'falta' => $falta 	)
+	array('intereses' => $intereses, 'moras' => $moras, 	'cuotas' => $cuotas, 	'otrosIngresos' => $otrosIngresos, 	'bancos' => $bancos, 	'servicios' => $servicios, 	'sueldos' => $sueldos, 	'otrosGastos' => $otrosGastos, 'falta' => $falta, 'recuperar' => $recuperar	)
 );
 ?>
