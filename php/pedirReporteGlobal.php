@@ -33,10 +33,28 @@ round( case p.intSimple when 1 then pc.cuotInteres else devolverInteresIDCuota(p
 //Calcular, cuando sea ==1: la cuota se toma por defecto.
 // sino debe sacar el porcentaje a partir del capital
 
-$sqlRecuperar = $db->prepare("SELECT round(sum(cuotCapital - cuotInteres - cuotSeg), 2) as sumaCapital, round(sum(cuotInteres), 2) as sumaIntereses, round(sum(cuotSeg), 2) as sumaSeguro FROM
+$sqlRecuperar = $db->prepare("SELECT p.idPrestamo, pc.idCuota, p.intSimple,
+case intSimple
+when 1 then round(cuotCuota - cuotInteres, 2)
+else round(cuotCapital, 2) end
+as capital,
+round(cuotInteres, 2) as intereses, round(cuotSeg, 2) as seguro, presActivo
+FROM
 prestamo p 
 inner join `prestamo_cuotas` pc on pc.idPrestamo = p.idPrestamo
-where pc.idTipoPrestamo in (33, 79) and presAprobado = 1;");
+where pc.idTipoPrestamo in (33, 79) and presAprobado = 1 and presActivo=1;");
+/*Reporte:
+
+SELECT
+case intSimple
+when 1 then round(sum(cuotCuota - cuotInteres), 2)
+else round(sum(cuotCapital), 2) end
+as sumaCapital,
+round(sum(cuotInteres), 2) as sumaIntereses, round(sum(cuotSeg), 2) as sumaSeguro FROM
+prestamo p 
+inner join `prestamo_cuotas` pc on pc.idPrestamo = p.idPrestamo
+where pc.idTipoPrestamo in (33, 79) and presAprobado = 1 and presActivo=1
+*/
 
 //Otros ingresos
 $sqlOtrosIngresos=$db->prepare("SELECT sum(`cajaValor`) as suma FROM `caja` WHERE 

@@ -349,13 +349,13 @@ if($cantReporte==1){
 				return sumaBancos.value + sumaTodosGastos.value
 			})
 			const sumaPorCobrarCapital = computed( ()=> {
-				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.sumaCapital ?? 0) , 0)
+				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.capital ?? 0) , 0)
 			})
 			const sumaPorCobrarInteres = computed( ()=> {
-				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.sumaIntereses ?? 0) , 0)
+				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.intereses ?? 0) , 0)
 			})
 			const sumaPorCobrarComision = computed( ()=> {
-				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.sumaSeguro ?? 0) , 0)
+				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.seguro ?? 0) , 0)
 			})
 			const sumaPorCobrarCuota = computed( ()=> {
 				return sumaPorCobrarCapital.value + sumaPorCobrarInteres.value + sumaPorCobrarComision.value
