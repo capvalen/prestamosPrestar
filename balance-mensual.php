@@ -349,16 +349,49 @@ if($cantReporte==1){
 				return sumaBancos.value + sumaTodosGastos.value
 			})
 			const sumaPorCobrarCapital = computed( ()=> {
-				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.capital ?? 0) , 0)
+				return recuperar.value.reduce( (acc, item) => {
+					if(parseFloat(item.adelanto)==0){				
+						return acc + parseFloat(item.capital)
+					}
+					else{
+						let porcentaje = parseFloat(item.adelanto)  / (parseFloat(item.capital) + parseFloat(item.intereses) + parseFloat(item.seguro) )
+						return acc + parseFloat(parseFloat(item.capital) * (1-porcentaje))
+					}
+				}, 0)
 			})
 			const sumaPorCobrarInteres = computed( ()=> {
+				return recuperar.value.reduce( (acc, item) => {
+					if(parseFloat(item.adelanto)==0){
+						console.log(item.intereses)
+						return acc + parseFloat(item.intereses)
+					}
+					else{
+						let porcentaje = parseFloat(item.adelanto)  / (parseFloat(item.capital) + parseFloat(item.intereses) + parseFloat(item.seguro) )
+						console.log(parseFloat(item.intereses) * (1-porcentaje))
+						return acc + parseFloat(parseFloat(item.intereses) * (1-porcentaje))
+					}
+				}, 0)
+			})
+			const sumaPorCobrarComision = computed( ()=> {
+				return recuperar.value.reduce( (acc, item) => {
+					if(parseFloat(item.adelanto)==0){
+						return acc + parseFloat(item.seguro)
+					}
+					else{
+						let porcentaje = parseFloat(item.adelanto)  / (parseFloat(item.capital) + parseFloat(item.intereses) + parseFloat(item.seguro) )
+						return acc + parseFloat(parseFloat(item.seguro) * (1-porcentaje))
+					}
+				}, 0)
+			})
+			/*const sumaPorCobrarInteres = computed( ()=> {
 				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.intereses ?? 0) , 0)
 			})
 			const sumaPorCobrarComision = computed( ()=> {
 				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.seguro ?? 0) , 0)
-			})
+			})*/
 			const sumaPorCobrarCuota = computed( ()=> {
-				return sumaPorCobrarCapital.value + sumaPorCobrarInteres.value + sumaPorCobrarComision.value
+				return recuperar.value.reduce( (acc, item) => acc + parseFloat(item.cuota ?? 0) , 0)
+				//return sumaPorCobrarCapital.value + sumaPorCobrarInteres.value + sumaPorCobrarComision.value
 			})
 			const resultadoFinal = computed(()=>{
 				return parseFloat(sumaTotalIngresos.value) - parseFloat(sumaTotalEgresos.value)
@@ -367,7 +400,7 @@ if($cantReporte==1){
 			return {
 				mes, año,
 				entradas, salidas,
-				intereses, moras, cuotas, otrosIngresos, bancos, servicios, sueldos, otrosGastos, falta,
+				intereses, moras, cuotas, otrosIngresos, bancos, servicios, recuperar, sueldos, otrosGastos, falta,
 				moneda,
 				sumaIntereses, sumaMoras, sumaComisiones, sumaOtrosIngresos, sumaTotalIngresos,
 				sumaBancos, sumaSueldos, sumaServicios, sumaTodosGastos,

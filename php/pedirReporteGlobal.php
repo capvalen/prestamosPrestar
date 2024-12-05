@@ -3,7 +3,7 @@ error_reporting(E_ALL); ini_set("display_errors", 1);
 include 'conkarl.php';
 $_POST = json_decode(file_get_contents('php://input'), true);
 
-$intereses =[]; $moras =[]; $cuotas =[]; $otrosIngresos =[]; $bancos =[]; $servicios =[]; $sueldos =[]; $otrosGastos =[]; $falta =[];
+$intereses =[]; $moras =[]; $cuotas =[]; $otrosIngresos =[]; $bancos =[]; $servicios =[]; $sueldos =[]; $otrosGastos =[]; $falta =[]; $recuperar=[];
 
 //---------- ENTRADAS ----------
 
@@ -33,18 +33,45 @@ round( case p.intSimple when 1 then pc.cuotInteres else devolverInteresIDCuota(p
 //Calcular, cuando sea ==1: la cuota se toma por defecto.
 // sino debe sacar el porcentaje a partir del capital
 
-$sqlRecuperar = $db->prepare("SELECT p.idPrestamo, pc.idCuota, p.intSimple,
+$sqlRecuperar = $db->prepare("SELECT p.idPrestamo, pc.idCuota, concat( c.cliApellidoPaterno, ' ', c.cliApellidoMaterno, ', ', c.cliNombres) as nombre,  p.intSimple,
+round(cuotInteres, 2) as intereses, round(cuotSeg, 2) as seguro,
 case intSimple
 when 1 then round(cuotCuota - cuotInteres, 2)
 else round(cuotCapital, 2) end
 as capital,
-round(cuotInteres, 2) as intereses, round(cuotSeg, 2) as seguro, presActivo
+case intSimple
+when 1 then round( cuotSeg + cuotCuota - cuotPago, 2)
+else round(cuotCapital + cuotInteres + cuotSeg - cuotPago, 2) end
+as cuota, cuotPago as adelanto
 FROM
 prestamo p 
 inner join `prestamo_cuotas` pc on pc.idPrestamo = p.idPrestamo
-where pc.idTipoPrestamo in (33, 79) and presAprobado = 1 and presActivo=1;");
+inner join involucrados i on i.idPrestamo = p.idPrestamo
+inner join cliente c on c.idCliente = i.idCliente
+where pc.idTipoPrestamo in (33, 79) and presAprobado = 1 and presActivo=1
+and i.idTipoCliente=1;");
 /*Reporte:
+--reporte cada uno
+SELECT p.idPrestamo, pc.idCuota, concat( c.cliApellidoPaterno, ' ', c.cliApellidoMaterno, ', ', c.cliNombres) as nombre,  p.intSimple,
+round(cuotInteres, 2) as intereses, round(cuotSeg, 2) as seguro,
+case intSimple
+when 1 then round(cuotCuota - cuotInteres, 2)
+else round(cuotCapital, 2) end
+as capital,
+case intSimple
+when 1 then round(cuotCuota - cuotInteres - cuotPago, 2)
+else round(cuotCapital - cuotPago, 2) end
+as cuota
+FROM
+prestamo p 
+inner join `prestamo_cuotas` pc on pc.idPrestamo = p.idPrestamo
+inner join involucrados i on i.idPrestamo = p.idPrestamo
+inner join cliente c on c.idCliente = i.idCliente
+where pc.idTipoPrestamo in (33, 79) and presAprobado = 1 and presActivo=1
+and p.idPrestamo = 600
+and i.idTipoCliente=1;
 
+--reporte sumas
 SELECT
 case intSimple
 when 1 then round(sum(cuotCuota - cuotInteres), 2)

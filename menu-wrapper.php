@@ -61,7 +61,7 @@ $nomArchivo = basename($_SERVER['PHP_SELF']); ?>
 					<ul class="nav navbar-nav navbar-right " style="padding:0 30px;">
 						 <li>
 							<div class="btn-group has-clear "><label for="txtBuscarNivelGod" class="text-muted visible-xs" style="color:white; font-weight: 500;">Buscar algo:</label>
-								<input type="text" class="form-control" id="txtBuscarNivelGod" placeholder="&#xed11;">
+								<input type="text" class="form-control" id="txtBuscarNivelGod" placeholder="&#xed11;" autocomplete="off">
 								<span class="form-control-clear icofont icofont-close form-control-feedback hidden" id="spanClear" style="color: #fff;"></span>
 							</div>
 						 </li>
