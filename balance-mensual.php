@@ -346,7 +346,7 @@ if($cantReporte==1){
 				return sumaSueldos.value + sumaServicios.value
 			})			
 			const sumaTotalEgresos = computed(()=>{
-				return sumaBancos.value + sumaTodosGastos.value
+				return parseFloat(sumaBancos.value) + parseFloat(sumaTodosGastos.value)
 			})
 			const sumaPorCobrarCapital = computed( ()=> {
 				return recuperar.value.reduce( (acc, item) => {
