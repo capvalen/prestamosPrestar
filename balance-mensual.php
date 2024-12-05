@@ -362,12 +362,10 @@ if($cantReporte==1){
 			const sumaPorCobrarInteres = computed( ()=> {
 				return recuperar.value.reduce( (acc, item) => {
 					if(parseFloat(item.adelanto)==0){
-						console.log(item.intereses)
 						return acc + parseFloat(item.intereses)
 					}
 					else{
 						let porcentaje = parseFloat(item.adelanto)  / (parseFloat(item.capital) + parseFloat(item.intereses) + parseFloat(item.seguro) )
-						console.log(parseFloat(item.intereses) * (1-porcentaje))
 						return acc + parseFloat(parseFloat(item.intereses) * (1-porcentaje))
 					}
 				}, 0)
