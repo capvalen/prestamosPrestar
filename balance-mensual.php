@@ -21,6 +21,7 @@ switch ($mes) {
 $sql=$db->prepare("SELECT `id`, campos FROM `vistacongelada` WHERE año = ? and mes = ? and activo =1;");
 $sql->execute([ $_GET['año'], $_GET['mes'] ]);
 $cantReporte = $sql->rowCount();
+//echo "cant reporte ". $cantReporte;
 if($cantReporte==1){
 	$row = $sql->fetch(PDO::FETCH_ASSOC);
 	$campos = $row['campos'];
@@ -276,7 +277,7 @@ if($cantReporte==1){
 					sueldos.value = serv.data.sueldos
 					otrosGastos.value = serv.data.otrosGastos
 					falta.value = serv.data.falta
-					recuperar.value = serv.data.recuperar
+					recuperar.value = serv.data.recuperar ?? []
 					saldo.value = serv.data.saldo ?? 0
 					inyeccion.value = serv.data.inyeccion ?? 0
 				})
@@ -319,7 +320,8 @@ if($cantReporte==1){
 				return moras.value.reduce( (acc, item) => acc + item.suma, 0)
 			})
 			const sumaCuotas = computed( ()=> {
-				return cuotas.value.reduce( (acc, item) => acc + (parseFloat(item.cuotCuota ?? 0) + parseFloat(item.cuotSeg ?? 0) ) * item.porcentaje , 0)
+				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cajaValor) , 0)
+				//(parseFloat(item.cuotCuota ?? 0) + parseFloat(item.cuotSeg ?? 0) ) * item.porcentaje 
 			})
 			const sumaComisiones = computed( ()=> {
 				return cuotas.value.reduce( (acc, item) => acc + parseFloat(item.cuotSeg ?? 0) * item.porcentaje , 0)
@@ -328,19 +330,19 @@ if($cantReporte==1){
 				return cuotas.value.reduce( (acc, item) => acc + (parseFloat(item.cuotCuota ?? 0) - parseFloat(item.cuotInteres ?? 0)) * item.porcentaje, 0)
 			})			
 			const sumaOtrosIngresos = computed( ()=> {
-				return otrosIngresos.value.reduce( (acc, item) => acc + item.suma, 0)
+				return otrosIngresos.value.reduce( (acc, item) => acc + parseFloat(item.suma), 0)
 			})
 			const sumaTotalIngresos = computed(()=>{
-				return sumaIntereses.value + sumaMoras.value + sumaComisiones.value + sumaOtrosIngresos.value
+				return parseFloat(sumaIntereses.value) + parseFloat(sumaMoras.value) + parseFloat(sumaComisiones.value) + parseFloat(sumaOtrosIngresos.value)
 			})
 			const sumaBancos = computed( ()=> {
-				return bancos.value.reduce( (acc, item) => acc + item.cajaValor, 0)
+				return bancos.value.reduce( (acc, item) => acc + parseFloat(item.cajaValor), 0)
 			})
 			const sumaSueldos = computed( ()=> {
-				return sueldos.value.reduce( (acc, item) => acc + item.cajaValor, 0)
+				return sueldos.value.reduce( (acc, item) => acc + parseFloat(item.cajaValor), 0)
 			})
 			const sumaServicios = computed( ()=> {
-				return servicios.value.reduce( (acc, item) => acc + item.cajaValor, 0)
+				return servicios.value.reduce( (acc, item) => acc + parseFloat(item.cajaValor), 0)
 			})
 			const sumaTodosGastos = computed(()=>{
 				return sumaSueldos.value + sumaServicios.value
@@ -392,7 +394,7 @@ if($cantReporte==1){
 				//return sumaPorCobrarCapital.value + sumaPorCobrarInteres.value + sumaPorCobrarComision.value
 			})
 			const resultadoFinal = computed(()=>{
-				return parseFloat(sumaTotalIngresos.value) - parseFloat(sumaTotalEgresos.value)
+				return parseFloat(sumaTotalIngresos.value ) - parseFloat(sumaTotalEgresos.value )
 			})
 
 			return {
