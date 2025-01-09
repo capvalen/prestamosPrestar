@@ -1,0 +1,2 @@
+CREATE TABLE `evaluacion` (`id` INT NOT NULL AUTO_INCREMENT , `idPrestamo` INT NOT NULL , `contenido` JSON NOT NULL , `activo` TINYINT NULL DEFAULT '1' , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+ALTER TABLE `cliente` ADD `giroNegocio` VARCHAR(250) NULL DEFAULT '' AFTER `cliCelularReferencia`;
