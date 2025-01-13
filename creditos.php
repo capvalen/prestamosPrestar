@@ -226,6 +226,16 @@ display: none;
 			<?php else:?>
 				<button class="btn btn-infocat btn-outline" id="btnsolicitarDeuda"><i class="icofont-money"></i> Pago global</button>
 				<button class="btn btn-infocat btn-outline hidden" id="btnMoraExtra"><i class="icofont-shield-alt"></i> Mora extraordinaria</button>
+				<?php
+				$sqlEval = $db->prepare("SELECT id FROM `evaluacion` where idPrestamo = ? and activo = 1");
+				$sqlEval->execute([ intval($codCredito) ]);
+				if($sqlEval->rowCount()==0) $idEvaluacion ='no';
+				else{
+					$rowEval = $sqlEval->fetch(PDO::FETCH_ASSOC);
+					$idEvaluacion = $rowEval['id'];
+				}
+				?>
+				<a class="btn btn-infocat btn-outline" href="evaluacion.php?idEvaluacion=<?=$idEvaluacion?>&idPrestamo=<?= intval($codCredito)?>"><i class="icofont-shield-alt"></i> Ver evaluación</a>
 			<?php endif; ?>
 			<?php else: ?> 
 				<div class="col-xs-12 col-md-6"><br>

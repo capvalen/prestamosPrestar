@@ -23,6 +23,7 @@ function listar($db){
 	$ingresos = [];
 	$deudas = [];
 	$gastos = [];
+	$cuota = 0;
 
 	$sql = $db->prepare("SELECT c.*,
 	ca.calDescripcion, lower(a.addrDireccion) as addrDireccion, lower(a.addrReferencia) as addrReferencia, a.addrNumero,
@@ -56,13 +57,15 @@ function listar($db){
 		$ingresos = $contenido['ingresos'];
 		$deudas = $contenido['deudas'];
 		$gastos = $contenido['gastos'];
+		$cuota = $contenido['cuota'];
 	endif;
 
 	echo json_encode(array(
 		'cliente' => $cliente,
 		'ingresos' => $ingresos,
 		'deudas' => $deudas,
-		'gastos' => $gastos
+		'gastos' => $gastos,
+		'cuota' => $cuota
 	));
 
 }
@@ -86,6 +89,7 @@ function actualizar($db){
 		'ingresos' => $_POST['ingresos'],
 		'deudas' => $_POST['deudas'],
 		'gastos' => $_POST['gastos'],
+		'cuota' => $_POST['cuota']
 	);
 	
 	$sqlAdd= $db->prepare("UPDATE `evaluacion` SET `contenido`= ? WHERE id = ? and activo = 1");
@@ -109,8 +113,6 @@ function updateHeader($db){
 	else:
 		echo 'error';
 	endif;
-	
 }
-
 
 ?>

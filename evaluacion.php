@@ -159,9 +159,14 @@ require_once('vendor/autoload.php');
 										</table>
 									</div>
 								</div>
-								<div class="col-md-6">
+								<div class="col-md-6 ">
 									<p class="fs-5 mt-5 text-center fw-bold">Cuota a prestar:</p>
-									<input type="text" class="form-control">
+									<div class="form-inline">
+										<div class="form-group">
+											<input type="text" class="form-control text-center" @keyup="btnView=true" v-model="editables.cuota">
+										</div>
+										<button class="btn btn-outline btn-primary" v-show="btnView" @click="actualizar()"><i class="bi bi-arrow-clockwise"></i> Actualizar dato</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -207,8 +212,9 @@ require_once('vendor/autoload.php');
 				const idPrestamo = ref(-1)
 				const idCliente = ref(-1)
 				const idEvaluacion = ref(-1)
+				const btnView = ref(false)
 				const editables = ref({
-					giro:'', direccion:''
+					giro:'', direccion:'', cuota:0
 				})
 				const evaluacion = ref([])
 				
@@ -235,6 +241,7 @@ require_once('vendor/autoload.php');
 						ingresos.value = serv.data.ingresos;
 						deudas.value = serv.data.deudas;
 						gastos.value = serv.data.gastos;
+						editables.value.cuota = parseFloat(serv.data.cuota)
 					})
 				}
 
@@ -359,6 +366,7 @@ require_once('vendor/autoload.php');
 						ingresos: ingresos.value,
 						deudas: deudas.value,
 						gastos: gastos.value,
+						cuota: editables.value.cuota
 					}).then(serv=>{
 
 						if(serv.data.accion == 'ok'){
@@ -474,7 +482,7 @@ require_once('vendor/autoload.php');
 				return {
 					servidor, dosDecimales, sumaIngresos, sumaDeudas, sumaGastos, idEvaluacion, idPrestamo, idCliente,
 					pedirDatos, editables, evaluacion, ingresos, deudas, gastos,
-					addDeuda, borrarDeuda, addGasto, addIngreso, totalEgresos, updateHeader
+					addDeuda, borrarDeuda, addGasto, addIngreso, totalEgresos, updateHeader, btnView, actualizar
 				}
 			}
 		}).mount('#app')
