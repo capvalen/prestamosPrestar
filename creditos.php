@@ -402,9 +402,9 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 			</div>
 		
 			
-		<? endif; //fin de get titular ?>
-		<? endif; //fin de get Credito ?>
-		<? if( !isset($_GET['titular']) && !isset($_GET['credito']) && !isset($_GET['record']) ): ?>
+		<?php endif; //fin de get titular ?>
+		<?php endif; //fin de get Credito ?>
+		<?php if( !isset($_GET['titular']) && !isset($_GET['credito']) && !isset($_GET['record']) ): ?>
 		<h3 class="purple-text text-lighten-1">Zona créditos</h3><hr>
 		<h4 class="purple-text text-lighten-1">Mi cartera</h4><hr>
 		<p>Comience buscando un crédito en la parte superior o seleccione uno de todos los créditos activos:</p>
