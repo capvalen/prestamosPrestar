@@ -10,9 +10,9 @@ $fechaHoy = new DateTime();
 $estadoMora = null;
 
 $codCredito='';
-if( isset($_GET['credito']) ){
+if( isset($_GET['credito']) )
 	$codCredito=$base58->decode($_GET['credito']);
-}
+
 
 if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 	//echo 'evaluar';
@@ -44,22 +44,7 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 
 <body>
 
-<style>
-#contenedorCreditosFluid label{font-weight: 500;}
-#contenedorCreditosFluid p, #contenedorCreditosFluid table{color: #a35bb4;}
-.modal p{color: #333;}
-.spanIcono{font-size:16px; margin: 0 5px;}
-.text-danger {
-    color: #f9221e;
-}.text-primary {
-    color: #1388ec;
-}.text-success {
-    color: #00b303;
-}
-.dataTables_filter, .dataTables_info, .dataTables_paginate {
-display: none;
-}
-</style>
+
 <div id="wrapper">
 	<!-- Sidebar -->
 	<?php include 'menu-wrapper.php' ?>
@@ -86,17 +71,17 @@ display: none;
 
 	<?php
 
-	$sqlCr="SELECT presFechaAutom, presMontoDesembolso, presPeriodo, tpr.tpreDescipcion,
-	u.usuNombres, preInteresPers, pre.idUsuario,
-	case presFechaDesembolso when '0000-00-00' then 'Desembolso pendiente' else presFechaDesembolso end as `presFechaDesembolso`,
-	case presAprobado when 0 then 'Sin aprobar' when 2 then 'Rechazado' else 'Aprobado' end as `presAprobado`, 
-	case when ua.usuNombres is Null then '-' else ua.usuNombres end  as `usuarioAprobador`, pre.idTipoPrestamo,
-	`preMoraFija`, `preMoraFecha`, `intSimple`
-	FROM `prestamo` pre
-	inner join usuario u on u.idUsuario = pre.idUsuario
-	left join usuario ua on ua.idUsuario = pre.idUsuarioAprobador
-	inner join tipoprestamo tpr on tpr.idTipoPrestamo = pre.idTipoPrestamo
-	where pre.idPrestamo='{$codCredito}'"; ?>
+		$sqlCr="SELECT presFechaAutom, presMontoDesembolso, presPeriodo, tpr.tpreDescipcion,
+		u.usuNombres, preInteresPers, pre.idUsuario,
+		case presFechaDesembolso when '0000-00-00' then 'Desembolso pendiente' else presFechaDesembolso end as `presFechaDesembolso`,
+		case presAprobado when 0 then 'Sin aprobar' when 2 then 'Rechazado' else 'Aprobado' end as `presAprobado`, 
+		case when ua.usuNombres is Null then '-' else ua.usuNombres end  as `usuarioAprobador`, pre.idTipoPrestamo,
+		`preMoraFija`, `preMoraFecha`, `intSimple`
+		FROM `prestamo` pre
+		inner join usuario u on u.idUsuario = pre.idUsuario
+		left join usuario ua on ua.idUsuario = pre.idUsuarioAprobador
+		inner join tipoprestamo tpr on tpr.idTipoPrestamo = pre.idTipoPrestamo
+		where pre.idPrestamo='{$codCredito}'"; ?>
 		<!-- <table class="table table-hover">
 		<thead>
 			<tr>
@@ -109,10 +94,11 @@ display: none;
 			$contadorF = $respuesta->num_rows;
 			$rowCr = $respuesta->fetch_assoc();
 			$estadoMora =false;
-
-			
-			
-			if($contadorF!=0):
+				
+			if($contadorF==0){ ?>
+				<p>El código solicitado no está asociado a ningún crédito, revise el código o comuníquelo al área responsable. </p>
+				<?php die();
+			}
 			$_POST['plazos'] = $rowCr['presPeriodo'];
 			$_POST['periodo'] = $rowCr['presPeriodo'];
 			$_POST['monto']= $rowCr['presMontoDesembolso'];
@@ -152,7 +138,7 @@ display: none;
 				<div class="col-sm-2"><label for="">Desembolso</label><p>S/ <?= number_format($rowCr['presMontoDesembolso'],2); ?></p> <span class="hidden" id="spanMontoDado" data-monto=<?= $base58->encode($rowCr['presMontoDesembolso']);?>><?= $rowCr['presMontoDesembolso']; ?></span></div>
 				<div class="col-sm-2"><label for="">Meses</label>
 					<p class="hidden" id="spanTipoDescpago"><?= $rowCr['tpreDescipcion']; ?></p>
-					<select name="" id="cmbPeriodos" class="form-control input-sm" style="margin-botom:0px;">
+					<select name="" id="cmbPeriodos" class="form-control input-sm" style="margin-bottom:0px;">
 						<option value="1">Diario</option>
 						<option value="2">Semanal</option>
 						<option value="3">Mensual</option>
@@ -166,14 +152,12 @@ display: none;
 			<hr>
 			
 			<p><strong>Clientes asociados a éste préstamo:</strong>
-				<?php /* if(in_array($_COOKIE['ckPower'], $soloAdmis )): */?>
 			 <button onclick="$('#btnAsociarDNI').removeClass('hidden'); $('#btnSiAsociarDNI').addClass('hidden'); $('#siSocioAdd').parent().addClass('hidden'); $('#noSocioAdd').parent().addClass('hidden'); $('#modalLlamarDNISocio').modal('show')" class="btn btn-sm btn-success btn-outline"><div class="icofont icofont-plus"></div></button>
-				<?php /* endif; */ ?>
 		</p>
 
 			<div class="row">
 				<ul>
-		<?php $sqlInv= "SELECT i.idPrestamo, lower(concat(c.cliApellidoPaterno, ' ', c.cliApellidoMaterno, ', ', c.cliNombres)) as `datosCliente` , tpc.tipcDescripcion, i.idCliente FROM `involucrados` i
+				<?php $sqlInv= "SELECT i.idPrestamo, lower(concat(c.cliApellidoPaterno, ' ', c.cliApellidoMaterno, ', ', c.cliNombres)) as `datosCliente` , tpc.tipcDescripcion, i.idCliente FROM `involucrados` i
 				inner join cliente c on i.idCliente = c.idCliente
 				inner join tipocliente tpc on tpc.idTipoCliente = i.idTipoCliente
 				where idPrestamo ='{$codCredito}'";
@@ -269,15 +253,11 @@ display: none;
 			<?php $_POST['credito']=$_GET['credito']; include 'php/listarOtrospagos.php'; ?>
 			
 		</div><!-- Fin de contenedorCreditosFluid -->
-			
-
-		<?php else: //else de contadorF!=0 ?>
-				<p>El código solicitado no está asociado a ningún crédito, revise el código o comuníquelo al área responsable. </p>
-		<?php endif; //Fin de if $contadorF 
+		<?php 
 		} //Fin de if $respuesta 	?>
 		<!-- </table> -->
 
-		<?php else: //else de si existe GET['credidto]
+	<?php else: //else de si existe GET['credidto]
 		if(isset($_GET['record'])):
 			$idCli = $base58->decode($_GET['record']);
 			$_GET['idCliente'] = $_GET['record']; 
@@ -557,7 +537,8 @@ display: none;
  
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.11.3/b-2.0.1/b-html5-2.0.1/datatables.min.js"></script>
 
-<?php if ( isset($_COOKIE['ckidUsuario']) ){ ?>
+<?php if ( !isset($_COOKIE['ckidUsuario']) ) return false;?>
+
 <script>
 datosUsuario();
 $('.selectpicker').selectpicker();
@@ -1261,7 +1242,24 @@ $('#btnPrintTicketPagoGlo').click(function() {
 });
 <?php } ?>
 </script>
-<?php } ?>
+
+<style>
+	#contenedorCreditosFluid label{font-weight: 500;}
+	#contenedorCreditosFluid p, #contenedorCreditosFluid table{color: #a35bb4;}
+	.modal p{color: #333;}
+	.spanIcono{font-size:16px; margin: 0 5px;}
+	.text-danger {
+			color: #f9221e;
+	}.text-primary {
+			color: #1388ec;
+	}.text-success {
+			color: #00b303;
+	}
+	.dataTables_filter, .dataTables_info, .dataTables_paginate {
+	display: none;
+	}
+</style>
 </body>
+
 
 </html>
