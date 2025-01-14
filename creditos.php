@@ -208,7 +208,17 @@ display: none;
 						<li class="hidden" id="btnImpresionContratoPDF" data-pre="<?= $_GET['credito'];?>"><a href="#!"><i class="icofont-paper"></i> Contrato PDF</a></li>
 					</ul>
 				<?php endif;//de desembolso pendiente ?>
-				</div>
+			</div>
+				<?php //Botón para evaluación
+					$sqlEval = $db->prepare("SELECT id FROM `evaluacion` where idPrestamo = ? and activo = 1");
+					$sqlEval->execute([ intval($codCredito) ]);
+					if($sqlEval->rowCount()==0) $idEvaluacion ='no';
+					else{
+						$rowEval = $sqlEval->fetch(PDO::FETCH_ASSOC);
+						$idEvaluacion = $rowEval['id'];
+					}
+				?>
+				<a class="btn btn-infocat btn-outline" href="evaluacion.php?idEvaluacion=<?=$idEvaluacion?>&idPrestamo=<?= intval($codCredito)?>"><i class="icofont-shield-alt"></i> Ver evaluación</a>
 				<?php if(isset($_GET['credito']) && $rowCr['presAprobado']== 'Sin aprobar' && in_array($_COOKIE['ckPower'], $soloAdmis)): ?>
 					<button class="btn btn-success btn-outline " id="btnShowVerificarCredito"><i class="icofont-check-circled"></i> Aprobar crédito</button>
 					<button class="btn btn-danger btn-outline " id="btnDenyVerificarCredito"><i class="icofont-thumbs-down"></i> Denegar crédito</button>
@@ -226,16 +236,6 @@ display: none;
 			<?php else:?>
 				<button class="btn btn-infocat btn-outline" id="btnsolicitarDeuda"><i class="icofont-money"></i> Pago global</button>
 				<button class="btn btn-infocat btn-outline hidden" id="btnMoraExtra"><i class="icofont-shield-alt"></i> Mora extraordinaria</button>
-				<?php
-				$sqlEval = $db->prepare("SELECT id FROM `evaluacion` where idPrestamo = ? and activo = 1");
-				$sqlEval->execute([ intval($codCredito) ]);
-				if($sqlEval->rowCount()==0) $idEvaluacion ='no';
-				else{
-					$rowEval = $sqlEval->fetch(PDO::FETCH_ASSOC);
-					$idEvaluacion = $rowEval['id'];
-				}
-				?>
-				<a class="btn btn-infocat btn-outline" href="evaluacion.php?idEvaluacion=<?=$idEvaluacion?>&idPrestamo=<?= intval($codCredito)?>"><i class="icofont-shield-alt"></i> Ver evaluación</a>
 			<?php endif; ?>
 			<?php else: ?> 
 				<div class="col-xs-12 col-md-6"><br>

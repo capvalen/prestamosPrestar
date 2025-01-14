@@ -78,7 +78,8 @@ switch ($_POST['caso']) {
 
 
 		case 'R2':
-		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso, cajaObservacion, date_format(c.cajaFecha, '%d/%m/%Y') as cajaFecha  FROM `caja` c left join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (43,85,84,83,82,40,41) and cajaActivo = 1 order by idPrestamo;";
+		$sql="SELECT `idCaja`,c.`idPrestamo`,`idCuota`, `cajaValor`, pre.presMontoDesembolso, pre.preInteresPers, pre.presPeriodo, tp.tipoDescripcion, c.idtipoProceso, cajaObservacion, date_format(c.cajaFecha, '%d/%m/%Y') as cajaFecha  FROM `caja` c left join prestamo pre on pre.idPrestamo = c.idPrestamo inner join tipoproceso tp on tp.idtipoproceso = c.idtipoProceso where cajaFecha between '{$_POST['fInicio']} 00:00' and '{$_POST['fFinal']} 23:59:59' and c.idTipoProceso in (
+		43,85,84,83,82,40,41,93,92) and cajaActivo = 1 order by idPrestamo;";
 		
 		$resultado=$cadena->query($sql);
 		?> 

@@ -32,7 +32,7 @@ if($cantReporte==1){
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Simulador - <?= $Htitle;?></title>
+	<title>Balance mensual - <?= $Htitle;?></title>
 	<?php include 'headers.php'; ?>
 
 </head>
@@ -185,10 +185,14 @@ if($cantReporte==1){
 								<td class="text-capitalize">Servicio: {{servicio.cajaObservacion}}</td>
 								<td>S/ {{moneda(servicio.cajaValor)}}</td>
 							</tr>
+							<tr v-for="otros in otrosGastos">
+								<td class="text-capitalize">Otros: {{otros.cajaObservacion}}</td>
+								<td>S/ {{moneda(otros.cajaValor)}}</td>
+							</tr>
 						</tbody>
 						<tfoot>
 							<tr>
-								<th>Total de deudas</th>
+								<th>Total de gastos</th>
 								<th>S/ {{moneda(sumaTodosGastos)}}</th>
 							</tr>
 						</tfoot>
@@ -344,8 +348,11 @@ if($cantReporte==1){
 			const sumaServicios = computed( ()=> {
 				return servicios.value.reduce( (acc, item) => acc + parseFloat(item.cajaValor), 0)
 			})
+			const sumaOtros = computed( ()=> {
+				return otrosGastos.value.reduce( (acc, item) => acc + parseFloat(item.cajaValor), 0)
+			})
 			const sumaTodosGastos = computed(()=>{
-				return sumaSueldos.value + sumaServicios.value
+				return sumaSueldos.value + sumaServicios.value + sumaOtros.value
 			})			
 			const sumaTotalEgresos = computed(()=>{
 				return parseFloat(sumaBancos.value) + parseFloat(sumaTodosGastos.value)
@@ -403,7 +410,7 @@ if($cantReporte==1){
 				intereses, moras, cuotas, otrosIngresos, bancos, servicios, recuperar, sueldos, otrosGastos, falta,
 				moneda,
 				sumaIntereses, sumaMoras, sumaComisiones, sumaOtrosIngresos, sumaTotalIngresos,
-				sumaBancos, sumaSueldos, sumaServicios, sumaTodosGastos,
+				sumaBancos, sumaSueldos, sumaServicios, sumaTodosGastos, sumaOtros,
 				sumaCuotas, sumaCapital,
 				sumaTotalEgresos, sumaPorCobrarCapital, sumaPorCobrarInteres, sumaPorCobrarComision, sumaPorCobrarCuota,
 				resultadoFinal,

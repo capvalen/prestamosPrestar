@@ -108,9 +108,10 @@ $sqlSueldos=$db->prepare("SELECT cajaValor, cajaObservacion FROM `caja` WHERE
 and year(`cajaFecha`) = ? and month(`cajaFecha`) = ? and cajaActivo = 1;");
 
 //Otros gastos:
-$sqlOtrosGastos=$db->prepare("SELECT sum(`cajaValor`) as suma FROM `caja` WHERE 
-`idTipoProceso`= 84
+$sqlOtrosGastos=$db->prepare("SELECT cajaValor, cajaObservacion FROM `caja` WHERE 
+`idTipoProceso` in( 85,84,83,82,41)
 and year(`cajaFecha`) = ? and month(`cajaFecha`) = ? and cajaActivo = 1;");
+
 
 
 //---------- Por cobrar ----------
