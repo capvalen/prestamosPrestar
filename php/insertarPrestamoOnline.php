@@ -7,6 +7,7 @@ $base58 = new StephenHill\Base58();
 
 
 $fecha = new DateTime($_POST['fDesembolso']);
+$diaProximo = $fecha->format('d');
 
 $feriados = include "feriadosProximos.php";
 $monto = $_POST['monto'];
@@ -64,19 +65,13 @@ foreach ($clientes as $cliente ) {
 
 $esclavo->multi_query($sqlClie);
 
-
-
-
-
-
-
 $sqlCuotas='';
 
 //Para saber si es sábado(6) o domingo(0):  format('w') 
 
 $lista1= '[{
 	"numDia": 0,
-	"fPago": "'.$fecha->format('Y-m-d').'",
+	"fPago": "'. $fecha->format('Y-m-d').'",
 	"razon": "Desembolso",
 	"cuota": 0,
 	"interes": 0,
@@ -90,6 +85,8 @@ $jsonSimple= json_decode($lista1, true);
 
 $interesSumado=0;
 $fecha->add($intervalo);
+if($_POST['fijar'] == 'si')
+	$fecha->setdate($fecha->format('Y'), $fecha->format('m'), $diaProximo);
 
 //$cuota = round($monto*$interes/$plazo,2);
 for ($i=0; $i < $plazo ; $i++) {
@@ -150,6 +147,9 @@ for ($i=0; $i < $plazo ; $i++) {
 			);
 			//echo "Día #".($i+1).": ". $fecha->format('d/m/Y') . "<br>";
 			$fecha->add($intervalo);
+
+			if($_POST['fijar'] == 'si')
+				$fecha->setdate($fecha->format('Y'), $fecha->format('m'), $diaProximo);
 			//echo $sql;
 			
 			//unset($conection);

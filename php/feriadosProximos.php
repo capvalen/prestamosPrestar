@@ -5,7 +5,7 @@ include 'conkarl.php';
 
 
 $filas=array();
-$log = mysqli_query($conection,"call feriadosProximos();");// ".$_POST['idSucursal']."
+$log = mysqli_query($conection,"SELECT * FROM `feriados` where ferFecha > curdate();");// ".$_POST['idSucursal']."
 
 while($row = mysqli_fetch_array($log, MYSQLI_ASSOC))
 {

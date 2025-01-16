@@ -31,6 +31,7 @@ if( count($row)===1 ){
 } */
 
 $fecha = new DateTime($_POST['fDesembolso']);
+$diaProximo = $fecha->format('d');
 
 $feriados = include "feriadosProximos.php";
 $monto = $_POST['monto'];
@@ -42,9 +43,7 @@ $meses =  $_POST['periodo'];
 
 $sumaCapital =0; $sumaInt=0; $sumaCuot=0; $sumSeguro=0;
 
-//Para saber si es sábado(6) o domingo(0):  format('w') 
-
-
+//Para saber si es sábado(6) o domingo(0):  format('w')
 $lista1= '[{
 	"numDia": 0,
 	"fPago": "'.$fecha->format('Y-m-d').'",
@@ -94,15 +93,16 @@ $seguro = $monto/$plazo*0.01;
 
 $interesSumado=0;
 $fecha->add($intervalo);
+if($_POST['fijar'] == 'si')
+	$fecha->setdate($fecha->format('Y'), $fecha->format('m'), $diaProximo);
 
 //$cuota = round($monto*$interes/$plazo,2);
 for ($i=0; $i < $plazo ; $i++) {
 /* 	?> <tr><?php */
 	
 	$razon = esFeriado($feriados, $fecha->format('Y-m-d'));
-	if($razon!=false && $_POST['modo']!=3 ){
+	if($razon!=false ){ //&& $_POST['modo']!=3
 		//echo "si es feriado";
-
 		$i--;
 		$jsonSimple[]=array(
 			"numDia"=>'-',
@@ -155,7 +155,10 @@ for ($i=0; $i < $plazo ; $i++) {
 				"saldo" => $saldo,
 				"saldoReal"=> 0
 			);
+			
 			$fecha->add($intervalo);
+			if($_POST['fijar'] == 'si')
+				$fecha->setdate($fecha->format('Y'), $fecha->format('m'), $diaProximo);
 		}
 	}
 /* ?></tr><?php */
@@ -231,6 +234,8 @@ function esFeriado($feriados, $dia){
 	}
 	return false;
 }
+
+function diaNoFeriado(){}
 
 ?>
 </tbody>

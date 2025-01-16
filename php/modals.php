@@ -312,11 +312,11 @@ if( in_array($_COOKIE['ckPower'], $soloAdmis) ){ ?>
 			<h4 class='modal-tittle'> Reprogramar fechas</h4>
 		</div>
 		<div class='modal-body'>
-			<p>Indique el primer día que desea empezar a reprogramar todas las fechas sin pagar.</p>
+			<p>Indique el día que desea fijar a reprogramar todas las fechas sin pagar.</p>
 			<input type="date" class="form-control" id="fechaReprogramacion" value="<?= date('Y-m-d'); ?>">
 		</div>
 		<div class='modal-footer'>
-			<button type='button' class='btn btn-primary btn-outline' id='btnCalibrarFechas'><i class="icofont-paper"></i> Realizar acción</button>
+			<button type='button' class='btn btn-primary btn-outline' id='btnCalibrarFechas' data-dismiss='modal'><i class="icofont-paper"></i> Realizar acción</button>
 		</div>
 		</div>
 	</div>

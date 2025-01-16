@@ -180,7 +180,7 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 			<hr>
 
 			<div class="container row" id="rowBotonesMaestros">
-				<div class="col-xs-12 col-md-6">
+				<div class="col-xs-12 col-md-8">
 				<div class="btn-group">
 				<?php if($rowCr['presFechaDesembolso']!='Desembolso pendiente'): ?>
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style='margin-bottom: 0px;'  ><i class="icofont-print"></i>  Impresiones <span class="caret"></span>
@@ -209,7 +209,7 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 				<?php else: 
 					if( in_array( $_COOKIE['ckPower'], $soloAdmis) &&  $rowCr['presAprobado']<>"Rechazado"):?>
 					<button class="btn btn-rojoFresa btn-outline" id="btnAnularCredito"><i class="icofont-ui-delete"></i> Anular crédito</button>
-					<button class="btn btn-dark btn-outline hidden" id="btnReprogramarFechas"><i class="icofont-ui-reply"></i> Reprogramar fechas</button>
+					<button class="btn btn-dark btn-outline" id="btnReprogramarFechas"><i class="icofont-ui-reply"></i> Fijar fechas</button>
 				<?php endif; endif; ?>
 				</div>
 
@@ -222,7 +222,7 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 				<button class="btn btn-infocat btn-outline hidden" id="btnMoraExtra"><i class="icofont-shield-alt"></i> Mora extraordinaria</button>
 			<?php endif; ?>
 			<?php else: ?> 
-				<div class="col-xs-12 col-md-6"><br>
+				<div class="col-xs-12 col-md-4"><br>
 					<div class="alert alert-morado container-fluid" role="alert">
 						<div class="col-xs-4 col-sm-2 col-md-3">
 							<img src="images/ghost.png" alt="img-responsive" width="100%">
@@ -369,6 +369,13 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 								</select>
 							</div>
 						</div>
+						<div class="col-xs-6 col-sm-3">
+							<label for="">¿Fechas fijas?</label>
+							<select class="form-control" id="sltFijas">
+								<option value="no">No, autocalcular</option>
+								<option value="si">Si, fijar</option>
+							</select>
+						</div>
 						<div class="col-xs-6 col-sm-3 hidden" id="divPrimerPago">
 							<label for="">Fecha primer pago</label>
 							<input type="text" id="dtpFechaPrimerv3" class="form-control text-center" placeholder="Fecha para controlar citas" autocomplete="off">
@@ -378,9 +385,9 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 							<input type="text" id="txtPrendaSimple" class="form-control" placeholder="Rellene si hay algùn item prendario" autocomplete="off">
 						</div>
 						
-						<div class="col-xs-5">
-							<button class="btn btn-azul btn-outline btnSinBorde" style="margin-top: 10px;" id="btnSimularPagos"><i class="icofont-support-faq"></i> Simular</button>
-							<button class="btn btn-infocat btn-outline btnSinBorde" style="margin-top: 10px;" id="btnGuardarCred"><i class="icofont-save"></i> Guardar</button>
+						<div class="col-xs-6 col-md-3">
+							<button class="btn btn-azul btn-outline" style="margin-top: 10px;" id="btnSimularPagos"><i class="icofont-support-faq"></i> Simular</button>
+							<button class="btn btn-infocat btn-outline" style="margin-top: 10px;" id="btnGuardarCred"><i class="icofont-save"></i> Guardar</button>
 						
 						</div>
 						<label class="orange-text text-darken-1 hidden" id="labelFaltaCombos" for=""><i class="icofont-warning"></i> Todas las casillas tienen que estar rellenadas para proceder</label>
@@ -534,7 +541,6 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 <script src="js/bootstrap-material-datetimepicker.js?version=2.0.1"></script>
 <?php include 'php/existeCookie.php'; ?>
 
- 
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.11.3/b-2.0.1/b-html5-2.0.1/datatables.min.js"></script>
 
 <?php if ( !isset($_COOKIE['ckidUsuario']) ) return false;?>
@@ -779,7 +785,8 @@ $('#btnSimularPagos').click(function() {
 				monto: $('#txtMontoPrinc').val(),
 				tasaInt: $('#txtInteres').val(),
 				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
-				primerPago: moment($('#dtpFechaPrimerv3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD')
+				primerPago: moment($('#dtpFechaPrimerv3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+				fijar: $('#sltFijas').val()
 				}}).done(function(resp) { //console.log(resp)
 				$('#tableSimulacion').html(resp);
 			//	$('#tbodyResultados td').last().text('0.00');
@@ -873,7 +880,8 @@ $('#btnGuardarCred').click(function() {
 				tasaInt: $('#txtInteres').val(),
 				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
 				primerPago: moment($('#dtpFechaPrimerv3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
-				prendaSimple: $('#txtPrendaSimple').val()
+				prendaSimple: $('#txtPrendaSimple').val(),
+				fijar: $('#sltFijas').val()
 			}}).done(function(resp) {
 				console.log(resp)
 				if( parseInt(resp)>0 ){
@@ -1062,12 +1070,10 @@ $('#btnDenyVerificarCredito').click(function() {
 });
 $('#btnVerificarCredito').click(function() {
 	$.ajax({url: 'php/updateVerificarCredito.php', type: 'POST', data: { credit: '<?= $codCredito; ?>' }}).done(function(resp) { //console.log(resp)
-		if(resp==1){
+		if(resp==1)
 			location.reload();
-		}
 	});
 });
-
 <?php endif;
 if( in_array($_COOKIE['ckPower'], $soloAdmis)){ ?>
 $('#btnAnularCredito').click(function() {
@@ -1084,7 +1090,14 @@ $('#btnReprogramarFechas').click(function() {
 	$("#modalReprogramarFechas").modal('show');
 });
 $('#btnCalibrarFechas').click(function() {
-	$.post('http://infocatsoluciones.com/app/prestamosPrestar/php/reprogramacionFechas.php', {nuevaFecha: $('#fechaReprogramacion').val(), idPrestamo: '<?= $codCredito; ?>' }, function(resp){ console.log(resp); location.reload(); });
+	$.post('php/reprogramacionFechas_v2.php', {nuevaFecha: $('#fechaReprogramacion').val(), idPrestamo: '<?= $codCredito; ?>' }, function(resp){
+		let respuesta = JSON.parse(resp)
+		if(respuesta.respuesta == 'ok'){
+			$('#modalGuardadoCorrecto #spanBien').text(respuesta.mensaje);
+			$('#modalGuardadoCorrecto').modal('show')
+		}
+		//location.reload();
+	});
 });
 $('#btnReactivarPrestamo').click(function() {
 	$.ajax({url: 'php/reactivarCredito.php', type: 'POST', data: { idPrestamo: '<?php if(isset ($_GET['credito'])){echo $_GET['credito'];}else{echo '';}; ?>' }}).done(function(resp) {
