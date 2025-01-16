@@ -799,6 +799,7 @@ $('#btnSimularPagos').click(function() {
 				monto: $('#txtMontoPrinc').val(),
 				tasaInt: $('#txtInteres').val(),
 				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
+				fijar: $('#sltFijas').val()
 			 }}).done(function(resp) {
 				//console.log(resp)
 				$('#tableSimulacion').html(resp);
@@ -905,7 +906,7 @@ $('#btnGuardarCred').click(function() {
 				monto: $('#txtMontoPrinc').val(),
 				tasaInt: $('#txtInteres').val(),
 				fDesembolso: moment($('#dtpFechaIniciov3').val(), 'DD/MM/YYYY').format('YYYY-MM-DD'),
-				
+				fijar: $('#sltFijas').val()
 			}}).done(function(resp) {
 				console.log(resp)
 				if( parseInt(resp)>0 ){

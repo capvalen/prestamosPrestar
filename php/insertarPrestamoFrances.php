@@ -8,6 +8,8 @@ $feriados = include "feriadosProximos.php";
 
 
 $hoy = new DateTime($_POST['fDesembolso']);
+$diaProximo = $hoy->format('d');
+
 $capital = $_POST['monto'];
 $interes = $_POST['tasaInt']/100;
 $periodo = $_POST['periodo'];
@@ -70,6 +72,9 @@ $sqlCuotas=$sqlCuotas."INSERT INTO `prestamo_cuotas`(`idCuota`, `idPrestamo`, `c
 
 for ($i=1; $i <= $plazo ; $i++) {
 	$hoy->add($intervalo);
+	if($_POST['fijar'] == 'si')
+	$hoy->setdate($hoy->format('Y'), $hoy->format('m'), $diaProximo);
+
 	$interesAmort = round($capitalVivo * $interes, 2, PHP_ROUND_HALF_UP );
 	$amortizacion = round($cuota - $interesAmort, 2, PHP_ROUND_HALF_UP);
 	$capitalVivo = round($capitalVivo - $amortizacion, 2, PHP_ROUND_HALF_UP );
