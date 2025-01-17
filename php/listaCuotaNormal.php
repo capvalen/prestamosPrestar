@@ -18,6 +18,7 @@
 	<tbody>
 <?php 
 	$fechaHoy= new DateTime();
+	$fechaHoy->setTime(0, 0, 0);
 		$sqlPrim = "SELECT `presMontoDesembolso`, `presPeriodo`,`preInteresPers`, `idTipoPrestamo`
 		from prestamo where `idPrestamo` = {$codCredito}";
 	
@@ -80,13 +81,16 @@
 				<td class="tdPagoCli" data-pago="<?= number_format($rowCuot['cuotPago'],2); ?>"><? if($k>=1) {echo number_format($rowCuot['cuotPago'],2);} ?></td>
 				<td class="hidden"><?= number_format($rowCuot['cuotSaldo'],2); ?></td>
 				<td><?php if(   $rowCuot['idTipoPrestamo']=='79' && $rowCr['presFechaDesembolso']<>'Desembolso pendiente' && $k>=1):
-				$diasDebe2=$fechaHoy ->diff($fechaCu);
+				$diasDebe2=$fechaHoy->diff($fechaCu);
 				if( $rowCr['presAprobado']== "Rechazado" ){ ?>
 					<p class="red-text text-darken-1">Rechazado</p>
 				<?php } else{
-					if( floatval($diasDebe2->format('%R%a')) < 0 ){
-					?> <p class="red-text text-darken-1">Cuota fuera de fecha (<?= $diasDebe2->format('%a').' días';?>)</p>
-					<!-- <button class="btn btn-primary btn-outline btn-sm btnPagarCuota"><i class="icofont-money"></i> Pagar</button> --> <?php
+					if( $diasDebe2->invert == 1 && $diasDebe2->days >0 ){
+					?> <p class="red-text text-darken-1">Cuota fuera de fecha (<?= $diasDebe2->days .' días';?>)</p>
+					<!-- <button class="btn btn-primary btn-outline btn-sm btnPagarCuota"><i class="icofont-money"></i> Pagar</button> -->
+					<?php }else if( $diasDebe2->days == 0 ){ ?>
+						<p class="red-text text-darken-1">Cuota se vence hoy (<?= $diasDebe2->days ?> días)</p>
+					<?php
 					}else{
 						?> <p class="blue-text text-accent-2">Cuota en buena fecha</p><?php
 					}

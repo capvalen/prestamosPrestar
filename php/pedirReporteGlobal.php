@@ -115,8 +115,8 @@ and year(`cajaFecha`) = ? and month(`cajaFecha`) = ? and cajaActivo = 1;");
 
 
 //---------- Por cobrar ----------
-$sqlFalta = $db->prepare("SELECT idCuota, pc.cuotCapital, pc.cuotInteres, pc.cuotSeg, round(cuotPago / (pc.cuotCapital + pc.cuotInteres+ pc.cuotSeg ),2) as porcentaje FROM `prestamo_cuotas` pc
-where idTipoPrestamo in (33, 79);");
+$sqlFalta = $db->prepare("SELECT pc.idCuota, pc.cuotCapital, pc.cuotInteres, pc.cuotSeg, round(pc.cuotPago / (pc.cuotCapital + pc.cuotInteres+ pc.cuotSeg ),2) as porcentaje FROM `prestamo_cuotas` pc inner join prestamo p on p.idPrestamo = pc.idPrestamo
+where pc.idTipoPrestamo in (33, 79) and p.presActivo=1;");
 
 
 //---------- Ejecución ----------
@@ -128,7 +128,7 @@ $sqlBancos ->execute([ $_POST['fecha']['año'], $_POST['fecha']['mes'] ]);
 $sqlServicios ->execute([ $_POST['fecha']['año'], $_POST['fecha']['mes'] ]);
 $sqlSueldos ->execute([ $_POST['fecha']['año'], $_POST['fecha']['mes'] ]);
 $sqlOtrosGastos ->execute([ $_POST['fecha']['año'], $_POST['fecha']['mes'] ]);
-$sqlFalta ->execute([ $_POST['fecha']['año'], $_POST['fecha']['mes'] ]);
+$sqlFalta ->execute([ ]);
 $sqlRecuperar ->execute();
 
 while($rowIntereses = $sqlIntereses->fetch(PDO::FETCH_ASSOC))

@@ -410,7 +410,7 @@ require_once('vendor/autoload.php');
 
 				function borrarIngreso(index){
 					Swal.fire({
-						title: `¿Estás seguro de borrar "${deudas.value[index].razon}" de monto S/ ${deudas.value[index].monto}?`,
+						title: `¿Estás seguro de borrar "${ingresos.value[index].razon}" de monto S/ ${ingresos.value[index].monto}?`,
 						icon: 'warning',
 						showCancelButton: true,
 						confirmButtonColor: '#3085d6',
@@ -427,7 +427,7 @@ require_once('vendor/autoload.php');
 
 				function borrarGasto(index){
 					Swal.fire({
-						title: `¿Estás seguro de borrar "${deudas.value[index].razon}" de monto S/ ${deudas.value[index].monto}?`,
+						title: `¿Estás seguro de borrar "${gastos.value[index].razon}" de monto S/ ${gastos.value[index].monto}?`,
 						icon: 'warning',
 						showCancelButton: true,
 						confirmButtonColor: '#3085d6',
@@ -482,7 +482,8 @@ require_once('vendor/autoload.php');
 				return {
 					servidor, dosDecimales, sumaIngresos, sumaDeudas, sumaGastos, idEvaluacion, idPrestamo, idCliente,
 					pedirDatos, editables, evaluacion, ingresos, deudas, gastos,
-					addDeuda, borrarDeuda, addGasto, addIngreso, totalEgresos, updateHeader, btnView, actualizar
+					addDeuda, borrarDeuda, addGasto, addIngreso, totalEgresos, updateHeader, btnView, actualizar,
+					borrarGasto, borrarIngreso
 				}
 			}
 		}).mount('#app')

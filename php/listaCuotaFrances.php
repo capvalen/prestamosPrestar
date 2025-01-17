@@ -97,12 +97,15 @@
 				if( $rowCr['presAprobado']== "Rechazado" ){ ?>
 					<p class="red-text text-darken-1">Rechazado</p>
 				<?php } else{
-					if( floatval($diasDebe2->format('%R%a')) < 0 ){
-					?> <p class="red-text text-darken-1">Cuota fuera de fecha (<?= $diasDebe2->format('%a').' días';?>)</p>
-					<!-- <button class="btn btn-primary btn-outline btn-sm btnPagarCuota"><i class="icofont-money"></i> Pagar</button> --> <?php
-					}else{
-						?> <p class="blue-text text-accent-2">Cuota en buena fecha</p><?php
-					}
+						if( floatval($diasDebe2->format('%R%a')) < 0 ){
+						?> <p class="red-text text-darken-1">Cuota fuera de fecha (<?= $diasDebe2->format('%a').' días';?>)</p>
+						<!-- <button class="btn btn-primary btn-outline btn-sm btnPagarCuota"><i class="icofont-money"></i> Pagar</button> -->
+						<?php }else if( floatval($diasDebe2->format('%R%a')) == 0 ){ ?>
+							<p class="red-text text-darken-1">Cuota se vence hoy (<?= $diasDebe2->format('%R%a')?>)</p>
+						<?php
+						}else{
+							?> <p class="blue-text text-accent-2">Cuota en buena fecha</p><?php
+						}
 					}
 					endif;
 
