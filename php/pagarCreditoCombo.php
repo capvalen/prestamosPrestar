@@ -56,8 +56,8 @@ elseif($diasMora>0): // -> Se paga la mora $diasMora-=1;
 		// CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) 
 
 	//echo "mora pagada ".$moraTotal."\n";
+	$resultadoMora=$esclavo->query($sqlMora);
 endif;
-$resultadoMora=$esclavo->query($sqlMora);
 
 $filas[] = array('sumaMora' => $_POST['cliMora'], 'diasMora' => $diasMora, 'queEs'=> 'Pago mora', 'montoCuota' => $_POST['cliMora']  );
 
