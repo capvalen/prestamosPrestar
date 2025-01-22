@@ -26,11 +26,12 @@ if($resultado->num_rows>0){
 
 	$hoy=new DateTime();
 
-
+$i=0;
 while($row=$resultado->fetch_assoc()){ 
 	$fecha = new DateTime($row['presFechaDesembolso']);
 	?>
 	<tr>
+		<td><?=$i+1;?></td>
 		<td><a href="creditos.php?credito=<?= $base58->encode($row['idPrestamo']);?>">CR-<?= $row['idPrestamo'];?></a></td>
 		<td class="mayuscula"><a href="clientes.php?idCliente=<?= $base58->encode($row['idCliente']); ?>"><?= $row['cliNombres'];?></a></td>
 		<td><?= $row['tpreDescipcion'];?></td>
@@ -40,7 +41,7 @@ while($row=$resultado->fetch_assoc()){
 		<td><?= $row['preInteresPers'];?></td>
 		<td><?= $fecha->format('d/m/Y');?></td>
 	</tr>
-<? }
+<? $i++; }
 }else{
 ?>
 <tr>

@@ -31,12 +31,14 @@
 					if( file_exists($imagen) ):?>
 					<img src="<?= $imagen; ?>" class="img-responsive img-circle" style=" display: inline-block; padding: 0 40px;">
 				<? else: ?>
-					<img src="https://perucash.com/app/images/usuarios/noimg.jpg?ver=1.1" class="img-responsive img-circle" style=" display: inline-block; padding: 0 40px;">
+					<img src="noimg.jpg?ver=1.1" class="img-responsive img-circle hidden" style=" display: inline-block; padding: 0 40px;">
 				<? endif;?>
 				<br>
                <label for="">Mi nombre</label> <input type="text" id="txtNombre" class="form-control text-center mayuscula" readonly value="<?= $_COOKIE['cknomCompleto'];?>">
-               <label for="">Mi correo</label> <input type="text" id="txtCorreo" class="form-control text-center" autocomplete="nope" value="<? if(isset($_COOKIE['ckCorreo'])){ echo $_COOKIE['ckCorreo'];}?>">
-					<button class="btn btn-azul btn-outline btn-block btn.lg" id="btnCambiarCorrreo"><i class="icofont icofont-ui-email"></i> Actualizar mi correo</button><br>
+               <div class="hidden">
+								<label for="">Mi correo</label> <input type="text" id="txtCorreo" class="form-control text-center" autocomplete="nope" value="<? if(isset($_COOKIE['ckCorreo'])){ echo $_COOKIE['ckCorreo'];}?>">
+													<button class="btn btn-azul btn-outline btn-block btn.lg" id="btnCambiarCorrreo"><i class="icofont icofont-ui-email"></i> Actualizar mi correo</button><br>
+							 </div>
                <label for="">Cambiar contraseña:</label> <input type="password" id="txtPassN" class="form-control text-center" autocomplete="nope" value="*****************">
 					<input type="password" id="txtPassR" class="form-control text-center" autocomplete="nope" value="*****************">
 					<p class="perror hidden" style="color: rgb(213, 0, 0);"></p>

@@ -6,7 +6,7 @@ header('Content-Type: text/html; charset=utf8');
 include 'conkarl.php';
 $clavePrivada= 'Es sencillo hacer que las cosas sean complicadas, pero difícil hacer que sean sencillas. Friedrich Nietzsche';
 $path = '/';
-$dominio = '.infocatsoluciones.com';
+$dominio = 'localhost';//.infocatsoluciones.com
 
 $fila = array(); $i=0;
 //echo "select * from  usuario u inner join sucursal s on s.idSucursal=u.idSucursal where usuNick = '".$_POST['user']."' and usuPass='".md5($_POST['pws'])."' and usuActivo=1;";

@@ -33,13 +33,16 @@ include 'php/conkarl.php'; ?>
 					<caption>Listado de todos los usuarios registrados</caption>
 					<thead>
 					<tr>
-					<th>N°</th> <th>Nombres y apellidos</th> <th>Nivel</th> <th>Activo</th></tr>
+					<th>N°</th> <th>Nombres y apellidos</th> <th>Nivel</th> <th>Activo</th>
+						<th>Usuario</th>
+						<th>@</th>
+					</tr>
 					</thead>
 					<tbody>
 					
 				<?php
 				$i=0;
-				$sentencia = mysqli_query($conection,"SELECT `idUsuario`, `usuNombres`, `usuApellido`,	`usuPoder`, `usuActivo` FROM `usuario` order by usuNombres asc");
+				$sentencia = mysqli_query($conection,"SELECT `idUsuario`, usuNick, `usuNombres`, `usuApellido`,	`usuPoder`, `usuActivo` FROM `usuario` order by usuNombres asc");
 				while($ussers= mysqli_fetch_array($sentencia, MYSQLI_ASSOC)){?>
 					<tr data-id="<?= $ussers['idUsuario'];?>">  <th><?= $i+1; ?></th> <td class='mayuscula' ><?= $ussers['usuNombres'].' '.$ussers['usuApellido'];  ?></td>
 					<td> 
@@ -62,6 +65,10 @@ include 'php/conkarl.php'; ?>
 						<option value="0" <?php if($ussers['usuActivo']==0 ){echo 'selected';}?> >Deshabilitado</option>
 					</select>
 					
+					</td>
+					<td><?= $ussers['usuNick']?></td>
+					<td>
+						<button class="btn btn-outline btn-primary" title="Asignar contraseña" onclick="abrirClave(<?=$ussers['idUsuario']?>)"><i class="icofont icofont-key-hole"></i></button>
 					</td>
 					</tr>
 				<? $i++; }
@@ -118,6 +125,24 @@ include 'php/conkarl.php'; ?>
 	</div>
 </div>
 </div>
+
+<div class="modal fade" id="modalClave" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Cambiar contraseña</h4>
+      </div>
+      <div class="modal-body">
+        <p>Ingrese la nueva contraseña</p>
+				<input type="text" class="form-control" id="txtNuevaClave" autocomplete="off">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnCambiarClave">Cambiar clave</button>
+      </div>
+    </div>
+  </div>
 
 
 
@@ -207,8 +232,28 @@ $('#btnGuardarAddUser').click(function () { console.log('a')
 		});
 	}
 });
+function abrirClave(id){
+	$.idUsuario = id
+	$('#modalClave').modal('show')
+}
+$('#btnCambiarClave').click(function(){
+	$.ajax({
+		url: 'php/actualizarDatosUsuario.php', type:'POST', data:{
+			idUsuario: $.idUsuario,
+			passw: $('#txtNuevaClave').val()
+		}
+	}).done(resp=>{
+		console.log(resp)
+		$('#txtNuevaClave').val('')
+	})
+})
 </script>
 <?php } ?>
+<style>
+	.form-control{
+		margin-bottom:0!important;
+	}
+</style>
 </body>
 
 </html>

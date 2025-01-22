@@ -930,6 +930,36 @@ switch ($_POST['caso']) {
 					</tfoot>
 				<?
 				break;
+			case 'R13':
+				$sql = "SELECT c.*, date_format(c.registro, '%d/%m/%Y') as regFecha, i.idPrestamo FROM `cliente` c
+				inner join involucrados i on i.idCliente = c.idCliente 
+				where i.idTipoCliente = 1
+				and c.registro between '{$_POST['fInicio']}' and '{$_POST['fFinal']}';";
+				$resultado=$cadena->query($sql);
+				?> 
+				<thead>
+					<tr>
+						<th data-sort="string">N°</th>
+						<th data-sort="string">Nombre del cliente</th>
+						<th data-sort="string">Fecha</th>
+						<th data-sort="float">Préstamo</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php $i=0;
+					while($row= $resultado->fetch_assoc()):?>
+						<tr>
+							<td><?= $i+1; ?></td>
+							<td><?= $row['cliApellidoPaterno']; ?> <?= $row['cliApellidoMaterno']; ?>, <?= $row['cliNombres']; ?></td>
+							<td><?= $row['regFecha']?></td>
+							<td>CR-<?= $row['idPrestamo']?></td>
+						</tr>
+					<?php $i++; 
+				endwhile;?>
+				</tbody>
+				<?
+				break;
+
 	default:
 		# code...
 		break;

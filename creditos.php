@@ -418,6 +418,7 @@ if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 			<table class="table table-hover" id="tableCreditosTodos">
 			<thead>
 				<tr>
+					<th>N°</th>
 					<th>Crédito</th>
 					<th>Cliente</th>
 					<th>Tipo</th>

@@ -100,6 +100,9 @@
 						if( $rowCuot['idTipoPrestamo'] ==33 ){ ?>
 							<span class="mitoolTip spanIcono" data-toggle="tooltip" title="Pago parcial"><i class="icofont-warning-alt"></i></span>
 							<span class="amber-text text-darken-2 mitoolTip spanIcono spanPrint" data-print="parcial" data-toggle="tooltip" title="Imprimir"><i class="icofont-print"></i></span>
+							<?php if( $_COOKIE['ckPower']=='1' ):?>
+								<span class="spanIcono text-danger" data-toggle="tooltip" title="Limpiar pago" onclick="limpiarPago(<?= $rowCuot['idCuota']?>, <?=$k?>)"><i class="icofont-brush"></i></span>
+							<?php endif;?>
 						<? }
 						if($rowCuot['idTipoPrestamo'] ==80){ ?>
 							<p><span class="mitoolTip spanIcono" data-toggle="tooltip" title="Pago completo"><i class="icofont-verification-check"></i> </span>
