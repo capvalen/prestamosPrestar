@@ -16,15 +16,23 @@ ALTER TABLE `cliente` ADD `registro` DATE NULL DEFAULT CURRENT_TIMESTAMP AFTER `
 
 
 DELIMITER $$
-CREATE FUNCTION `retornarFaltaCapital`(`idPrest` INT) RETURNS decimal
+CREATE FUNCTION `retornarFaltaCapital`(`idPrest` INT, tipo int) RETURNS float
     NO SQL
 BEGIN
 DECLARE falta decimal(10,2) default 0;
 
-SELECT cuotCapital into falta FROM `prestamo_cuotas`
-where idPrestamo=idPrest and idTipoPrestamo<>79
-order by cuotFechaPago desc
-limit 1;
+if tipo=0 then
+-- calculo cuota normal
+SELECT ROUND(sum(cuotCapital)) into falta FROM `prestamo_cuotas`
+where idPrestamo=idPrest and idTipoPrestamo in (33, 79) 
+order by cuotFechaPago desc;
+else 
+-- calculo cuota frances
+SELECT ROUND(sum(cuotCuota-cuotInteres)) into falta FROM `prestamo_cuotas`
+where idPrestamo=idPrest and idTipoPrestamo in (33, 79) 
+order by cuotFechaPago desc;
+end if;
+
 return falta;
 
 END$$

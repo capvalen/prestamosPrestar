@@ -931,18 +931,23 @@ switch ($_POST['caso']) {
 				<?
 				break;
 			case 'R13':
-				$sql = "SELECT c.*, date_format(c.registro, '%d/%m/%Y') as regFecha, i.idPrestamo FROM `cliente` c
+				$sql = "SELECT c.*, date_format(c.registro, '%d/%m/%Y') as regFecha, i.idPrestamo, p.intSimple, p.presMontoDesembolso, date_format(p.presFechaDesembolso, '%d/%m/%Y') as presFechaDesembolso
+				FROM `cliente` c
 				inner join involucrados i on i.idCliente = c.idCliente 
+				inner join prestamo p on p.idPrestamo = i.idPrestamo
 				where i.idTipoCliente = 1
-				and c.registro between '{$_POST['fInicio']}' and '{$_POST['fFinal']}';";
+				and c.registro between '{$_POST['fInicio']}' and '{$_POST['fFinal']}' and p.presActivo = 1 and p.presAprobado <>2;";
 				$resultado=$cadena->query($sql);
 				?> 
 				<thead>
 					<tr>
 						<th data-sort="string">N°</th>
 						<th data-sort="string">Nombre del cliente</th>
-						<th data-sort="string">Fecha</th>
+						<th data-sort="string">Registro</th>
 						<th data-sort="float">Préstamo</th>
+						<th data-sort="float">Monto</th>
+						<th data-sort="float">Desembolso</th>
+						<th data-sort="float">Estado</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -950,9 +955,12 @@ switch ($_POST['caso']) {
 					while($row= $resultado->fetch_assoc()):?>
 						<tr>
 							<td><?= $i+1; ?></td>
-							<td><?= $row['cliApellidoPaterno']; ?> <?= $row['cliApellidoMaterno']; ?>, <?= $row['cliNombres']; ?></td>
+							<td class="text-capitalize"><?= $row['cliApellidoPaterno']; ?> <?= $row['cliApellidoMaterno']; ?>, <?= $row['cliNombres']; ?></td>
 							<td><?= $row['regFecha']?></td>
 							<td>CR-<?= $row['idPrestamo']?></td>
+							<td><?= number_format($row['presMontoDesembolso'], 2)?></td>
+							<td><?= $row['presFechaDesembolso']?></td>
+							<td><?= $row['presFechaDesembolso']=='00/00/0000' ? 'Sin desembolsar' : 'Desembolsado' ?></td>
 						</tr>
 					<?php $i++; 
 				endwhile;?>
