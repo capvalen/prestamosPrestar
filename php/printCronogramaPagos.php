@@ -92,6 +92,7 @@ if($llamado= $conection->query($sql)){
 				<p><strong>Periodo:</strong> <span><?= $respuesta['tpreDescipcion'];?></span></p>
 			<?php } ?>
 				<p> <strong>F. Desembolso:</strong> <span><? $fecha1= new DateTime( $respuesta['presFechaDesembolso']); echo $fecha1->format('d/m/Y h:m a');?></span></p>
+				<p><strong>Monto Desembolso:</strong> S/ <span><?= number_format($respuesta['presMontoDesembolso'],2)?></span></p>
 			</div>
 		</div>
 		<div class="row">
@@ -206,8 +207,8 @@ if($llamado= $conection->query($sql)){
 					endswitch;
 			?>
 			</span></p>
-			<p>Su cuota la puede depositar en cualquier agente BCP, a nombre de <strong>Verila campos</strong></p>
-			<p>N° de cuenta: 355 91451054038</p>
+			<p>Su cuota la puede depositar en cualquier agente BCP, a nombre de <strong>Verila campos</strong>. N° de cuenta: 355 91451054038</p>
+			<p>O con el aplicativo Yape con número 966 690452. A nombre de <strong>Jhon Ramos</strong> </p>
 		</div>
 	</div>
 
