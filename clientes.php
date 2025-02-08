@@ -51,7 +51,10 @@ $base58 = new StephenHill\Base58();?>
 			</div></div>
 
 			<div class="listarTodosClientes">
-				<?php if(!isset($_GET['buscar']) && !isset($_GET['idCliente'])): include 'php/listarTodosClientes.php'; endif; ?>
+				<?php if(!isset($_GET['buscar']) && !isset($_GET['idCliente'])):
+					$_POST['restriccion'] = ($_COOKIE['ckPower'] != 1) ? $_COOKIE['ckidUsuario'] : -1;
+					include 'php/listarTodosClientes.php';
+				endif; ?>
 			</div>
 
 			<?php if( isset($_GET['buscar'])){ ?>
@@ -234,7 +237,7 @@ $base58 = new StephenHill\Base58();?>
 						<div class="col-xs-3" id="divCallesUpd"><select id="slpCallesUpd" class="selectpicker" data-width="100%" data-live-search="true" data-size="15" title="Calle"><?php include 'php/OPTCalles.php'; ?></select></div>
 						<div class="col-xs-12 col-sm-7"><input type="text" class="form-control mayuscula" id="txtDireccionCasaUpd"  placeholder='Dirección de hogar' autocomplete='nope'></div>
 						<div class="col-xs-2"><input type="text" class="form-control mayuscula" id="txtNumeroCasaUpd" placeholder='#' autocomplete='nope'></div>
-						<div class="col-xs-4" id="divDireccionExtraUpd"><select class="selectpicker" title="Zona" id="sltDireccionExtraUpd" data-width="100%" data-live-search="true" data-size="15"><?php include 'php/OPTZona.php'; ?></select></div>
+						<div class="col-xs-4" id="divDireccionExtraUpd"><select class="selectpicker" title="Zona" id="sltDireccionExtraUpd" data-width="100%" data-live-search="true" data-size="15"><?php include 'php/OPTZona.php'; ?></select></div> 
 						<div class="col-xs-8"><input type="text" id='txtReferenciaCasaUpd' class='form-control mayuscula' placeholder='Referencia de la casa' autocomplete='nope'></div>
 						<div class="col-xs-4" id="divDepartamentosUpd"><select id="slpDepartamentosUpd" class="selectpicker" data-width="100%" data-live-search="true"  data-size="15" title="Departamento"><?php include 'php/OPTDepartamento.php'; ?></select></div>
 						<div class="col-xs-4" id="idProvinciasUpd"><select id="slpProvinciasUpd" class="selectpicker" data-width="100%" data-live-search="true" title="Provincia"></select></div>
@@ -425,57 +428,72 @@ $('#txtDniCliente').focusout(function () {
 	}
 });
 $('#btnGuardarClienteNew').click(function() {
+	var idParej='';
+		if( $('#sltEstadoCivil').val()== 2 ){ idParej = $('#sltBuscarPareja').val(); }
+
 	if( $('#txtDniCliente').val()=='' || $('#txtDniCliente').val().length<8 ){
 		$('#modalNewCliente .divError .spanError').text('Falta ingresar un D.N.I. válido').parent().removeClass('hidden');
 	}else if( $('#txtPaternoCliente').val()=='' || $('#txtMaternoCliente').val()=='' || $('#txtNombresCliente').val()==''  ){
-		$('#modalNewCliente .divError .spanError').text('Falta ingresar un D.N.I. válido').parent().removeClass('hidden');
+		$('#modalNewCliente .divError .spanError').text('Falta ingresar nombres válidos').parent().removeClass('hidden');
+	}else if( !$('#sltDireccionExtra').find(':selected').data('tokens') ){
+		$('#modalNewCliente .divError .spanError').text('Falta seleccionar una zona').parent().removeClass('hidden');
+	}else if( !$('#slpDepartamentos').find(':selected').data('tokens') ){
+		$('#modalNewCliente .divError .spanError').text('Falta seleccionar un departamento').parent().removeClass('hidden');
+	}else if( !$('#slpProvincias').find(':selected').data('tokens') ){
+		$('#modalNewCliente .divError .spanError').text('Falta seleccionar una provicincia').parent().removeClass('hidden');
+	}else if( !$('#slpDistritos').find(':selected').data('tokens') ){
+		$('#modalNewCliente .divError .spanError').text('Falta seleccionar un distrito').parent().removeClass('hidden');
+	}else if( !$('#sltEstadoCivil').find(':selected').data('tokens') ){
+		$('#modalNewCliente .divError .spanError').text('Falta seleccionar un estado civil').parent().removeClass('hidden');
+	} else if( $('#sltEstadoCivil').val()== 2 && idParej=='' ){
+		$('#modalNewCliente .divError .spanError').text('Falta seleccionar una pareja casada').parent().removeClass('hidden');
+	}else{
+		var casa =0;
+	
+		if( $('#chkDireccion').is(':checked') ){//true
+			casa=0;}else{ casa=1;}
+		
+		
+			
+		$.ajax({url: 'php/insertarCliente.php', type: 'POST', data: {
+			direccion: $('#txtDireccionCasa').val(),
+			zona: $('#sltDireccionExtra').val(),
+			referencia: $('#txtReferenciaCasa').val(),
+			numero: $('#txtNumeroCasa').val(),
+			departam: $('#divDireccionCasa .optDepartamento:contains("'+$('#slpDepartamentos').val()+'")').attr('data-tokens'),
+			provinc: $('#divDireccionCasa .optProvincia:contains("'+$('#slpProvincias').val()+'")').attr('data-tokens'),
+			distrit: $('#divDireccionCasa .optDistrito:contains("'+$('#slpDistritos').val()+'")').attr('data-tokens'),
+			calle: $('#slpCalles').val(),
+	
+			direccionNeg: $('#txtDireccionNegocio').val(),
+			zonaNeg: $('#sltDireccionExtraNegoc').val(),
+			referenciaNeg: $('#txtReferenciaNegoc').val(),
+			numeroNeg: $('#txtNumeroNegoc').val(),
+			departamNeg: $('#divDireccionNegocio .optDepartamento:contains("'+$('#slpDepartamentosNegoc').val()+'")').attr('data-tokens'),
+			provincNeg: $('#divDireccionNegocio .optProvincia:contains("'+$('#slpProvinciasNegoc').val()+'")').attr('data-tokens'),
+			distritNeg: $('#divDireccionNegocio .optDistrito:contains("'+$('#slpDistritosNegoc').val()+'")').attr('data-tokens'),
+			calleNeg: $('#slpCallesNeg').val(),
+	
+			dni: $('#txtDniCliente').val(),
+			nombres: $('#txtNombresCliente').val(),
+			paterno: $('#txtPaternoCliente').val(),
+			materno: $('#txtMaternoCliente').val(),
+			hijos: $('#txtNumHijos').val(),
+			sexo: $('#sltSexo').val(),
+			celularPers: $('#txtCelPersonal').val(),
+			celularRef: $('#txtCelReferencia').val(),
+			civil: $('#sltEstadoCivil').val(),
+			pareja: parseFloat(idParej),
+	
+			casa: casa}}).done(function(resp) { console.log(resp)
+				if( parseInt(resp)>0 ){
+					//location.reload();
+					window.location.href = 'clientes.php?buscar='+resp;
+				}
+		});
+
 	}
 	
-	
-	var casa =0;
-
-	if( $('#chkDireccion').is(':checked') ){//true
-		casa=0;}else{ casa=1;}
-	
-	var idParej='';
-	if( $('#sltEstadoCivil').val()== 2 ){ idParej = $('#sltBuscarPareja').val(); }
-		
-	$.ajax({url: 'php/insertarCliente.php', type: 'POST', data: {
-		direccion: $('#txtDireccionCasa').val(),
-		zona: $('#sltDireccionExtra').val(),
-		referencia: $('#txtReferenciaCasa').val(),
-		numero: $('#txtNumeroCasa').val(),
-		departam: $('#divDireccionCasa .optDepartamento:contains("'+$('#slpDepartamentos').val()+'")').attr('data-tokens'),
-		provinc: $('#divDireccionCasa .optProvincia:contains("'+$('#slpProvincias').val()+'")').attr('data-tokens'),
-		distrit: $('#divDireccionCasa .optDistrito:contains("'+$('#slpDistritos').val()+'")').attr('data-tokens'),
-		calle: $('#slpCalles').val(),
-
-		direccionNeg: $('#txtDireccionNegocio').val(),
-		zonaNeg: $('#sltDireccionExtraNegoc').val(),
-		referenciaNeg: $('#txtReferenciaNegoc').val(),
-		numeroNeg: $('#txtNumeroNegoc').val(),
-		departamNeg: $('#divDireccionNegocio .optDepartamento:contains("'+$('#slpDepartamentosNegoc').val()+'")').attr('data-tokens'),
-		provincNeg: $('#divDireccionNegocio .optProvincia:contains("'+$('#slpProvinciasNegoc').val()+'")').attr('data-tokens'),
-		distritNeg: $('#divDireccionNegocio .optDistrito:contains("'+$('#slpDistritosNegoc').val()+'")').attr('data-tokens'),
-		calleNeg: $('#slpCallesNeg').val(),
-
-		dni: $('#txtDniCliente').val(),
-		nombres: $('#txtNombresCliente').val(),
-		paterno: $('#txtPaternoCliente').val(),
-		materno: $('#txtMaternoCliente').val(),
-		hijos: $('#txtNumHijos').val(),
-		sexo: $('#sltSexo').val(),
-		celularPers: $('#txtCelPersonal').val(),
-		celularRef: $('#txtCelReferencia').val(),
-		civil: $('#sltEstadoCivil').val(),
-		pareja: parseFloat(idParej),
-
-		casa: casa}}).done(function(resp) { console.log(resp)
-			if( parseInt(resp)>0 ){
-				//location.reload();
-				window.location.href = 'clientes.php?buscar='+resp;
-			}
-	});
 });
 $('#btnGuardarClienteUpd').click(function() {
 	if( $('#txtDniClienteUpd').val().length <8 ){

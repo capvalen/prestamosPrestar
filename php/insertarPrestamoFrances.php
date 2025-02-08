@@ -94,6 +94,13 @@ for ($i=1; $i <= $plazo ; $i++) {
 $cadena->multi_query($sqlCuotas);
 
 
+ob_start();
+	$_POST['idPrestamo'] = $idPrestamo;
+	$_POST['usuario'] = $_COOKIE['ckidUsuario'];
+	$_POST['regla'] = 2;
+	include 'nuevaRegla.php';
+ob_end_clean();
+
 function esFeriado($feriados, $dia){
 	foreach ($feriados as $llave => $valor) {
 		if($valor["ferFecha"]==$dia){

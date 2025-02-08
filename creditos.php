@@ -17,12 +17,12 @@ if( isset($_GET['credito']) )
 if($_COOKIE['ckPower']!='1' && isset($_GET['credito']) ){
 	//echo 'evaluar';
 	if($_COOKIE['ckPower']=='2'){ //vista asesor
-		$sqlVista="SELECT * FROM `vistas` WHERE idUsuario ={$_COOKIE['ckidUsuario']} and idPrestamo = {$codCredito} and ver=1 and activo=1;";
+		$sqlVista="SELECT * FROM `vistas` WHERE idUsuario ={$_COOKIE['ckidUsuario']} and idPrestamo = {$codCredito} and ver in(1,2) and activo=1;";
 		$resultVista = $preferido->query($sqlVista);
 		if($resultVista->num_rows==0){ header('Location: sinPermiso.php'); die(); }
 	}
 
-	if($_COOKIE['ckPower']=='4'){ //vista asesor
+	if($_COOKIE['ckPower']=='4'){ //vista caja
 		$sqlVista="SELECT * FROM `vistas` WHERE idUsuario ={$_COOKIE['ckidUsuario']} and idPrestamo = {$codCredito} and ver=0 and activo=1;";
 		$resultVista = $preferido->query($sqlVista);
 		if($resultVista->num_rows==1){ header('Location: sinPermiso.php'); die(); }
@@ -552,7 +552,7 @@ $('.selectpicker').selectpicker();
 $('.mitoolTip').tooltip();
 
 $(document).ready(function(){
-	$('#sltNuevoAsesr').val(-1);
+	$('#sltNuevoAsesr').val(<?=$rowCr['idUsuario'] ?? -1?>);
 	<?php if (isset($_GET['credito'])){ ?>
 	$('#cmbPeriodos').val('<?= $rowCr['idTipoPrestamo']; ?>');
 	<?php } ?>

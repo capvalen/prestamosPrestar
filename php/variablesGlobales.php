@@ -5,7 +5,7 @@ $admis=array('1');
 $soloAdmis=array('1');
 $soloDios=array('1');
 $soloCaja=array('4');
-$soloCajas=array('1','4');
+$soloCajas=array('4');
 $soloAnalistas =array('1','2');
 
 $serverLocal= "//192.168.1.36/prestamosPrestar/";

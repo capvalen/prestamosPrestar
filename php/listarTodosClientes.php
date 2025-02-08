@@ -18,7 +18,22 @@
 <?php 
 require("conkarl.php");
 require('contarRecurrente.php');
-$sql = mysqli_query($conection,"SELECT c.*, a.addrDireccion, a.addrNumero, ec.civDescripcion FROM `cliente` c inner join address a on a.idAddress = c.cliDireccionCasa inner join estadocivil ec on c.idEstadoCivil = ec.idEstadoCivil");
+$filtro = '';
+if($_POST['restriccion']>-1){
+	$linea = "SELECT c.*, a.addrDireccion, a.addrNumero, ec.civDescripcion FROM
+`cliente` c
+inner join address a on a.idAddress = c.cliDireccionCasa
+inner join estadocivil ec on c.idEstadoCivil = ec.idEstadoCivil
+where c.idCreador = {$_POST['restriccion']} group by c.cliDni
+/*inner join vistas v on v.idPrestamo = i.idPrestamo
+ i.idTipoCliente = 1 and v.idUsuario= {$_POST['restriccion']} or*/
+;";
+}else{
+	$linea = "SELECT c.*, a.addrDireccion, a.addrNumero, ec.civDescripcion FROM `cliente` c inner join address a on a.idAddress = c.cliDireccionCasa inner join estadocivil ec on c.idEstadoCivil = ec.idEstadoCivil ";
+}
+
+$sql = mysqli_query($conection, $linea );
+$num_filas = mysqli_num_rows($sql);
 $botonMatri='';
 while($row = mysqli_fetch_array($sql, MYSQLI_ASSOC))
 { ?>
@@ -34,6 +49,12 @@ while($row = mysqli_fetch_array($sql, MYSQLI_ASSOC))
 </tr>
  <?php
 }
+
+if($num_filas==0){ ?>
+	<tr>
+		<td colspan="8">No tienes clientes registrados en tu cuenta</td>
+	</tr>
+<?php }
 mysqli_close($conection); //desconectamos la base de datos
 ?>
 </tbody>

@@ -90,8 +90,8 @@ if($_COOKIE['ckPower']!='1' ){
 
 		<!-- Modal -->
 		<div class="modal fade" id="modalNuevRegla" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
+			<div class="modal-dialog modal-sm" role="document">
+				<div class="modal-content ">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						<h4 class="modal-title" id="myModalLabel">Nueva Regla</h4>
@@ -107,7 +107,7 @@ if($_COOKIE['ckPower']!='1' ){
 						</select>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" @click="guardarRegla()">Save changes</button>
+						<button type="button" class="btn btn-outline btnprimary" @click="guardarRegla()">Guardar regla</button>
 					</div>
 				</div>
 			</div>

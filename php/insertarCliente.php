@@ -4,8 +4,8 @@ header('Content-Type: text/html; charset=utf8');
 date_default_timezone_set('America/Lima');
 
 
-$sql= "call insertarDireccion('{$_POST['direccion']}',{$_POST['zona']}, '{$_POST['referencia']}', '{$_POST['numero']}', {$_POST['departam']}, {$_POST['provinc']}, {$_POST['distrit']}, 0, {$_POST['calle']} )";
-
+$sql= "call insertarDireccion('{$_POST['direccion']}','{$_POST['zona']}', '{$_POST['referencia']}', '{$_POST['numero']}', {$_POST['departam']}, {$_POST['provinc']}, {$_POST['distrit']}, 0, '{$_POST['calle']}' )";
+//echo $sql; die();
 $consultaDepos = $conection->prepare($sql);
 $consultaDepos ->execute();
 $resultadoDepos = $consultaDepos->get_result();
@@ -15,8 +15,7 @@ $idCasa= $rowDepos[0];
 
 if($_POST['casa']==1){
 
-  $sql= "call insertarDireccion('{$_POST['direccionNeg']}',{$_POST['zonaNeg']}, '{$_POST['referenciaNeg']}', '{$_POST['numeroNeg']}', {$_POST['departamNeg']}, {$_POST['provincNeg']}, {$_POST['distritNeg']}, 1, {$_POST['calleNeg']} )";
-
+  $sql= "call insertarDireccion('{$_POST['direccionNeg']}',{$_POST['zonaNeg']}, '{$_POST['referenciaNeg']}', '{$_POST['numeroNeg']}', {$_POST['departamNeg']}, {$_POST['provincNeg']}, {$_POST['distritNeg']}, 1, '{$_POST['calleNeg']}' )";
   $consultaDepos = $esclavo->prepare($sql);
   $consultaDepos ->execute();
   $resultadoDepos = $consultaDepos->get_result();
@@ -29,7 +28,8 @@ if($_POST['casa']==1){
 
 if($idNego==$idCasa){ $igual =1;}else{ $igual =0;}
 
-$sql= "call insertarCliente('{$_POST['dni']}','{$_POST['nombres']}', '{$_POST['paterno']}', '{$_POST['materno']}', {$igual}, {$_POST['hijos']}, {$_POST['sexo']}, {$idCasa}, {$idNego}, '{$_POST['celularPers']}', '{$_POST['celularRef']}', {$_POST['civil']} )";
+$sql= "call insertarCliente('{$_POST['dni']}','{$_POST['nombres']}', '{$_POST['paterno']}', '{$_POST['materno']}', {$igual}, {$_POST['hijos']}, {$_POST['sexo']}, {$idCasa}, {$idNego}, '{$_POST['celularPers']}', '{$_POST['celularRef']}', {$_POST['civil']}, {$_COOKIE['ckidUsuario']} )";
+//echo $sql; die();
 
 $consultaDepos = $prisionero->prepare($sql);
 $consultaDepos ->execute();
