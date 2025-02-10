@@ -119,7 +119,7 @@ p{ text-indent: 5em }
 		</div>
 		<h4 class="text-center pt-3">CONTRATO DE DEUDA Y COMPROMISO DE PAGO</h4>
 		<div class="container-fluid">
-			<p class="text-justify">CONSTE POR EL PRESENTE DOCUMENTO QUE SUSCRIBE EL CONTRATO DE DEUDA Y COMPROMISO DE PAGO QUE CELEBRAN DE UNA PARTE EL SEÑOR RAMOS GALVAN JHON CON DNI N° 41699159 Y DOMICILIADO EN LA CALLE REAL 969 A QUIEN EN ADELANTE SE LE DENOMINARA EL ACREEDOR Y DE LA OTRA PARTE SR(A) <?= $rowInvolucrados['cliNombres'];?> CON DNI N° <?= $rowInvolucrados['cliDni'];?> CON DOMICILIO EN EL <?= $rowInvolucrados['cliDireccion'];?>, A QUIEN EN ADELANTE SE LE DENOMINARA EL DEUDOR
+			<p class="text-justify">CONSTE POR EL PRESENTE DOCUMENTO QUE SUSCRIBE EL CONTRATO DE DEUDA Y COMPROMISO DE PAGO QUE CELEBRAN DE UNA PARTE PRESTAR HUANCAYO E.I.R.L. CON R.U.C. 20612802875, DIRECCIÓN CALLE REAL 261 - HUANCAYO, EN ADELANTE SE LE DENOMINARA EL ACREEDOR Y DE LA OTRA PARTE SR(A) <?= $rowInvolucrados['cliNombres'];?> CON DNI N° <?= $rowInvolucrados['cliDni'];?> CON DOMICILIO EN EL <?= $rowInvolucrados['cliDireccion'];?>, A QUIEN EN ADELANTE SE LE DENOMINARA EL DEUDOR
 			<?php while($dato = $resultadoInvolucrados->fetch_assoc()){
 				if( $dato['idTipoCliente']=='2'){
 					echo " Y SU CONYUGUE: ".$dato['cliNombres']." CON DNI N° ".$dato['cliDni']." CON DOMICILIO EN EL ". $dato['cliDireccion'];
