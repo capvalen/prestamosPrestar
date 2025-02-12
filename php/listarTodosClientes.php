@@ -24,12 +24,13 @@ if($_POST['restriccion']>-1){
 `cliente` c
 inner join address a on a.idAddress = c.cliDireccionCasa
 inner join estadocivil ec on c.idEstadoCivil = ec.idEstadoCivil
-where c.idCreador = {$_POST['restriccion']} group by c.cliDni
+where c.idCreador = {$_POST['restriccion']} and cliActivo=1
+group by c.cliDni
 /*inner join vistas v on v.idPrestamo = i.idPrestamo
  i.idTipoCliente = 1 and v.idUsuario= {$_POST['restriccion']} or*/
 ;";
 }else{
-	$linea = "SELECT c.*, a.addrDireccion, a.addrNumero, ec.civDescripcion FROM `cliente` c inner join address a on a.idAddress = c.cliDireccionCasa inner join estadocivil ec on c.idEstadoCivil = ec.idEstadoCivil ";
+	$linea = "SELECT c.*, a.addrDireccion, a.addrNumero, ec.civDescripcion FROM `cliente` c inner join address a on a.idAddress = c.cliDireccionCasa inner join estadocivil ec on c.idEstadoCivil = ec.idEstadoCivil where cliActivo=1";
 }
 
 $sql = mysqli_query($conection, $linea );

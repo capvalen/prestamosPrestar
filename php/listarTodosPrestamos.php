@@ -27,7 +27,8 @@ case presAprobado when 0 then 'Sin aprobar' when 2 then 'Rechazado' else 'Aproba
 	inner join usuario u on u.idUsuario = pre.idUsuario
 	inner join tipoprestamo tpr on tpr.idTipoPrestamo = pre.idTipoPrestamo
 	inner join vistas v on v.idPrestamo = pre.idPrestamo
-	where i.idTipoCliente=1 and v.activo=1 and v.ver in (1,2) and v.idUsuario={$_COOKIE['ckidUsuario']}
+	where presActivo =1 and cast(presFechaDesembolso as char) <> '0000-00-00 00:00:00' and presAprobado =1 and
+	i.idTipoCliente=1 and v.activo=1 and v.ver in (1,2) and v.idUsuario={$_COOKIE['ckidUsuario']}
 	order by pre.idPrestamo asc;";
 }
 else { //consideremos cajas

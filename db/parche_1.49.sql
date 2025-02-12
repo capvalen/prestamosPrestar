@@ -37,3 +37,28 @@ return falta;
 
 END$$
 DELIMITER ;
+
+
+ALTER TABLE `cliente` ADD `idCreador` INT NULL DEFAULT '1' AFTER `registro`;
+
+DROP PROCEDURE `insertarCliente`;
+DELIMITER $$
+CREATE PROCEDURE `insertarCliente`(IN `dni` VARCHAR(8), IN `nombres` VARCHAR(200), IN `paterno` VARCHAR(200), IN `materno` VARCHAR(200), IN `igual` INT, IN `hijos` INT, IN `sexo` INT, IN `idCasa` INT, IN `idNegocio` INT, IN `celularPers` VARCHAR(100), IN `celularRef` VARCHAR(100), IN `civil` INT, IN `idUser` INT)
+    NO SQL
+BEGIN
+
+INSERT INTO `cliente` (`idCliente`, `cliCodigo`, `cliDni`,
+               `cliNombres`, `cliApellidoPaterno`, `cliApellidoMaterno`,
+               `cliSexo`, `cliNumHijos`, `cliDireccionesIgual`,
+               `cliDireccionCasa`, `cliDireccionNegocio`, `cliCelularPersonal`, `cliCelularReferencia`, `idEstadoCivil`, `cliActivo`, `idCreador`)
+      VALUES (NULL, '', dni,
+              trim(nombres), trim(paterno), trim(materno),
+              sexo, hijos, igual,
+              idCasa, idNegocio, 
+              celularPers, celularRef, civil, '1', idUser);
+
+set @id = (select LAST_INSERT_ID());
+select @id;
+
+END$$
+DELIMITER ;
