@@ -1,7 +1,7 @@
 <?php
 
 /* Change to the correct path if you copy this example! */
-require __DIR__ . './../vendor/mike42/escpos-php/autoload.php';
+require '../vendor/autoload.php';
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\EscposImage; //librería de imagen
@@ -15,7 +15,7 @@ use Mike42\Escpos\EscposImage; //librería de imagen
  */
  
     //$connector = new WindowsPrintConnector("smb://192.168.1.131/TM-U220");
-$connectorV31 = new WindowsPrintConnector("smb://127.0.0.1/XP-58");
+$connectorV31 = new WindowsPrintConnector("smb://127.0.0.1/POS58");
 try {
 	if( isset($_POST['observacion'])){
 		$obs =$_POST['observacion'];
@@ -23,13 +23,13 @@ try {
 		$obs='';
 	}
 
-	$tux = EscposImage::load("../images/empresaTicket.jpg", false);
+//	$tux = EscposImage::load("../images/empresaTicket.jpg", false);
     // A FilePrintConnector will also work, but on non-Windows systems, writes
     // to an actual file called 'LPT1' rather than giving a useful error.
     // $connector = new FilePrintConnector("LPT1");
     /* Print a "Hello world" receipt" */
 		$printer = new Printer($connectorV31);
-		$printer -> bitImage($tux);
+		//$printer -> bitImage($tux);
 		$printer -> setEmphasis(true);
 		$printer->setJustification(Printer::JUSTIFY_CENTER);
     $printer -> text("{$_POST['titulo']}\n");
