@@ -1144,7 +1144,9 @@ $('#btnInsertarMoraExtra').click(function() {
 		console.log(resp)
 		if(resp==1){
 			var linea = "Mora extra: S/ " + $('#txtMoraExtra').val() ;
-			$.ajax({url: '<?= $serverLocal;?>impresion/ticketCuotas.php', type: 'POST', data: { queMichiEs: linea, codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {
+			$.ajax({url: '<?= $serverLocal;?>impresion/printTicketCuotas.php', type: 'POST', data: { queMichiEs: linea, codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>',
+				direccion: '<?= $_COOKIE['ckdireccionEmpresa']; ?>'
+			}}).done(function(resp) {
 					console.log(resp)
 				});			
 			$('#h1Bien2').append(`Se guardó correctamente la mora extraordinaria.`);
@@ -1230,7 +1232,9 @@ $('#btnRealizarDeposito').click(function() {
 					linea = linea + "\nUd. Acaba de finalizar todas sus cuotas.\n";
 				}
 				//console.log( linea );
-				$.ajax({url: '<?= $serverLocal;?>impresion/ticketCuotas.php', type: 'POST', data: { queMichiEs: linea, codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>' }}).done(function(resp) {
+				$.ajax({url: '<?= $serverLocal;?>impresion/printTicketCuotas.php', type: 'POST', data: { queMichiEs: linea, codPrest: '<?= $codCredito;?>', cliente: $('#spanTitular').text(), hora: moment().format('DD/MM/YYYY hh:mm a'), usuario: '<?= $_COOKIE['ckAtiende'];?>', ckcelularEmpresa: '<?= $_COOKIE['ckcelularEmpresa']; ?>',
+					direccion: '<?= $_COOKIE['ckdireccionEmpresa']; ?>'
+				 }}).done(function(resp) {
 					console.log(resp)
 				});
 				$('#modalGuardadoCorrecto2').modal('show');

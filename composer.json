@@ -1,6 +1,7 @@
 {
     "require": {
         "stephenhill/base58": "~1.0",
-        "mike42/escpos-php": "^2.0"
+        "mike42/escpos-php": "^4.0",
+        "setasign/fpdf": "^1.8"
     }
 }

@@ -1,7 +1,7 @@
 <?php
 date_default_timezone_set('America/Lima');
 /* Change to the correct path if you copy this example! */
-require __DIR__ . '/vendor/mike42/escpos-php/autoload.php';
+require '../vendor/autoload.php';
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 /**
@@ -14,7 +14,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
  */
  
     //$connector = new WindowsPrintConnector("smb://192.168.1.131/TM-U220");
-$connectorV31 = new WindowsPrintConnector("smb://127.0.0.1/TM-U220");
+$connectorV31 = new WindowsPrintConnector("smb://127.0.0.1/POS58");
 try {
     $cierreVirtual= $_POST['apertura']+$_POST['efectivoEntrada']-$_POST['efectivoSalida']-$_POST['tarjetaSalida'];
     $sobra=$cierreVirtual-$_POST['cierre'];

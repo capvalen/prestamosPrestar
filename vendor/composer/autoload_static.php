@@ -30,7 +30,13 @@ class ComposerStaticInit9ca6b0da783afa875880f91630f21d2f
         'Mike42\\' => 
         array (
             0 => __DIR__ . '/..' . '/mike42/escpos-php/src/Mike42',
+            1 => __DIR__ . '/..' . '/mike42/gfx-php/src/Mike42',
         ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'FPDF' => __DIR__ . '/..' . '/setasign/fpdf/fpdf.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -38,6 +44,7 @@ class ComposerStaticInit9ca6b0da783afa875880f91630f21d2f
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit9ca6b0da783afa875880f91630f21d2f::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit9ca6b0da783afa875880f91630f21d2f::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit9ca6b0da783afa875880f91630f21d2f::$classMap;
 
         }, null, ClassLoader::class);
     }

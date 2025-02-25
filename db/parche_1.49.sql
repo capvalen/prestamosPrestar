@@ -62,3 +62,62 @@ select @id;
 
 END$$
 DELIMITER ;
+
+
+Drop procedure reporteIngresoDiaxCuadre;
+Drop procedure reporteEgresoDiaxCuadre;
+DELIMITER $$
+CREATE PROCEDURE `reporteIngresoDiaxCuadre`(IN `cuadre` INT)
+    NO SQL
+BEGIN
+DECLARE fecha1 DATETIME ;
+DECLARE fecha2 varchar(100) ;
+SET FOREIGN_KEY_CHECKS=0;
+
+SELECT `fechaInicio`, `fechaFin` into fecha1 , fecha2 FROM `cuadre`
+where idCuadre=cuadre;
+
+if fecha2='0000-00-00 00:00:00' then set fecha2=now(); end if;
+
+SELECT
+c.idCaja, ROUND(cajaValor,2) as pagoMonto, cajaFecha, replace(cajaObservacion, 'Ingreso extra: ', '') as cajaObservacion, 
+u.usuNombres as usuNick, tp.tipoDescripcion, m.moneDescripcion, c.cajaActivo, c.cajaMoneda, c.idPrestamo, c.idTipoProceso, retornarDuenoDeCaja(c.idCaja) as cliNombres, retornarNumCuotasFaltanToFin(c.idPrestamo) as toFin
+FROM `caja` c
+inner join tipoproceso tp on tp.idTipoProceso = c.idTipoProceso
+inner JOIN usuario u on u.idUsuario=c.idUsuario
+inner join moneda m on m.idMoneda = c.cajaMoneda
+where `cajaFecha` BETWEEN fecha1 and fecha2
+and c.idTipoProceso in (45, 44, 32, 31, 34, 33, 36, 20, 21, 75, 76, 80,81,86 ,87, 88, 89, 90, 91, 94)
+and cajaActivo=1
+order by c.idCaja;
+
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `reporteEgresoDiaxCuadre`(IN `cuadre` INT)
+    NO SQL
+BEGIN
+DECLARE fecha1 DATETIME ;
+DECLARE fecha2 varchar(100) ;
+SET FOREIGN_KEY_CHECKS=0;
+
+SELECT `fechaInicio`, `fechaFin` into fecha1, fecha2 
+FROM `cuadre`
+where idCuadre=cuadre;
+
+if fecha2='0000-00-00 00:00:00' then set fecha2=now(); end if;
+
+SELECT
+c.idCaja, ROUND(cajaValor,2) as pagoMonto, cajaFecha, replace(cajaObservacion, 'Ingreso extra: ', '') as cajaObservacion, 
+u.usuNombres as usuNick, tp.tipoDescripcion, m.moneDescripcion, c.cajaActivo, c.cajaMoneda, c.idPrestamo, c.idTipoProceso, retornarDuenoDeCaja(c.idCaja) as cliNombres, retornarNumCuotasFaltanToFin(c.idPrestamo) as toFin
+FROM `caja` c
+inner join tipoproceso tp on tp.idTipoProceso = c.idTipoProceso
+LEFT JOIN usuario u on u.idUsuario=c.idUsuario
+inner join moneda m on m.idMoneda = c.cajaMoneda
+where `cajaFecha` BETWEEN fecha1 and fecha2
+and tp.idTipoProceso in (43, 40, 41, 78, 82, 83, 84, 85, 92, 93)
+and cajaActivo=1
+order by c.idCaja;
+END$$
+DELIMITER ;

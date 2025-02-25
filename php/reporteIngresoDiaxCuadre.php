@@ -44,7 +44,7 @@ else{
 		elseif( $_COOKIE['ckPower']==4 ):  $boton = "<button class='btn btn-sm btn-azul btn-outline btnPrintCajaEsp' data-caja='{$row["idCaja"]}' data-boton='{$row["idTipoProceso"]}'><i class='icofont icofont-print'></i></button> <button class='btn btn-sm btn-success btn-outline btnChangeMonedaEsp' data-caja='{$row["idCaja"]}' ><i class='icofont icofont-pen-alt-3'></i></button> ";
 		else: $boton=''; endif; ?>
 
-		<tr data-id="<?= $row['idCaja']; ?>" data-activo="<?= $row['cajaActivo']; ?>">
+		<tr data-id="<?= $row['idCaja']; ?>" data-activo="<?= $row['cajaActivo']; ?>" data-faltan="<?= $row['toFin']?>">
 			<th scope='row' class="aCode"><a href="<?php if($row['idPrestamo']<>0){ echo 'creditos.php?credito='.$codTemp;}?>"><?php if($row['idPrestamo']<>0){ echo 'CR-0'.($row['idPrestamo']);} ?></a> </th>
 			<td class="mayuscula aCliente"><?= $row['cliNombres'];?></td>
 			<td class='mayuscula tpIdDescripcion'><?= $row['tipoDescripcion'];?></td>

@@ -2,9 +2,11 @@
 require 'variablesGlobales.php';
 include 'conkarl.php';
 require_once('../vendor/autoload.php');
+date_default_timezone_set('America/Lima');
 $base58 = new StephenHill\Base58();
 
 $fechaHoy = new DateTime();
+$fechaHoy->setTime(0, 0, 0);
 $deudaAHoy =0;
 $filas=array();
 $k=0;
@@ -29,7 +31,9 @@ while($row=$resultado->fetch_assoc()){
 	$precioCuota=floatval($row['cuotCuota']-$row['cuotPago']);
 	$fechaCuota = new DateTime($row['cuotFechaPago']);
 	$diasDebe=$fechaHoy ->diff($fechaCuota);
-	$restaDias= floatval($diasDebe->format('%a'));
+	$restaDias= floatval($diasDebe->days); //->format('%a')
+	//echo $fechaHoy->format('Y-m-d H:i');
+	
 
 	$sumaSa+=floatval($precioCuota + $seguro );
 //echo $restaDias."\n";
@@ -84,7 +88,8 @@ $filas = array(
 	'mora_neta' => $mora,
 	'paraFinalizar' => round( ($precioCuota  + $seguro )*$k + $diasMora*$mora ,2), // round($sumaSa+ $diasMora*$mora ,2) //$seguro
 	//146.3)*4
-	'capital' => $onlyCapital
+	'capital' => $onlyCapital,
+	'hoy' => $fechaHoy->format('Y-m-d H:i')
 );
 
 echo json_encode($filas);

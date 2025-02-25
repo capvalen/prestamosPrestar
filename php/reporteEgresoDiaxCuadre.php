@@ -42,7 +42,7 @@ if($totalRow==0){
 		else: $boton='';
 		endif; ?>
 
-		<tr data-id="<?= $row['idCaja']; ?>" data-activo="<?= $row['cajaActivo']; ?>">
+		<tr data-id="<?= $row['idCaja']; ?>" data-activo="<?= $row['cajaActivo']; ?>" data-faltan="<?= $row['toFin']?>">
 			<th scope='row' class="aCode">
 				<a href="<?= ($row['idPrestamo']>0) ? 'creditos.php?credito='.$codTemp : '#!'; ?>" > <?= ($row['idPrestamo']>0) ? 'CR-'.$row['idPrestamo'] : 'CR-0'; ?>
 				</a>

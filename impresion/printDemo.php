@@ -1,0 +1,68 @@
+<?php
+/* Change to the correct path if you copy this example! */
+require '../vendor/autoload.php';
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\EscposImage; //librería de imagen
+
+/**
+ * Assuming your printer is available at LPT1,
+ * simpy instantiate a WindowsPrintConnector to it.
+ *
+ * When troubleshooting, make sure you can send it
+ * data from the command-line first:
+ *  echo "Hello World" > LPT1
+ */
+ 
+    //$connector = new WindowsPrintConnector("smb://192.168.1.131/TM-U220");
+$connectorV31 = new WindowsPrintConnector("smb://127.0.0.1/POS58");
+try {
+//	$tux = EscposImage::load("../images/empresaTicket.jpg", false);
+    // A FilePrintConnector will also work, but on non-Windows systems, writes
+    // to an actual file called 'LPT1' rather than giving a useful error.
+    // $connector = new FilePrintConnector("LPT1");
+    /* Print a "Hello world" receipt" */
+		$printer = new Printer($connectorV31);
+		$printer->setJustification(Printer::JUSTIFY_CENTER);
+    $tux = EscposImage::load("logo.png", true);
+		$printer -> bitImage($tux);
+		
+		$printer -> setEmphasis(true);
+		$printer->setJustification(Printer::JUSTIFY_CENTER);
+    $printer -> text("TITUTLO");
+		$printer -> setEmphasis(false);
+    $printer -> text("DIRECCION\n");
+		$printer -> text("Gracias por su preferencia\n\n\n");
+    
+    title($printer, "Font A sizes\n");
+    $printer -> setFont(Printer::FONT_A);
+    $printer -> setTextSize(1, 1);
+    $printer -> text("The quick brown fox jumps over the lazy dog.\n");
+    $printer -> setTextSize(2, 2);
+    $printer -> text("The quick brown fox jumps over the lazy dog.\n");
+
+    title($printer, "Font B sizes\n");
+    $printer -> setFont(Printer::FONT_B);
+    $printer -> setTextSize(1, 1);
+    $printer -> text("The quick brown fox jumps over the lazy dog.\n");
+    $printer -> setTextSize(2, 2);
+    $printer -> text("The quick brown fox jumps over the lazy dog.\n");
+
+    $printer -> cut();
+    $printer -> close();
+
+    
+		$printer->setJustification(Printer::JUSTIFY_LEFT);
+    $printer -> cut();
+    /* Close printer */
+    $printer -> close();
+} catch (Exception $e) {
+    echo "No se pudo imprimir en la impresora: " . $e -> getMessage() . "\n";
+}
+
+function title(Printer $printer, $text)
+{
+  $printer -> selectPrintMode(Printer::MODE_EMPHASIZED);
+  $printer -> text("\n" . $text);
+  $printer -> selectPrintMode(); // Reset
+}

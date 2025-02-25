@@ -622,7 +622,7 @@ $('#modalGuardadoCorrecto').on('click', '#btnPrintTCierre', function (e) {
 		"\ntarjetaSalida:"+ $('#spanResultadoFinal').attr('sumaSalidaTarjeta'),
 		"\nusuario:"+ '<?= $_COOKIE['ckAtiende']; ?>'
 		) */
-	$.ajax({url: '<?= $servidorLocal;?>printTicketCierre.php', type: 'POST', data: {
+	$.ajax({url: '<?= $servidorLocal;?>impresion/printTicketCierre.php', type: 'POST', data: {
 		apertura: $('#spanApertura').text(),
 		cierre: $('#txtMontoCierre').val(),
 		efectivoEntrada: $('#spanResultadoFinal').attr('sumaEfectivo'),
@@ -745,6 +745,8 @@ $('.btnPrintCajaEsp').click(function () {
 	var queUser = padre.find('.emRegistra').text();
 	queMonto= padre.find('.spanCantv3').text();
 	var code = padre. find('.aCode').text();
+	var direccion = '<?= $_COOKIE['ckdireccionEmpresa']; ?>'
+	var faltan = padre.data('faltan')
 	
 	var queDueno =  '';
 	var cliente = padre.find('.aCliente').text();
@@ -762,6 +764,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				
 				articulo: queArticulo,
@@ -774,6 +777,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				
 				monto: queMonto,
@@ -786,6 +790,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				
 				monto: queMonto,
@@ -797,6 +802,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				cliente: '-',
 				monto: queMonto,
@@ -808,6 +814,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				cliente: '-',
 				monto: queMonto,
@@ -819,6 +826,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				
 				monto: queMonto,
@@ -830,6 +838,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				
 				monto: queMonto,
@@ -841,6 +850,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				
 				monto: queMonto,
@@ -852,6 +862,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				monto: queMonto,
 				usuario: queUser
@@ -862,6 +873,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				monto: queMonto,
 				usuario: queUser
@@ -883,6 +895,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				monto: queMonto,
 				usuario: queUser
@@ -893,6 +906,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				monto: queMonto,
 				/* observacion: padre.find('.tdObservacion').text(), */
@@ -904,6 +918,7 @@ $('.btnPrintCajaEsp').click(function () {
 				codigo: code,
 				cliente: cliente,
 				titulo: queTitulo,
+				direccion, faltan,
 				fecha: queFecha.replace('a las ', ''),
 				monto: queMonto,
 				usuario: queUser
@@ -915,7 +930,8 @@ $('.btnPrintCajaEsp').click(function () {
 				'titulo:' + queTitulo+"\n",
 				'fecha:' + queFecha.replace('a las ', '')+"\n",
 				'cliente:' + queDueno+"\n",
-				'monto:' + queMonto+"\n",
+				'faltan: ' + faltan+"\n",
+				'monto: ' + queMonto+"\n",
 				'usuario:' + queUser );
 });
 $('body').on('click', '.btnChangeMonedaEsp', function (e) {

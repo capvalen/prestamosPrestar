@@ -58,7 +58,7 @@ if($existeCajaU>0  ){
 				 ?>
 					<p>La última caja se encuentra en <a href="caja.php?fecha=<?= $rowLast['fechaInicio']; ?>&cuadre=<?= $rowLast['idCuadre'];?>"><i class="icofont icofont-dotted-right"></i> <?= $rowLast['fechaInicioC']; ?></a></p>
 					<?php if( in_array($_COOKIE['ckPower'], $soloCajas) && date('Y-m-d')== $_GET['fecha'] ){ ?>
-					<span>También puedes: </span><button class="btn btn-morado btn-outline btn-sm" id="btnCajaAbrir"><i class="icofont icofont-coins"></i> Aperturar caja nueva</button>
+					<span>Puedes: </span><button class="btn btn-morado btn-outline btn-sm" id="btnCajaAbrir"><i class="icofont icofont-coins"></i> Aperturar nueva caja</button>
 					<?php } ?>
 				</div>
 			</div>

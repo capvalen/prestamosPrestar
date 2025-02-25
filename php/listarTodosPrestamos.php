@@ -1,4 +1,4 @@
-<?
+<?php
 
 if($_COOKIE['ckPower']=='1'){
 	
@@ -12,7 +12,7 @@ if($_COOKIE['ckPower']=='1'){
 	inner join cliente c on c.idCliente = i.idCliente
 	inner join usuario u on u.idUsuario = pre.idUsuario
 	inner join tipoprestamo tpr on tpr.idTipoPrestamo = pre.idTipoPrestamo
-	where presActivo =1 and cast(presFechaDesembolso as char) <> '0000-00-00 00:00:00' and presAprobado =1 and i.idTipoCliente=1 {$permiso}
+	where presActivo =1 and cast(presFechaDesembolso as char) <> '0000-00-00 00:00:00' and presAprobado =1 and i.idTipoCliente=1
 	order by pre.idPrestamo asc;";
 }
 else if($_COOKIE['ckPower']=='2'){
