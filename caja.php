@@ -118,7 +118,7 @@ a:focus, a:hover { color: #62286f; }
 					</div>
 						<div class="table-responsive">
 							<table class="table table-hover">
-								<thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Monto</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+								<thead> <tr> <th>#</th> <th>Servicio</th> <th>Motivo de ingreso</th> <th>Usuario</th> <th>Monto</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
 							<tbody>
 							<?php
 							if( ! isset($_GET['cuadre']) ):
@@ -150,7 +150,7 @@ a:focus, a:hover { color: #62286f; }
 					<div class="panel-body">
 					</div>
 						<div class="table-responsive">
-							<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Producto</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Monto</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
+							<table class="table table-hover">  <thead> <tr> <th>#</th> <th>Servicio</th> <th>Motivo de egreso</th> <th>Usuario</th> <th>Monto</th> <th>Moneda</th> <th>Obs.</th> </tr> </thead>
 							<tbody>
 							<?php
 								if( ! isset($_GET['cuadre']) ):

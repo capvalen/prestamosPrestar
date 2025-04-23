@@ -302,7 +302,8 @@ if($cantReporte==1){
 						otrosGastos: otrosGastos.value,
 						falta: falta.value,
 						saldo: saldo.value,
-						inyeccion: inyeccion.value
+						inyeccion: inyeccion.value,
+						recuperar: recuperar.value
 					})
 				})
 				.then(serv=>{
