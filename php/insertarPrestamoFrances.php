@@ -44,7 +44,7 @@ $comServ = round(($capital * 0.01)/$plazo, 2);
 $cuota = round( ( $interes* pow((1+$interes), $plazo) )* $capital / ( (pow(( 1 + $interes), $plazo)) -1), 2); //1, PHP_ROUND_HALF_UP
 $cuotaReal = round($cuota + $comServ,1);
 
-$sql="INSERT INTO `prestamo`(`idPrestamo`, `presFechaAutom`, `presFechaDesembolso`, `presPeriodo`, `preInteresPers`,`presMontoDesembolso`, `idTipoPrestamo`, `presActivo`, `idUsuario`, `preSaldoDebe`, `intSimple`) VALUES (null, now(), '0000-00-00 00:00:00', {$_POST['periodo']}, {$_POST['tasaInt']}, {$_POST['monto']}, {$_POST['modo']}, 1, {$_COOKIE['ckidUsuario']}, {$capital}, b'1' );"; 
+$sql="INSERT INTO `prestamo`(`idPrestamo`, `presFechaAutom`, `presFechaDesembolso`, `presPeriodo`, `preInteresPers`,`presMontoDesembolso`, `idTipoPrestamo`, `presActivo`, `idUsuario`, `preSaldoDebe`, `intSimple`) VALUES (null, CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) , '0000-00-00 00:00:00', {$_POST['periodo']}, {$_POST['tasaInt']}, {$_POST['monto']}, {$_POST['modo']}, 1, {$_COOKIE['ckidUsuario']}, {$capital}, b'1' );"; 
 
 
 if($cadena->query($sql)){

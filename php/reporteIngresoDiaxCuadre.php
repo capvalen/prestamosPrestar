@@ -42,7 +42,9 @@ else{
 		
 		if($_COOKIE['ckPower']==1): $boton = "<button class='btn btn-sm btn-negro btn-outline btnEditarCajaMaestra'><i class='icofont icofont-edit'></i></button> <button class='btn btn-sm btn-azul btn-outline btnPrintCajaEsp' data-caja='{$row["idCaja"]}' data-boton='{$row["idTipoProceso"]}'><i class='icofont icofont-print'></i></button> ";
 		elseif( $_COOKIE['ckPower']==4 ):  $boton = "<button class='btn btn-sm btn-azul btn-outline btnPrintCajaEsp' data-caja='{$row["idCaja"]}' data-boton='{$row["idTipoProceso"]}'><i class='icofont icofont-print'></i></button> <button class='btn btn-sm btn-success btn-outline btnChangeMonedaEsp' data-caja='{$row["idCaja"]}' ><i class='icofont icofont-pen-alt-3'></i></button> ";
-		else: $boton=''; endif; ?>
+		else: $boton=''; endif;
+		$hora = new DateTime($row['cajaFecha']);
+		?>
 
 		<tr data-id="<?= $row['idCaja']; ?>" data-activo="<?= $row['cajaActivo']; ?>" data-faltan="<?= $row['toFin']?>">
 			<th scope='row' class="aCode"><a href="<?php if($row['idPrestamo']<>0){ echo 'creditos.php?credito='.$codTemp;}?>"><?php if($row['idPrestamo']<>0){ echo 'CR-0'.($row['idPrestamo']);} ?></a> </th>
@@ -50,7 +52,7 @@ else{
 			<td class='mayuscula tpIdDescripcion'><?= $row['tipoDescripcion'];?></td>
 			<td><i class="icofont icofont-bubble-right"></i> <em class="emRegistra"><?= $row['usuNick'];?></em></td>
 			<td>S/ <span class='spanCantv3'><?= number_format(round($row['pagoMonto'],1),2);?></span></td>
-			<td class='mayuscula tdMoneda' data-id="<?= $row['cajaMoneda'];?>" ><?= $row['moneDescripcion'];?></td>
+			<td class='mayuscula tdMoneda' data-id="<?= $row['cajaMoneda'];?>" ><?= $row['moneDescripcion'];?> [<?= $hora->format('h:i a');?>]</td>
 			<td class='mayuscula tdObservacion'><?= $row['cajaObservacion'];?></td>
 			<td class="tdBotones"><span class="sr-only fechaPagov3"><?= $row['cajaFecha']; ?></span> <?= $boton; ?></td>
 		</tr>

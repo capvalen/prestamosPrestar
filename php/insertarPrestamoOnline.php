@@ -47,7 +47,7 @@ $intGanado = round( $interes/ $plazo ,1, PHP_ROUND_HALF_UP);
 $seguro = round( ($monto/ $plazo) * 0.01 ,1, PHP_ROUND_HALF_UP);
 
 
-$sql="INSERT INTO `prestamo`(`idPrestamo`, `presFechaAutom`, `presFechaDesembolso`, `presPeriodo`, `preInteresPers`,`presMontoDesembolso`, `idTipoPrestamo`, `presActivo`, `idUsuario`, `preSaldoDebe`) VALUES (null, now(), '0000-00-00 00:00:00', {$_POST['periodo']}, {$_POST['tasaInt']},{$_POST['monto']}, {$_POST['modo']}, 1, {$_COOKIE['ckidUsuario']}, {$pagoTotal} );"; 
+$sql="INSERT INTO `prestamo`(`idPrestamo`, `presFechaAutom`, `presFechaDesembolso`, `presPeriodo`, `preInteresPers`,`presMontoDesembolso`, `idTipoPrestamo`, `presActivo`, `idUsuario`, `preSaldoDebe`) VALUES (null, CONVERT_TZ( NOW(),'US/Eastern','America/Lima' ) , '0000-00-00 00:00:00', {$_POST['periodo']}, {$_POST['tasaInt']},{$_POST['monto']}, {$_POST['modo']}, 1, {$_COOKIE['ckidUsuario']}, {$pagoTotal} );"; 
 
 if($cadena->query($sql)){
 	$idPrestamo = $cadena->insert_id;
